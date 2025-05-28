@@ -119,3 +119,156 @@ func TestRegister(t *testing.T){
 		userService.AssertExpectations(t)
 	})
 }
+
+func TestLogin(t *testing.T) {
+	t.Run("Test Login Success", func(t *testing.T) {
+		app := fiber.New()
+		userService := services.NewUserServiceMock()
+		userHandler := handlers.NewUserHandler(userService)
+		app.Post("/login", userHandler.Login)
+
+		userService.On("Login", mock.AnythingOfType("*models.User")).Return("jwt_token", nil)
+
+		reqBody := []byte(`{
+			"email":"test@gmail.com",
+			"password":"password123"
+		}`)
+
+		req := httptest.NewRequest("POST", "/login", bytes.NewReader(reqBody))
+
+		req.Header.Set("Content-Type", "application/json")	
+
+		res,err := app.Test(req)	
+
+		assert.NoError(t, err)
+		assert.Equal(t,fiber.StatusOK, res.StatusCode)
+
+		body, _ := io.ReadAll(res.Body)
+
+		assert.Contains(t, string(body), "jwt_token")
+		assert.Contains(t, string(body), "Login successful")
+	})
+
+	t.Run("Invalid request body", func(t *testing.T) {
+		app := fiber.New()
+		userService := services.NewUserServiceMock()
+		userHandler := handlers.NewUserHandler(userService)
+		app.Post("/login", userHandler.Login)
+
+		reqBody := []byte(`{
+			"email":"test@gmail.com",
+			"password":"password123",
+		}`)
+
+		req := httptest.NewRequest("POST", "/login", bytes.NewReader(reqBody))
+
+		req.Header.Set("Content-Type", "application/json")	
+
+		res,err := app.Test(req)	
+
+		assert.NoError(t, err)
+		assert.Equal(t,fiber.StatusBadRequest, res.StatusCode)
+
+		body, _ := io.ReadAll(res.Body)
+
+		assert.Contains(t, string(body), "Invalid request body")
+	})
+
+	t.Run("Validation Error", func(t *testing.T) {
+		app := fiber.New()
+		userService := services.NewUserServiceMock()
+		userHandler := handlers.NewUserHandler(userService)
+		app.Post("/login", userHandler.Login)
+
+		tests := []struct{
+			name string
+			requestBody string
+			expect []string
+		}{
+			{
+				name :"Miss both fields",
+				requestBody: `{
+					"email":"",
+					"password":""
+				}`,
+				expect: []string{
+					"Email is required",
+					"Password is required",
+				},
+
+			},
+			{
+				name :"Email is email",
+				requestBody: `{
+					"email": "test@gmail",
+					"password": "password"
+				}`,
+				expect: []string{
+					"Email is email",
+				},
+			},
+			{
+				name :"Password too short",
+				requestBody: `{
+					"email": "test@gmail.com",
+					"password": "pass"
+				}`,
+				expect: []string{
+					"Password is min",
+				},
+			},
+
+		}
+
+
+		for _, tc := range tests{
+			t.Run(tc.name,func(t *testing.T) {
+				req := httptest.NewRequest("POST", "/login", bytes.NewReader([]byte(tc.requestBody)))
+
+				req.Header.Set("Content-Type", "application/json")	
+				res,err := app.Test(req)	
+
+				assert.NoError(t, err)
+				assert.Equal(t,fiber.StatusBadRequest, res.StatusCode)
+
+				body, _ := io.ReadAll(res.Body)
+
+				for _, expect := range tc.expect {
+					assert.Contains(t, string(body),expect)
+				}
+
+			})
+			
+		}
+
+
+		
+	})
+
+	t.Run("Login Error", func(t *testing.T) {
+		app := fiber.New()
+		userService := services.NewUserServiceMock()
+		userHandler := handlers.NewUserHandler(userService)
+		app.Post("/login", userHandler.Login)
+
+		userService.On("Login", mock.AnythingOfType("*models.User")).Return("", errors.New("Invalid credentials"))
+
+		reqBody := []byte(`{
+			"email":"test@gmail.com",
+			"password":"password"
+		}`)
+
+		req := httptest.NewRequest("POST", "/login", bytes.NewReader(reqBody))
+
+		req.Header.Set("Content-Type", "application/json")	
+
+		res,err := app.Test(req)	
+
+		assert.NoError(t, err)
+		assert.Equal(t,fiber.StatusUnauthorized, res.StatusCode)
+
+		body, _ := io.ReadAll(res.Body)
+
+		assert.Contains(t, string(body), "Invalid credentials")
+	})
+}

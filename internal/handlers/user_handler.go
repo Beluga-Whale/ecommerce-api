@@ -90,7 +90,7 @@ func (h *UserHandler) Login(c *fiber.Ctx) error {
 		
 	})
 
-	return JSONSuccess(c,fiber.StatusOK,"Login successful", fiber.Map{
-		"token": token,
+	return JSONSuccess(c,fiber.StatusOK,"Login successful",dto.LoginResponse{
+		Token:  token,
 	})
 }

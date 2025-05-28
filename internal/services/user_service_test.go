@@ -101,3 +101,145 @@ func TestRegister(t *testing.T) {
 
 	})
 }
+
+func TestLogin(t *testing.T) {
+	t.Run("Login Success",func(t *testing.T) {
+
+		dbUser := &models.User{
+			Email: "test@gmail.com",
+			Password: "hash_password",
+		}
+
+		inputUser := &models.User{
+			Email: "test@gmail.com",
+			Password: "password",
+		}
+
+		userRepo := repositories.NewUserRepositoryMock()
+		hashPassword := utils.NewComparePassMock()
+		jwtUtils := utils.NewJwtMock()
+
+		userRepo.On("GetUserByEmail",inputUser.Email).Return(dbUser,nil)
+
+		hashPassword.On("ComparePassword", dbUser.Password, inputUser.Password).Return(nil)
+
+		jwtUtils.On("GenerateJWT", dbUser.Email).Return("jwt_token", nil)
+
+		userService := services.NewUserService(userRepo,hashPassword,jwtUtils)
+
+		token, err := userService.Login(inputUser)
+
+		assert.NoError(t, err)
+		assert.Equal(t, "jwt_token", token)
+		userRepo.AssertExpectations(t)
+		
+	})
+	t.Run("User not found",func(t *testing.T) {
+
+		inputUser := &models.User{
+			Email: "",
+			Password: "password",
+		}
+
+		userRepo := repositories.NewUserRepositoryMock()
+		hashPassword := utils.NewComparePassMock()
+		jwtUtils := utils.NewJwtMock()
+
+		userService := services.NewUserService(userRepo,hashPassword,jwtUtils)
+
+		_, err := userService.Login(inputUser)
+
+		assert.EqualError(t, err,"Email and Password cannot be empty")
+		
+	})
+
+	t.Run("User not found",func(t *testing.T) {
+
+		dbUser := &models.User{
+			Email: "test@gmail.com",
+			Password: "hash_password",
+		}
+
+		inputUser := &models.User{
+			Email: "test@gmail.com",
+			Password: "password",
+		}
+
+		userRepo := repositories.NewUserRepositoryMock()
+		hashPassword := utils.NewComparePassMock()
+		jwtUtils := utils.NewJwtMock()
+
+		userRepo.On("GetUserByEmail",inputUser.Email).Return(dbUser,errors.New("User not found"))
+
+		userService := services.NewUserService(userRepo,hashPassword,jwtUtils)
+
+		_, err := userService.Login(inputUser)
+
+		assert.EqualError(t, err,"User not found")
+
+		userRepo.AssertExpectations(t)
+		
+	})
+
+	t.Run("Invalid email or password",func(t *testing.T) {
+
+		dbUser := &models.User{
+			Email: "test@gmail.com",
+			Password: "hash_password",
+		}
+
+		inputUser := &models.User{
+			Email: "test@gmail.com",
+			Password: "password",
+		}
+
+		userRepo := repositories.NewUserRepositoryMock()
+		hashPassword := utils.NewComparePassMock()
+		jwtUtils := utils.NewJwtMock()
+
+		userRepo.On("GetUserByEmail",inputUser.Email).Return(dbUser,nil)
+
+		hashPassword.On("ComparePassword", dbUser.Password, inputUser.Password).Return(errors.New("Invalid email or password"))
+
+		userService := services.NewUserService(userRepo,hashPassword,jwtUtils)
+
+		_, err := userService.Login(inputUser)
+
+		assert.EqualError(t, err,"Invalid email or password")
+
+		userRepo.AssertExpectations(t)
+		
+	})
+
+	t.Run("Login Success",func(t *testing.T) {
+
+		dbUser := &models.User{
+			Email: "test@gmail.com",
+			Password: "hash_password",
+		}
+
+		inputUser := &models.User{
+			Email: "test@gmail.com",
+			Password: "password",
+		}
+
+		userRepo := repositories.NewUserRepositoryMock()
+		hashPassword := utils.NewComparePassMock()
+		jwtUtils := utils.NewJwtMock()
+
+		userRepo.On("GetUserByEmail",inputUser.Email).Return(dbUser,nil)
+
+		hashPassword.On("ComparePassword", dbUser.Password, inputUser.Password).Return(nil)
+
+		jwtUtils.On("GenerateJWT", dbUser.Email).Return("", errors.New("Error generating JWT token"))
+
+		userService := services.NewUserService(userRepo,hashPassword,jwtUtils)
+
+		token, err := userService.Login(inputUser)
+
+		assert.EqualError(t, err, "Error generating JWT token")
+		assert.Equal(t, "", token)
+		userRepo.AssertExpectations(t)
+		
+	})
+}
