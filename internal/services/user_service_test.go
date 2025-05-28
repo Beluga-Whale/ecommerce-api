@@ -123,7 +123,7 @@ func TestLogin(t *testing.T) {
 
 		hashPassword.On("ComparePassword", dbUser.Password, inputUser.Password).Return(nil)
 
-		jwtUtils.On("GenerateJWT", dbUser.Email).Return("jwt_token", nil)
+		jwtUtils.On("GenerateJWT", dbUser.Email, string(dbUser.Role)).Return("jwt_token", nil)
 
 		userService := services.NewUserService(userRepo,hashPassword,jwtUtils)
 
@@ -231,7 +231,7 @@ func TestLogin(t *testing.T) {
 
 		hashPassword.On("ComparePassword", dbUser.Password, inputUser.Password).Return(nil)
 
-		jwtUtils.On("GenerateJWT", dbUser.Email).Return("", errors.New("Error generating JWT token"))
+		jwtUtils.On("GenerateJWT", dbUser.Email, string(dbUser.Role)).Return("", errors.New("Error generating JWT token"))
 
 		userService := services.NewUserService(userRepo,hashPassword,jwtUtils)
 
