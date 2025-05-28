@@ -9,12 +9,13 @@ import (
 )
 
 type JwtInterface interface {
-	GenerateJWT(email string) (string, error)
-	ParseJWT(tokenString string) (string, error)
+	GenerateJWT(email string,role string) (string, error)
+	ParseJWT(tokenString string) (*JWTClaims, error)
 }
 
 type JWTClaims struct {
 	Email string `json:"email"`
+	Role  string `json:"role"`
 	jwt.RegisteredClaims
 }
 
@@ -22,11 +23,12 @@ func NewJwt() *JWTClaims{
 	return &JWTClaims{}
 }
 
-func (c *JWTClaims) GenerateJWT(email string) (string, error) {
+func (c *JWTClaims) GenerateJWT(email string,role string) (string, error) {
 	secretKey := []byte(os.Getenv("JWT_SECRET"))
 
 	claims :=JWTClaims{
 		Email: email,
+		Role:  role,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * time.Hour)),
 		},
@@ -37,23 +39,19 @@ func (c *JWTClaims) GenerateJWT(email string) (string, error) {
 
 }
 
-func (c *JWTClaims) ParseJWT(tokenString string) (string, error) {
-	// NOTE - นำ token มาเช็คว่าเป็นอันเดียวกันไหม
-	token, err := jwt.ParseWithClaims(tokenString,&JWTClaims{}, func(token *jwt.Token)  (interface{},error){
-		return []byte(os.Getenv("JWT_SECRET")),nil
+func (c *JWTClaims) ParseJWT(tokenString string) (*JWTClaims, error) {
+	token, err := jwt.ParseWithClaims(tokenString, &JWTClaims{}, func(token *jwt.Token) (interface{}, error) {
+		return []byte(os.Getenv("JWT_SECRET")), nil
 	})
 
-	if err !=nil || !token.Valid {
-		return "" , err
+	if err != nil || !token.Valid {
+		return nil, err
 	}
 
-	// NOTE - ดึงข้อมูลจาก claim
-	claims, ok := token.Claims.(*JWTClaims); 
-
+	claims, ok := token.Claims.(*JWTClaims)
 	if !ok {
-		return "",errors.New("Invalid token claims")
+		return nil, errors.New("Invalid token claims")
 	}
 
-	return claims.Email,nil
-
+	return claims, nil
 }

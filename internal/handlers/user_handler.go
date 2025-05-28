@@ -94,3 +94,17 @@ func (h *UserHandler) Login(c *fiber.Ctx) error {
 		Token:  token,
 	})
 }
+
+func (h *UserHandler) GetProfile(c *fiber.Ctx) error {
+	email := c.Locals("userEmail").(string)
+	return c.JSON(fiber.Map{
+		"message": "User Profile",
+		"email":   email,
+	})
+}
+
+func (h *UserHandler) AdminDashboard(c *fiber.Ctx) error {
+	return c.JSON(fiber.Map{
+		"message": "Welcome to Admin Dashboard!",
+	})
+}

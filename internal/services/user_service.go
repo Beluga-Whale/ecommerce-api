@@ -65,7 +65,7 @@ func (s *UserService)  Login(user *models.User) (string,error) {
 		return "", errors.New("Invalid email or password")
 	}
 
-	token, err  := s.jwtUtil.GenerateJWT(dbUser.Email)
+	token, err  := s.jwtUtil.GenerateJWT(dbUser.Email, string(dbUser.Role))
 
 	if err != nil {
 		return "", errors.New("Error generating JWT token")

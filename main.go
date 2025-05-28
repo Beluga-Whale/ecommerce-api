@@ -49,7 +49,7 @@ func main() {
 	userHandler := handlers.NewUserHandler(userService)
 
 	// NOTE - Set Up Routes
-	routes.SetUpRoutes(app, userHandler)
+	routes.SetUpRoutes(app, userHandler,jwtUtil)
 	
 	port := os.Getenv("PORT_API")
 
