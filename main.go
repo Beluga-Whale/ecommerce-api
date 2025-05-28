@@ -40,8 +40,10 @@ func main() {
 
 	// NOTE - Utilities
 	hashPassword := utils.NewPasswordUtil()
+	jwtUtil := utils.NewJwt()
+
 	// NOTE - Create Services
-	userService := services.NewUserService(userRepo,hashPassword)
+	userService := services.NewUserService(userRepo,hashPassword,jwtUtil)
 
 	// NOTE - Create Handlers
 	userHandler := handlers.NewUserHandler(userService)
