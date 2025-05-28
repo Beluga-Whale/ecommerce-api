@@ -9,6 +9,7 @@ import (
 	"github.com/Beluga-Whale/ecommerce-api/internal/handlers"
 	"github.com/Beluga-Whale/ecommerce-api/internal/repositories"
 	"github.com/Beluga-Whale/ecommerce-api/internal/services"
+	"github.com/Beluga-Whale/ecommerce-api/internal/utils"
 	"github.com/Beluga-Whale/ecommerce-api/routes"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
@@ -32,11 +33,15 @@ func main() {
 		AllowCredentials: true,
 	}))
 
+
+
 	// NOTE - Create Repositories
 	userRepo := repositories.NewUserRepository(config.DB)
 
+	// NOTE - Utilities
+	hashPassword := utils.NewPasswordUtil()
 	// NOTE - Create Services
-	userService := services.NewUserService(userRepo)
+	userService := services.NewUserService(userRepo,hashPassword)
 
 	// NOTE - Create Handlers
 	userHandler := handlers.NewUserHandler(userService)
