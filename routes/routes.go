@@ -7,10 +7,17 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func SetUpRoutes(app *fiber.App, userHandler *handlers.UserHandler,jwtUtil utils.JwtInterface) {
+func SetUpRoutes(app *fiber.App, jwtUtil utils.JwtInterface, userHandler *handlers.UserHandler, categoryHandler *handlers.CategoryHandler) {
 	api := app.Group("/api")
 	api.Post("/register", userHandler.Register)
 	api.Post("/login",userHandler.Login)
+
+	// NOTE - Category Routes
+	protectedCategoryAdmin := api.Group("/category", middleware.AuthMiddleware(jwtUtil),middleware.RequireRole("admin"))
+	protectedCategoryAdmin.Post("/", categoryHandler.Create) 
+	protectedCategoryAdmin.Put("/:id", categoryHandler.Update) 
+	protectedCategoryAdmin.Delete("/:id", categoryHandler.Delete)
+	protectedCategoryAdmin.Get("/", categoryHandler.GetAll)
 
 	// Protected Routes
 	protected := api.Group("/user", middleware.AuthMiddleware(jwtUtil))

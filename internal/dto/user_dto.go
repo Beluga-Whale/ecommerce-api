@@ -22,14 +22,26 @@ type LoginResponseDTO struct {
 
 // NOTE - Category DTOs
 
+// NOTE - Create, Update, Delete Category DTOs
+
 type CategoryCreateDTO struct {
 	Name string `json:"name" validate:"required,min=2,max=100"`
-	Slug string `json:"slug" validate:"required,min=2,max=100"`
+	Description string `json:"description" validate:"required,min=2,max=255"`
+}
+
+type CategoryCreateResponseDTO struct {
+	Name string `json:"name" validate:"required,min=2,max=100"`
+	Slug string `json:"slug"`
 	Description string `json:"description" validate:"required,min=2,max=255"`
 }
 
 type UpdateCategoryDTO struct {
-	Name        string `json:"name"`
-	Slug        string `json:"slug"`
-	Description string `json:"description"`
+	Name string `json:"name" validate:"required,min=2,max=100"`
+	Description string `json:"description" validate:"required,min=2,max=255"`
+}
+
+type UpdateCategoryResponseDTO struct {
+	Name string `json:"name" validate:"required,min=2,max=100"`
+	Slug string `json:"slug"`
+	Description string `json:"description" validate:"required,min=2,max=255"`
 }
