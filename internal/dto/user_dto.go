@@ -26,22 +26,18 @@ type LoginResponseDTO struct {
 
 type CategoryCreateDTO struct {
 	Name string `json:"name" validate:"required,min=2,max=100"`
-	Description string `json:"description" validate:"required,min=2,max=255"`
 }
 
 type CategoryCreateResponseDTO struct {
 	Name string `json:"name" validate:"required,min=2,max=100"`
 	Slug string `json:"slug"`
-	Description string `json:"description" validate:"required,min=2,max=255"`
 }
 
 type UpdateCategoryDTO struct {
 	Name string `json:"name" validate:"required,min=2,max=100"`
-	Description string `json:"description" validate:"required,min=2,max=255"`
 }
 
 type UpdateCategoryResponseDTO struct {
 	Name string `json:"name" validate:"required,min=2,max=100"`
 	Slug string `json:"slug"`
-	Description string `json:"description" validate:"required,min=2,max=255"`
 }

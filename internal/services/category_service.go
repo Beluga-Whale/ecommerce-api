@@ -25,8 +25,8 @@ func NewCategoryService(categoryRepo repositories.CategoryInterface) *CategorySe
 
 func (s *CategoryService) CreateCategory(category *models.Category) error {
 	// NOTE - เช็คว่ามีชื่อ category เป็นค่าว่างไหม
-	if category.Name == "" || category.Description == "" {
-		return errors.New("Category name and description cannot be empty")
+	if category.Name == "" {
+		return errors.New("Category name cannot be empty")
 	}
 
 	// NOTE - เช็คว่ามี category ซ้ำไหม
@@ -55,8 +55,8 @@ func (s *CategoryService) CreateCategory(category *models.Category) error {
 
 func (s *CategoryService) UpdateCategory(id uint, category *models.Category) error {
 	// NOTE - เช็คว่ามีชื่อ category เป็นค่าว่างไหม
-	if category.Name == "" || category.Description == "" {
-		return errors.New("Category name and description cannot be empty")
+	if category.Name == ""  {
+		return errors.New("Category name cannot be empty")
 	}
 
 	// NOTE - เช็คว่า category มีอยู่ในระบบไหม
@@ -73,7 +73,6 @@ func (s *CategoryService) UpdateCategory(id uint, category *models.Category) err
 	// NOTE - Update Fields ของ category เป็นค่าใหม่
 	existingCategory.Slug = slug.Make(category.Name)
 	existingCategory.Name = category.Name
-	existingCategory.Description = category.Description
 
 	err = s.categoryRepo.Update(existingCategory)
 

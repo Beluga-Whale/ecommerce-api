@@ -26,7 +26,7 @@ func (h *CategoryHandler) GetAll(c *fiber.Ctx) error {
 	if err != nil {
 		return JSONError(c, fiber.StatusInternalServerError, "Failed to fetch categories")
 	}
-	
+
 	return JSONSuccess(c, fiber.StatusOK,"Get all categories successfully", categories)
 }
 
@@ -50,7 +50,6 @@ func (h *CategoryHandler) Create(c *fiber.Ctx) error {
 
 	category := &models.Category{
 		Name: 	  req.Name,
-		Description: req.Description,
 	}
 
 	err := h.categoryService.CreateCategory(category)
@@ -61,7 +60,6 @@ func (h *CategoryHandler) Create(c *fiber.Ctx) error {
 	return JSONSuccess(c, fiber.StatusCreated, "Category created successfully", dto.CategoryCreateResponseDTO{
 		Name: category.Name,
 		Slug: category.Slug,
-		Description: category.Description,
 	})
 
 }
@@ -89,7 +87,6 @@ func (h *CategoryHandler) Update(c *fiber.Ctx) error {
 
 	category := &models.Category{
 		Name: 	  req.Name,
-		Description: req.Description,
 	}
 
 	err := h.categoryService.UpdateCategory(uint(categoryID),category)
@@ -99,7 +96,6 @@ func (h *CategoryHandler) Update(c *fiber.Ctx) error {
 	return JSONSuccess(c, fiber.StatusOK, "Category update successfully", dto.UpdateCategoryResponseDTO{
 		Name: category.Name,
 		Slug: slug.Make(category.Name) ,
-		Description: category.Description,
 	})
 }
 
