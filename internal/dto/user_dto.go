@@ -19,25 +19,3 @@ type LoginRequestDTO struct {
 type LoginResponseDTO struct {
 	Token string `json:"token"`
 }
-
-// NOTE - Category DTOs
-
-// NOTE - Create, Update, Delete Category DTOs
-
-type CategoryCreateDTO struct {
-	Name string `json:"name" validate:"required,min=2,max=100"`
-}
-
-type CategoryCreateResponseDTO struct {
-	Name string `json:"name" validate:"required,min=2,max=100"`
-	Slug string `json:"slug"`
-}
-
-type UpdateCategoryDTO struct {
-	Name string `json:"name" validate:"required,min=2,max=100"`
-}
-
-type UpdateCategoryResponseDTO struct {
-	Name string `json:"name" validate:"required,min=2,max=100"`
-	Slug string `json:"slug"`
-}
