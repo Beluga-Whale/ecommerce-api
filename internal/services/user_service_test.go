@@ -5,9 +5,9 @@ import (
 	"testing"
 
 	"github.com/Beluga-Whale/ecommerce-api/internal/models"
-	"github.com/Beluga-Whale/ecommerce-api/internal/repositories"
+	repositories "github.com/Beluga-Whale/ecommerce-api/internal/repositories/mocks"
 	"github.com/Beluga-Whale/ecommerce-api/internal/services"
-	"github.com/Beluga-Whale/ecommerce-api/internal/utils"
+	utils "github.com/Beluga-Whale/ecommerce-api/internal/utils/mocks"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )

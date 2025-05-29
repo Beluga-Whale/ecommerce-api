@@ -8,7 +8,7 @@ import (
 	"testing"
 
 	"github.com/Beluga-Whale/ecommerce-api/internal/handlers"
-	"github.com/Beluga-Whale/ecommerce-api/internal/services"
+	services "github.com/Beluga-Whale/ecommerce-api/internal/services/mocks"
 	"github.com/gofiber/fiber/v2"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"

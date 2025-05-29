@@ -21,7 +21,7 @@ func NewUserHandler(userService services.UserServiceInterface) *UserHandler {
 
 func (h *UserHandler) Register(c *fiber.Ctx) error {
 	// NOTE - Parse request body use DTO
-	var req dto.RegisterRequest
+	var req dto.RegisterRequestDTO
 	if err := c.BodyParser(&req); err != nil {
 		return JSONError(c,fiber.StatusBadRequest, "Invalid request body")
 	}
@@ -53,7 +53,7 @@ func (h *UserHandler) Register(c *fiber.Ctx) error {
 
 func (h *UserHandler) Login(c *fiber.Ctx) error {
 	// NOTE - Parse request body use DTO
-	var req dto.LoginRequest
+	var req dto.LoginRequestDTO
 	if err := c.BodyParser(&req); err != nil {
 		return JSONError(c, fiber.StatusBadRequest, "Invalid request body")
 	}
@@ -90,7 +90,7 @@ func (h *UserHandler) Login(c *fiber.Ctx) error {
 		
 	})
 
-	return JSONSuccess(c,fiber.StatusOK,"Login successful",dto.LoginResponse{
+	return JSONSuccess(c,fiber.StatusOK,"Login successful",dto.LoginResponseDTO{
 		Token:  token,
 	})
 }

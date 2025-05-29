@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"github.com/Beluga-Whale/ecommerce-api/internal/utils"
 	"github.com/stretchr/testify/mock"
 )
 
@@ -13,17 +14,16 @@ func NewJwtMock() *JwtMock {
 }
 
 func (m *JwtMock) GenerateJWT(email string, role string) (string, error) {
-	args := m.Called(email,role)
-	return args.String(0),args.Error(1)
+	args := m.Called(email, role)
+	return args.String(0), args.Error(1)
 }
 
-
-func (m *JwtMock)  ParseJWT(tokenString string) (*JWTClaims, error) {
+func (m *JwtMock) ParseJWT(tokenString string) (*utils.JWTClaims, error) {
 	args := m.Called(tokenString)
 
 	if args.Get(0) == nil {
 		return nil, args.Error(1)
 	}
 
-	return args.Get(0).(*JWTClaims), args.Error(1)
+	return args.Get(0).(*utils.JWTClaims), args.Error(1)
 }
