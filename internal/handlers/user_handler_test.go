@@ -15,8 +15,6 @@ import (
 )
 
 func TestRegister(t *testing.T){
-
-
 	t.Run("Test Register Success",func(t *testing.T) {			
 		app := fiber.New()
 		userService := services.NewUserServiceMock()
