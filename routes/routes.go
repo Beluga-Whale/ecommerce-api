@@ -7,7 +7,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func SetUpRoutes(app *fiber.App, jwtUtil utils.JwtInterface, userHandler *handlers.UserHandler, categoryHandler *handlers.CategoryHandler) {
+func SetUpRoutes(app *fiber.App, jwtUtil utils.JwtInterface, userHandler *handlers.UserHandler, categoryHandler *handlers.CategoryHandler, productHandler *handlers.ProductHandler ) {
 	api := app.Group("/api")
 	api.Post("/register", userHandler.Register)
 	api.Post("/login",userHandler.Login)
@@ -18,6 +18,14 @@ func SetUpRoutes(app *fiber.App, jwtUtil utils.JwtInterface, userHandler *handle
 	protectedCategoryAdmin.Put("/:id", categoryHandler.Update) 
 	protectedCategoryAdmin.Delete("/:id", categoryHandler.Delete)
 	protectedCategoryAdmin.Get("/", categoryHandler.GetAll)
+
+	// NOTE - Product Routes
+	protectedProductAdmin := api.Group("/product", middleware.AuthMiddleware(jwtUtil), middleware.RequireRole("admin"))
+	protectedProductAdmin.Get("/", productHandler.GetAllProducts)
+	protectedProductAdmin.Post("/", productHandler.CreateProduct) 
+	protectedProductAdmin.Get("/:id", productHandler.GetProductByID)
+	protectedProductAdmin.Put("/:id", productHandler.UpdateProduct)
+	protectedProductAdmin.Delete("/:id", productHandler.DeleteProduct)
 
 	// Protected Routes
 	protected := api.Group("/user", middleware.AuthMiddleware(jwtUtil))

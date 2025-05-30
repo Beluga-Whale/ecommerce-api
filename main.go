@@ -38,6 +38,7 @@ func main() {
 	// NOTE - Create Repositories
 	userRepo := repositories.NewUserRepository(config.DB)
 	categoryRepo := repositories.NewCategoryRepository(config.DB)
+	productRepo := repositories.NewProductRepository(config.DB)
 
 	// NOTE - Utilities
 	hashPassword := utils.NewPasswordUtil()
@@ -46,13 +47,15 @@ func main() {
 	// NOTE - Create Services
 	userService := services.NewUserService(userRepo,hashPassword,jwtUtil)
 	categoryService := services.NewCategoryService(categoryRepo)
+	productService := services.NewProductService(productRepo,categoryRepo)
 
 	// NOTE - Create Handlers
 	userHandler := handlers.NewUserHandler(userService)
 	categoryHandler := handlers.NewCategoryHandler(categoryService)
+	productHandler := handlers.NewProductHandler(productService)
 
 	// NOTE - Set Up Routes
-	routes.SetUpRoutes(app ,jwtUtil,userHandler,categoryHandler)
+	routes.SetUpRoutes(app ,jwtUtil,userHandler,categoryHandler,productHandler)
 	
 	port := os.Getenv("PORT_API")
 
