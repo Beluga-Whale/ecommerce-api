@@ -154,6 +154,7 @@ func (h *ProductHandler) GetProductByID(c *fiber.Ctx) error {
 		Stock:       product.Stock,
 		IsFeatured:  product.IsFeatured,
 		IsOnSale:    product.IsOnSale,
+		CategoryID:  product.CategoryID,
 	})
 }
 
