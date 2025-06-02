@@ -9,7 +9,7 @@ type ProductServiceMock struct {
 	mock.Mock
 }
 
-func NewProductRepositoryMock() *ProductServiceMock {
+func NewProductServiceMock() *ProductServiceMock {
 	return &ProductServiceMock{}
 }
 

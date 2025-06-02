@@ -143,7 +143,7 @@ func (h *ProductHandler) GetProductByID(c *fiber.Ctx) error {
 		return JSONError(c, fiber.StatusInternalServerError,  err.Error())
 	}
 	if product == nil {
-		return JSONError(c, fiber.StatusNotFound, err.Error())
+		return JSONError(c, fiber.StatusNotFound, "Product not found")
 	}
 
 	return JSONSuccess(c, fiber.StatusOK, "Product retrieved successfully", dto.ProductUpdateResponseDTO{
