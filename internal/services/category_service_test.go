@@ -199,7 +199,6 @@ func TestDeleteCategory(t *testing.T) {
 	t.Run("Category not found", func(t *testing.T) {
 		categoryRepo := repositories.NewCategoryRepositoryMock()
 		categoryRepo.On("FindByID", uint(1)).Return(nil, nil)
-		categoryRepo.On("Delete", uint(1)).Return(nil)
 
 		categoryService := services.NewCategoryService(categoryRepo)
 		err := categoryService.DeleteCategory(1)

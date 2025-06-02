@@ -71,7 +71,7 @@ func (h *ProductHandler) CreateProduct(c *fiber.Ctx) error {
 	})
 }
 
-func (h* ProductHandler) UpdateProduct(c *fiber.Ctx) error {
+func (h *ProductHandler) UpdateProduct(c *fiber.Ctx) error {
 	id, err := c.ParamsInt("id")
 	if err != nil {
 		return JSONError(c, fiber.StatusBadRequest, "Invalid product ID")
