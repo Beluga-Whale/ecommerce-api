@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"errors"
+	"strconv"
 
 	"github.com/Beluga-Whale/ecommerce-api/internal/models"
 	"gorm.io/gorm"
@@ -10,7 +11,7 @@ import (
 type ProductRepositoryInterface interface {
 	Create(product *models.Product) error
 	FindByID(id uint) (*models.Product, error)
-	FindAll(page uint, limit uint) (productList []models.Product ,pageTotal int64,err error) 
+	FindAll(page uint, limit uint, minPrice int64, maxPrice int64, searchName string, category string) (productList []models.Product ,pageTotal int64,err error) 
 	Update(product *models.Product) error
 	Delete(id uint) error
 }
@@ -43,18 +44,36 @@ func (r *ProductRepository) FindByID(id uint) (*models.Product, error){
 	return &product, nil
 }
 
-func (r *ProductRepository) FindAll(page uint, limit uint) (productList []models.Product ,pageTotal int64,err error) {
+func (r *ProductRepository) FindAll(page uint, limit uint, minPrice int64, maxPrice int64, searchName string, category string) (productList []models.Product ,pageTotal int64,err error) {
 	var products []models.Product
 	var total int64
 
-	if err := r.db.Model(&models.Product{}).Count(&total).Error; err != nil{
+	productQuery := r.db.Model(&models.Product{})
+
+	// NOTE - เช็คว่า Category เป็นค่าว่างมาไหม
+	if category != "" {
+		// NOTE - ถ้าไม่เป็นค่าว่างต้องเปลี่ยนให้เป็น int
+    	catID, err := strconv.Atoi(category)
+    	if err == nil {
+        	productQuery = productQuery.Where("category_id = ?", catID)
+    	}
+	}
+
+	// NOTE - Where price
+	productQuery = productQuery.Where("price >= ? AND price <= ?",minPrice,maxPrice)
+
+	if searchName != "" {
+		productQuery = productQuery.Where("name ILIKE ?", "%"+searchName+"%")
+	}
+
+	if err := productQuery.Count(&total).Error; err != nil{
 		return nil,0,err
 	}
 	
 	offset := (page -1 ) * limit
 	pageTotal = (total + int64(limit) - 1) / int64(limit)
 
-	err = r.db.Preload("Category").Offset(int(offset)).Limit(int(limit)).Find(&products).Error
+	err = productQuery.Preload("Category").Offset(int(offset)).Limit(int(limit)).Find(&products).Error
 	return products, pageTotal,err
 }
 

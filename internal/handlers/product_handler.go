@@ -165,8 +165,20 @@ func (h *ProductHandler) GetProductByID(c *fiber.Ctx) error {
 func (h *ProductHandler) GetAllProducts(c *fiber.Ctx) error {
 	page := c.QueryInt("page",1)
 	limit := c.QueryInt("limit",10)
+	maxPrice := c.QueryInt("maxPrice",999999)
+	minPrice := c.QueryInt("minPrice",0)
+	searchName := c.Query("searchName","")
+	category := c.Query("category","")
 
-	products, pageTotal ,err := h.productService.GetAllProducts(uint(page),uint(limit))
+	if limit <1  {
+		limit = 10
+	}
+
+	if minPrice > maxPrice {
+		return JSONError(c, fiber.StatusInternalServerError, "minPrice must be less than maxPrice")
+	}
+
+	products, pageTotal ,err := h.productService.GetAllProducts(uint(page),uint(limit),int64(minPrice),int64(maxPrice),searchName,category)
 
 	if err != nil {
 		return JSONError(c, fiber.StatusInternalServerError, err.Error())

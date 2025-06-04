@@ -692,6 +692,7 @@ func TestGetProductByID(t *testing.T) {
 
 func TestGetAllProducts(t *testing.T) {
 	t.Run("GetAllProducts Success",func(t *testing.T) {
+
 		products := []models.Product{
 			{
 				Name: "CPU",
@@ -715,15 +716,19 @@ func TestGetAllProducts(t *testing.T) {
 			},
 		}
 
+		minPrice := 0
+		maxPrice := 999999
+		searchName := ""
+		category := ""
 		productRepo := repositories.NewProductRepositoryMock()
 
-		productRepo.On("FindAll",uint(1),uint(10)).Return(products,int64(1),nil)
+		productRepo.On("FindAll",uint(1),uint(10),int64(minPrice),int64(maxPrice),searchName,category).Return(products,int64(1),nil)
 
 		categoryRepo := repositories.NewCategoryRepositoryMock()
 
 		productService := services.NewProductService(productRepo,categoryRepo)
 
-		_,_,err := productService.GetAllProducts(1,10)
+		_,_,err := productService.GetAllProducts(uint(1),uint(10),int64(minPrice),int64(maxPrice),searchName,category)
 
 		assert.NoError(t,err)
 
@@ -735,13 +740,18 @@ func TestGetAllProducts(t *testing.T) {
 
 		productRepo := repositories.NewProductRepositoryMock()
 
-		productRepo.On("FindAll",uint(1),uint(10)).Return(nil,int64(0),errors.New("Error retrieving products"))
+		minPrice := 0
+		maxPrice := 999999
+		searchName := ""
+		category := ""
+		
+		productRepo.On("FindAll",uint(1),uint(10),int64(minPrice),int64(maxPrice),searchName,category).Return(nil,int64(0),errors.New("Error retrieving products"))
 
 		categoryRepo := repositories.NewCategoryRepositoryMock()
 
 		productService := services.NewProductService(productRepo,categoryRepo)
 
-		_,_,err := productService.GetAllProducts(1,10)
+		_,_,err := productService.GetAllProducts(uint(1),uint(10),int64(minPrice),int64(maxPrice),searchName,category)
 
 		assert.EqualError(t,err,"Error retrieving products")
 	})
