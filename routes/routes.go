@@ -7,7 +7,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func SetUpRoutes(app *fiber.App, jwtUtil utils.JwtInterface, userHandler *handlers.UserHandler, categoryHandler *handlers.CategoryHandler, productHandler *handlers.ProductHandler ) {
+func SetUpRoutes(app *fiber.App, jwtUtil utils.JwtInterface, userHandler *handlers.UserHandler, categoryHandler *handlers.CategoryHandler, productHandler *handlers.ProductHandler, orderHandler *handlers.OrderHandler ) {
 	api := app.Group("/api")
 	api.Post("/register", userHandler.Register)
 	api.Post("/login",userHandler.Login)
@@ -26,6 +26,12 @@ func SetUpRoutes(app *fiber.App, jwtUtil utils.JwtInterface, userHandler *handle
 	protectedProductAdmin.Get("/:id", productHandler.GetProductByID)
 	protectedProductAdmin.Put("/:id", productHandler.UpdateProduct)
 	protectedProductAdmin.Delete("/:id", productHandler.DeleteProduct)
+
+	// NOTE - Order Route
+	// NOTE - User use createOnly
+	protectedOrderUser := api.Group("/user/order", middleware.AuthMiddleware(jwtUtil), middleware.RequireRole("user"))
+	protectedOrderUser.Post("/", orderHandler.CreateOrder)
+
 
 	// Protected Routes
 	protected := api.Group("/user", middleware.AuthMiddleware(jwtUtil))
