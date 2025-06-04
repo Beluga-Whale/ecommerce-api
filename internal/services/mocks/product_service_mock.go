@@ -36,10 +36,18 @@ func (m *ProductServiceMock) GetProductByID(id uint) (*models.Product, error) {
 	return  nil,args.Error(1)
 }
 
-func (m *ProductServiceMock) GetAllProducts() ([]models.Product, error) {
-	args := m.Called()
-	if products,ok := args.Get(0).([]models.Product) ; ok {
-		return products,nil
+func (m *ProductServiceMock) GetAllProducts( page uint, limit uint) ([]models.Product, int64, error)  {
+	args := m.Called(page, limit)
+
+	var products []models.Product
+	if res,ok := args.Get(0).([]models.Product);ok {
+		products = res
 	}
-	return  nil,args.Error(1)
+
+	var pageTotal int64
+	if pt, ok := args.Get(1).(int64); ok {
+		pageTotal = pt
+	}
+
+	return  products, pageTotal,args.Error(2)
 }

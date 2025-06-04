@@ -13,7 +13,7 @@ type ProductServiceInterface interface{
 	UpdateProduct(id uint, product *models.Product) error
 	DeleteProduct(id uint) error
 	GetProductByID(id uint) (*models.Product, error) 
-	GetAllProducts() ([]models.Product, error)
+	GetAllProducts( page uint, limit uint) ([]models.Product, int64,error) 
 }
 
 type ProductService struct {
@@ -137,11 +137,11 @@ func (s *ProductService) GetProductByID(id uint) (*models.Product, error) {
 	return existingProduct, nil
 }
 
-func (s *ProductService) GetAllProducts() ([]models.Product, error) {
-	products, err := s.productRepo.FindAll()
+func (s *ProductService) GetAllProducts( page uint, limit uint) ([]models.Product, int64,error) {
+	products,pageTotal, err := s.productRepo.FindAll(page,limit)
 	if err != nil {
-		return nil, errors.New("Error retrieving products")
+		return nil, 0,errors.New("Error retrieving products")
 	}
-	return products, nil
+	return products,pageTotal, nil
 }
 

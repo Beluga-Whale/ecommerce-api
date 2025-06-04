@@ -10,7 +10,7 @@ import (
 type ProductRepositoryInterface interface {
 	Create(product *models.Product) error
 	FindByID(id uint) (*models.Product, error)
-	FindAll() ([]models.Product, error)
+	FindAll(page uint, limit uint) (productList []models.Product ,pageTotal int64,err error) 
 	Update(product *models.Product) error
 	Delete(id uint) error
 }
@@ -43,10 +43,19 @@ func (r *ProductRepository) FindByID(id uint) (*models.Product, error){
 	return &product, nil
 }
 
-func (r *ProductRepository) FindAll() ([]models.Product, error) {
+func (r *ProductRepository) FindAll(page uint, limit uint) (productList []models.Product ,pageTotal int64,err error) {
 	var products []models.Product
-	err := r.db.Preload("Category").Find(&products).Error
-	return products, err
+	var total int64
+
+	if err := r.db.Model(&models.Product{}).Count(&total).Error; err != nil{
+		return nil,0,err
+	}
+	
+	offset := (page -1 ) * limit
+	pageTotal = (total + int64(limit) - 1) / int64(limit)
+
+	err = r.db.Preload("Category").Offset(int(offset)).Limit(int(limit)).Find(&products).Error
+	return products, pageTotal,err
 }
 
 func (r *ProductRepository) Update(product *models.Product) error {

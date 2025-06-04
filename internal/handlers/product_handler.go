@@ -163,9 +163,18 @@ func (h *ProductHandler) GetProductByID(c *fiber.Ctx) error {
 }
 
 func (h *ProductHandler) GetAllProducts(c *fiber.Ctx) error {
-	products, err := h.productService.GetAllProducts()
+	page := c.QueryInt("page",1)
+	limit := c.QueryInt("limit",10)
+
+	products, pageTotal ,err := h.productService.GetAllProducts(uint(page),uint(limit))
+
 	if err != nil {
 		return JSONError(c, fiber.StatusInternalServerError, err.Error())
 	}
-	return JSONSuccess(c, fiber.StatusOK, "Products retrieved successfully", products)
+	return JSONSuccess(c, fiber.StatusOK, "Products retrieved successfully", fiber.Map{
+		"products":products,
+		"page": page,
+		"limit" : limit,
+		"pageTotal": pageTotal,
+	})
 }

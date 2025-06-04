@@ -717,13 +717,13 @@ func TestGetAllProducts(t *testing.T) {
 
 		productRepo := repositories.NewProductRepositoryMock()
 
-		productRepo.On("FindAll").Return(products,nil)
+		productRepo.On("FindAll",uint(1),uint(10)).Return(products,int64(1),nil)
 
 		categoryRepo := repositories.NewCategoryRepositoryMock()
 
 		productService := services.NewProductService(productRepo,categoryRepo)
 
-		_,err := productService.GetAllProducts()
+		_,_,err := productService.GetAllProducts(1,10)
 
 		assert.NoError(t,err)
 
@@ -735,13 +735,13 @@ func TestGetAllProducts(t *testing.T) {
 
 		productRepo := repositories.NewProductRepositoryMock()
 
-		productRepo.On("FindAll").Return(nil,errors.New("Error retrieving products"))
+		productRepo.On("FindAll",uint(1),uint(10)).Return(nil,int64(0),errors.New("Error retrieving products"))
 
 		categoryRepo := repositories.NewCategoryRepositoryMock()
 
 		productService := services.NewProductService(productRepo,categoryRepo)
 
-		_,err := productService.GetAllProducts()
+		_,_,err := productService.GetAllProducts(1,10)
 
 		assert.EqualError(t,err,"Error retrieving products")
 	})

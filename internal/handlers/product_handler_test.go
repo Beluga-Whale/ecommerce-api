@@ -571,7 +571,7 @@ func TestGetAllProducts(t *testing.T) {
 
 		app.Get("/category/", productHandler.GetAllProducts)
 
-		productService.On("GetAllProducts").Return(product,nil)
+		productService.On("GetAllProducts",uint(1),uint(10)).Return(product,int64(1),nil)
 
 		req := httptest.NewRequest("GET","/category", bytes.NewReader(nil))
 
@@ -594,7 +594,7 @@ func TestGetAllProducts(t *testing.T) {
 
 		app.Get("/category/", productHandler.GetAllProducts)
 
-		productService.On("GetAllProducts").Return(nil,errors.New("Not get product"))
+		productService.On("GetAllProducts",uint(1),uint(10)).Return(nil,int64(0),errors.New("Not get product"))
 
 		req := httptest.NewRequest("GET","/category", bytes.NewReader(nil))
 

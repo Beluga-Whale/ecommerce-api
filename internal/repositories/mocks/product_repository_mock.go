@@ -27,13 +27,22 @@ func (m *ProductRepositoryMock) FindByID(id uint) (*models.Product, error){
 	return nil, args.Error(1)
 }
 
-func (m *ProductRepositoryMock) FindAll() ([]models.Product, error){
-	args := m.Called()
+func (m *ProductRepositoryMock) FindAll(page uint, limit uint) ([]models.Product, int64, error) {
+	args := m.Called(page, limit)
 
-	if products,ok := args.Get(0).([]models.Product); ok {
-		return products,nil
+	var products []models.Product
+	if res, ok := args.Get(0).([]models.Product); ok {
+		products = res
 	}
-	return nil, args.Error(1)
+
+	var pageTotal int64
+	if pt, ok := args.Get(1).(int64); ok {
+		pageTotal = pt
+	}
+
+	err := args.Error(2)
+
+	return products, pageTotal, err
 }
 
 func (m *ProductRepositoryMock) Update(product *models.Product) error{
