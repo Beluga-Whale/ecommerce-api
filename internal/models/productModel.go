@@ -11,6 +11,7 @@ type Product struct {
 	Stock int 
 	IsFeatured bool
 	IsOnSale bool
+	SalePrice *float64
 	CategoryID uint //NOTE FK
 	Category Category `gorm:"foreignKey:CategoryID"`
 }

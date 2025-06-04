@@ -8,6 +8,7 @@ type ProductCreateDTO struct {
 	Stock       int     `json:"stock" validate:"required,gte=0"`
 	IsFeatured  bool    `json:"isFeatured" validate:"omitempty"`
 	IsOnSale    bool    `json:"isOnSale" validate:"omitempty"`
+	SalePrice   *float64 `json:"salePrice"`
 	CategoryID  uint    `json:"categoryID"`
 }
 
@@ -19,6 +20,7 @@ type ProductCreateResponseDTO struct {
 	Stock       int     `json:"stock" validate:"required,gte=0"`
 	IsFeatured  bool    `json:"isFeatured" validate:"omitempty"`
 	IsOnSale    bool    `json:"isOnSale" validate:"omitempty"`
+	SalePrice   *float64 `json:"salePrice"`
 	CategoryID  uint    `json:"categoryID"`
 }
 
@@ -30,6 +32,7 @@ type ProductUpdateDTO struct {
 	Stock       int     `json:"stock" validate:"required,gte=0"`
 	IsFeatured  bool    `json:"isFeatured" validate:"omitempty"`
 	IsOnSale    bool    `json:"isOnSale" validate:"omitempty"`
+	SalePrice   *float64 `json:"salePrice"`
 	CategoryID  uint    `json:"categoryID"`
 }
 
@@ -41,5 +44,6 @@ type ProductUpdateResponseDTO struct {
 	Stock       int     `json:"stock" validate:"required,gte=0"`
 	IsFeatured  bool    `json:"isFeatured" validate:"omitempty"`
 	IsOnSale    bool    `json:"isOnSale" validate:"omitempty"`
+	SalePrice   *float64 `json:"salePrice"`
 	CategoryID  uint    `json:"categoryID"`
 }

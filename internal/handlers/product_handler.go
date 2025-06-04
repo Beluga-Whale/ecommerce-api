@@ -50,6 +50,7 @@ func (h *ProductHandler) CreateProduct(c *fiber.Ctx) error {
 		Stock:       req.Stock,
 		IsFeatured: req.IsFeatured,
 		IsOnSale: 	req.IsOnSale,
+		SalePrice: req.SalePrice,
 		CategoryID: req.CategoryID,
 	}
 
@@ -65,9 +66,10 @@ func (h *ProductHandler) CreateProduct(c *fiber.Ctx) error {
 		Price:       product.Price,
 		Image:       product.Image,
 		Stock:       product.Stock,
-		IsFeatured: product.IsFeatured,
-		IsOnSale: 	product.IsOnSale,
-		CategoryID: product.CategoryID,
+		IsFeatured:  product.IsFeatured,
+		IsOnSale: 	 product.IsOnSale,
+		SalePrice:   product.SalePrice,
+		CategoryID:  product.CategoryID,
 	})
 }
 
@@ -98,6 +100,7 @@ func (h *ProductHandler) UpdateProduct(c *fiber.Ctx) error {
 		Stock:       req.Stock,
 		IsFeatured:  req.IsFeatured,
 		IsOnSale:    req.IsOnSale,
+		SalePrice:   req.SalePrice,
 		CategoryID:  req.CategoryID,
 	}
 
@@ -114,6 +117,7 @@ func (h *ProductHandler) UpdateProduct(c *fiber.Ctx) error {
 		Stock:       product.Stock,
 		IsFeatured:  product.IsFeatured,
 		IsOnSale:    product.IsOnSale,
+		SalePrice:   product.SalePrice,
 		CategoryID:  product.CategoryID,
 	})
 }
