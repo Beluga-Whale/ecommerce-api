@@ -13,8 +13,8 @@ func NewJwtMock() *JwtMock {
 	return &JwtMock{}
 }
 
-func (m *JwtMock) GenerateJWT(email string, role string) (string, error) {
-	args := m.Called(email, role)
+func (m *JwtMock) GenerateJWT(email string, role string, userID string) (string, error) {
+	args := m.Called(email, role, userID)
 	return args.String(0), args.Error(1)
 }
 

@@ -123,7 +123,7 @@ func TestLogin(t *testing.T) {
 
 		hashPassword.On("ComparePassword", dbUser.Password, inputUser.Password).Return(nil)
 
-		jwtUtils.On("GenerateJWT", dbUser.Email, string(dbUser.Role)).Return("jwt_token", nil)
+		jwtUtils.On("GenerateJWT", dbUser.Email, string(dbUser.Role),mock.Anything).Return("jwt_token", nil)
 
 		userService := services.NewUserService(userRepo,hashPassword,jwtUtils)
 
@@ -211,7 +211,7 @@ func TestLogin(t *testing.T) {
 		
 	})
 
-	t.Run("Login Success",func(t *testing.T) {
+	t.Run("Login Error",func(t *testing.T) {
 
 		dbUser := &models.User{
 			Email: "test@gmail.com",
@@ -231,7 +231,7 @@ func TestLogin(t *testing.T) {
 
 		hashPassword.On("ComparePassword", dbUser.Password, inputUser.Password).Return(nil)
 
-		jwtUtils.On("GenerateJWT", dbUser.Email, string(dbUser.Role)).Return("", errors.New("Error generating JWT token"))
+		jwtUtils.On("GenerateJWT", dbUser.Email, string(dbUser.Role),mock.Anything).Return("", errors.New("Error generating JWT token"))
 
 		userService := services.NewUserService(userRepo,hashPassword,jwtUtils)
 

@@ -2,6 +2,8 @@ package services
 
 import (
 	"errors"
+	"fmt"
+	"strconv"
 
 	"github.com/Beluga-Whale/ecommerce-api/internal/models"
 	"github.com/Beluga-Whale/ecommerce-api/internal/repositories"
@@ -46,7 +48,7 @@ func (s *UserService) Register(user *models.User)error {
 
 }
 
-func (s *UserService)  Login(user *models.User) (string,error) {
+func (s *UserService) Login(user *models.User) (string,error) {
 	// NOTE - เช็คว่ามี email เป็นค่าว่างไหม
 	if user.Email == "" || user.Password == "" {
 		return "",errors.New("Email and Password cannot be empty")
@@ -65,7 +67,9 @@ func (s *UserService)  Login(user *models.User) (string,error) {
 		return "", errors.New("Invalid email or password")
 	}
 
-	token, err  := s.jwtUtil.GenerateJWT(dbUser.Email, string(dbUser.Role))
+	userIDStr := strconv.FormatUint(uint64(dbUser.ID), 10)
+	fmt.Print(userIDStr)
+	token, err  := s.jwtUtil.GenerateJWT(dbUser.Email, string(dbUser.Role), userIDStr)
 
 	if err != nil {
 		return "", errors.New("Error generating JWT token")

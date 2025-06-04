@@ -125,8 +125,8 @@ func ConnectDB() {
 		&models.CartItem{},   // NOTE - ให้ตรวจสอบตาราง CartItem
 		&models.Category{},   // NOTE - ให้ตรวจสอบตาราง Category
 		&models.Coupon{},   // NOTE - ให้ตรวจสอบตาราง Coupon
-		&models.OrderItem{},   // NOTE - ให้ตรวจสอบตาราง OrderItem
 		&models.Order{},   // NOTE - ให้ตรวจสอบตาราง Order
+		&models.OrderItem{},   // NOTE - ให้ตรวจสอบตาราง OrderItem
 		&models.Payment{},   // NOTE - ให้ตรวจสอบตาราง Payment
 		&models.Product{},   // NOTE - ให้ตรวจสอบตาราง Product
 		&models.Review{},   // NOTE - ให้ตรวจสอบตาราง Review

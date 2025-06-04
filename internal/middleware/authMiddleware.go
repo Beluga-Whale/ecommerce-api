@@ -22,6 +22,7 @@ func AuthMiddleware(jwtUtil utils.JwtInterface) fiber.Handler {
 			})
 		}
 
+		c.Locals("userID", claims.UserID)
 		c.Locals("userEmail", claims.Email)
 		c.Locals("userRole", claims.Role)
 		return c.Next()

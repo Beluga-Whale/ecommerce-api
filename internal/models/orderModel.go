@@ -23,4 +23,6 @@ type Order struct {
 	Phone string
 	Address string
 	TotalPrice float64
+	OrderItem []OrderItem `gorm:"foreignKey:OrderID"`
+
 }

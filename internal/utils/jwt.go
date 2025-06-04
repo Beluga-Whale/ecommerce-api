@@ -9,13 +9,14 @@ import (
 )
 
 type JwtInterface interface {
-	GenerateJWT(email string,role string) (string, error)
+	GenerateJWT(email string,role string, userId string) (string, error)
 	ParseJWT(tokenString string) (*JWTClaims, error)
 }
 
 type JWTClaims struct {
 	Email string `json:"email"`
 	Role  string `json:"role"`
+	UserID string `json:"userID"`
 	jwt.RegisteredClaims
 }
 
@@ -23,12 +24,13 @@ func NewJwt() *JWTClaims{
 	return &JWTClaims{}
 }
 
-func (c *JWTClaims) GenerateJWT(email string,role string) (string, error) {
+func (c *JWTClaims) GenerateJWT(email string,role string, userId string) (string, error) {
 	secretKey := []byte(os.Getenv("JWT_SECRET"))
 
 	claims :=JWTClaims{
 		Email: email,
 		Role:  role,
+		UserID: userId,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * time.Hour)),
 		},

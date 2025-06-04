@@ -5,7 +5,7 @@ import (
 )
 
 type ProductInterface interface {
-	FindProductID(products []models.Product, id uint) *models.Product
+	FindProductID(products []models.Product, productID uint) *models.Product
 }
 
 type Product_Util struct{}
@@ -14,9 +14,9 @@ func NewProductUtil() *Product_Util {
 	return &Product_Util{}
 }
 
-func (h *Product_Util) FindProductID(products []models.Product, id uint) *models.Product {
+func (h *Product_Util) FindProductID(products []models.Product, productID uint) *models.Product {
 	for _, p := range products {
-		if p.ID == id {
+		if p.ID == productID {
 			return &p
 		}
 	}
