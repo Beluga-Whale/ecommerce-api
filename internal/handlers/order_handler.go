@@ -43,6 +43,10 @@ func (h *OrderHandler) CreateOrder(c *fiber.Ctx) error {
 
 	order,err := h.OrderService.CreateOrder(uint(userIDUint), req)
 
+	if err != nil{
+		return JSONError(c, fiber.StatusInternalServerError, err.Error())
+	}
+
 	response := dto.OrderResponseDTO{
 		OrderID: order.ID,
 		Status:  order.Status,
@@ -59,9 +63,6 @@ func (h *OrderHandler) CreateOrder(c *fiber.Ctx) error {
 		})
 	}
 
-	if err != nil{
-		return JSONError(c, fiber.StatusInternalServerError, err.Error())
-	}
 
 	return JSONSuccess(c, fiber.StatusCreated, "Order created successfully", response)
 	
