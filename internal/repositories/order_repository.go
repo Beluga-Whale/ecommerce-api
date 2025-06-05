@@ -6,8 +6,11 @@ import (
 )
 
 type OrderRepositoryInterface interface {
+	GetDB() *gorm.DB
 	FindProductByID(productIDs []uint)([]models.Product,error)
-	Create(order *models.Order) error
+	Create(tx *gorm.DB,order *models.Order) error
+	UpdateProductStock(tx *gorm.DB,productID uint, newStock int) error
+	FindByIDWithItemsAndProducts(orderID uint) (*models.Order, error)
 }
 
 type OrderRepository struct {
@@ -16,6 +19,10 @@ type OrderRepository struct {
 
 func NewOrderRepository(db *gorm.DB) *OrderRepository{
 	return &OrderRepository{db:db}
+}
+
+func (r *OrderRepository) GetDB() *gorm.DB {
+	return r.db
 }
 
 func (r *OrderRepository) FindProductByID(productIDs []uint)([]models.Product,error) {
@@ -30,16 +37,21 @@ func (r *OrderRepository) FindProductByID(productIDs []uint)([]models.Product,er
 	return products,nil 
 }
 
-func (r *OrderRepository) Create(order *models.Order) error {
-	return r.db.Transaction(func(tx *gorm.DB) error {
-		if err := tx.Create(order).Error; err != nil {
-			return err
-		}
+func (r *OrderRepository) Create(tx *gorm.DB,order *models.Order) error {
+	return tx.Create(order).Error
+}
 
+func (r *OrderRepository) UpdateProductStock(tx *gorm.DB,productID uint, newStock int) error {
+	return tx.Model(&models.Product{}).Where("id = ?",productID).Update("stock",newStock).Error
+}
 
-		if err := tx.Preload("OrderItem.Product").First(order, order.ID).Error; err != nil {
-			return err
-		}
-		return nil
-	})
+func (r *OrderRepository) FindByIDWithItemsAndProducts(orderID uint) (*models.Order, error) {
+	var order models.Order
+
+	if	err := r.db.Preload("OrderItem.Product").First(&order,orderID).Error; err != nil {
+		return nil,err
+	}
+
+	return &order,nil
+
 }
