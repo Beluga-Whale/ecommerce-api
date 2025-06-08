@@ -6,7 +6,6 @@ import (
 )
 
 type OrderRepositoryInterface interface {
-	GetDB() *gorm.DB
 	FindProductByID(productIDs []uint)([]models.Product,error)
 	Create(tx *gorm.DB,order *models.Order) error
 	UpdateProductStock(tx *gorm.DB,productID uint, newStock int) error
@@ -19,10 +18,6 @@ type OrderRepository struct {
 
 func NewOrderRepository(db *gorm.DB) *OrderRepository{
 	return &OrderRepository{db:db}
-}
-
-func (r *OrderRepository) GetDB() *gorm.DB {
-	return r.db
 }
 
 func (r *OrderRepository) FindProductByID(productIDs []uint)([]models.Product,error) {

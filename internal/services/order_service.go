@@ -2,24 +2,32 @@ package services
 
 import (
 	"errors"
+	"time"
 
 	"github.com/Beluga-Whale/ecommerce-api/internal/dto"
 	"github.com/Beluga-Whale/ecommerce-api/internal/models"
 	"github.com/Beluga-Whale/ecommerce-api/internal/repositories"
 	"github.com/Beluga-Whale/ecommerce-api/internal/utils"
+	"gorm.io/gorm"
 )
 
 type OrderServiceInterface interface {
 	CreateOrder(userID uint, req dto.CreateOrderRequestDTO) (*models.Order, error)
+	CancelOrderAndRestoreStock( orderID uint) error
 }
 
 type OrderService struct {
-	orderRepo repositories.OrderRepositoryInterface
+	db 		    *gorm.DB
+	orderRepo   repositories.OrderRepositoryInterface
 	productUtil utils.ProductInterface
 }
 
-func NewOrderService(orderRepo repositories.OrderRepositoryInterface,productUtil utils.ProductInterface) *OrderService {
-	return &OrderService{orderRepo: orderRepo,productUtil:productUtil }
+func NewOrderService(db *gorm.DB,orderRepo repositories.OrderRepositoryInterface,productUtil utils.ProductInterface) *OrderService {
+	return &OrderService{
+		db: db,
+		orderRepo: orderRepo,
+		productUtil:productUtil,
+	}
 }
 
 
@@ -42,7 +50,7 @@ func (s *OrderService) CreateOrder(userID uint, req dto.CreateOrderRequestDTO) (
 	}
 
 	// NOTE - Create Transaction
-	tx := s.orderRepo.GetDB().Begin()
+	tx := s.db.Begin()
 	if tx.Error != nil {
 		return nil, tx.Error
 	}
@@ -87,13 +95,14 @@ func (s *OrderService) CreateOrder(userID uint, req dto.CreateOrderRequestDTO) (
 	}
 
 	order := models.Order{
-		UserID: userID,
-		Phone: req.Phone,
-		Address:  req.Address,
-		Note: req.Note,
+		UserID: 	userID,
+		Phone: 		req.Phone,
+		Address:  	req.Address,
+		Note: 		req.Note,
 		TotalPrice: total,
-		Status: models.Pending,
-		OrderItem: orderItems,
+		Status: 	models.Pending,
+		OrderItem: 	orderItems,
+		PaymentExpireAt: time.Now().Add(10 *time.Second),
 	}
 
 	// NOTE - create Order
@@ -114,4 +123,28 @@ func (s *OrderService) CreateOrder(userID uint, req dto.CreateOrderRequestDTO) (
 	}
 
 	return orderWithProducts,nil
+}
+
+func (s *OrderService) CancelOrderAndRestoreStock( orderID uint) error {
+	var order models.Order
+
+	if err := s.db.Preload("OrderItem").First(&order, orderID).Error; err != nil {
+		return err
+	}
+
+	if order.Status == models.Pending {
+		for _, item := range order.OrderItem {
+			// NOTE - หา order จาก orderID จากนั้นจะทำการ update stock ตาม Quantity ของ oderID ตัวนั้นๆ
+			if err := s.db.Model(&models.Product{}).
+				Where("id = ?",item.ProductID).
+				Update("stock", gorm.Expr("stock + ?",item.Quantity)).Error; err != nil {
+					return err
+				}
+		}
+		// NOTE -เปลี่ยนสถานะเป็น cancel
+		if err := s.db.Model(&order).Update("status",models.Cancel).Error; err != nil{
+			return err
+		}
+	}
+	return nil
 }

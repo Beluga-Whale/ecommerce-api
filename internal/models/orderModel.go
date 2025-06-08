@@ -1,6 +1,10 @@
 package models
 
-import "gorm.io/gorm"
+import (
+	"time"
+
+	"gorm.io/gorm"
+)
 
 type Status string
 
@@ -24,5 +28,5 @@ type Order struct {
 	Address string
 	TotalPrice float64
 	OrderItem []OrderItem `gorm:"foreignKey:OrderID"`
-
+	PaymentExpireAt time.Time
 }

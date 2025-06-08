@@ -7,6 +7,7 @@ import (
 
 	"github.com/Beluga-Whale/ecommerce-api/config"
 	"github.com/Beluga-Whale/ecommerce-api/internal/handlers"
+	"github.com/Beluga-Whale/ecommerce-api/internal/jobs"
 	"github.com/Beluga-Whale/ecommerce-api/internal/repositories"
 	"github.com/Beluga-Whale/ecommerce-api/internal/services"
 	"github.com/Beluga-Whale/ecommerce-api/internal/utils"
@@ -41,6 +42,7 @@ func main() {
 	productRepo := repositories.NewProductRepository(config.DB)
 	orderRepo := repositories.NewOrderRepository(config.DB)
 
+
 	// NOTE - Utilities
 	hashPassword := utils.NewPasswordUtil()
 	jwtUtil := utils.NewJwt()
@@ -50,7 +52,7 @@ func main() {
 	userService := services.NewUserService(userRepo,hashPassword,jwtUtil)
 	categoryService := services.NewCategoryService(categoryRepo)
 	productService := services.NewProductService(productRepo,categoryRepo)
-	orderService := services.NewOrderService(orderRepo, productUtil)
+	orderService := services.NewOrderService(config.DB,orderRepo, productUtil)
 	
 	// NOTE - Create Handlers
 	userHandler := handlers.NewUserHandler(userService)
@@ -61,6 +63,10 @@ func main() {
 	// NOTE - Set Up Routes
 	routes.SetUpRoutes(app ,jwtUtil,userHandler,categoryHandler,productHandler,orderHandler)
 	
+
+	// NOTE -ทำงานเพื่อการนับถอยหลังเช็ค order
+	jobs.StartOrderExpirationJob(config.DB, orderService)
+
 	port := os.Getenv("PORT_API")
 
 	if port =="" {
