@@ -31,7 +31,7 @@ func (r *ProductRepository) Create(product *models.Product) error {
 func (r *ProductRepository) FindByID(id uint) (*models.Product, error){
 	var product models.Product
 
-	err := r.db.First(&product,id).Error
+	err := r.db.Preload("Variants").First(&product,id).Error
 
 	if errors.Is(err, gorm.ErrRecordNotFound){
 		return nil,nil
@@ -73,14 +73,51 @@ func (r *ProductRepository) FindAll(page uint, limit uint, minPrice int64, maxPr
 	offset := (page -1 ) * limit
 	pageTotal = (total + int64(limit) - 1) / int64(limit)
 
-	err = productQuery.Preload("Category").Offset(int(offset)).Limit(int(limit)).Find(&products).Error
+	err = productQuery.Preload("Category").Preload("Variants").Offset(int(offset)).Limit(int(limit)).Order("id").Find(&products).Error
 	return products, pageTotal,err
 }
 
 func (r *ProductRepository) Update(product *models.Product) error {
-	return r.db.Save(product).Error
+	// NOTE - ใช้ transaction 
+	tx := r.db.Begin()
+
+	if tx.Error != nil{
+		return tx.Error
+	}
+
+	// NOTE - ลบ variants เก่าออกก่อน
+	if err := tx.Unscoped().Where("product_id = ?", product.ID).Delete(&models.ProductVariant{}).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	if err := tx.Save(product).Error; err !=nil {
+		tx.Rollback()
+		return err
+	}
+
+	return tx.Commit().Error
 }
 
 func (r *ProductRepository) Delete(id uint) error {
-	return r.db.Delete(&models.Product{}, id).Error
+	// NOTE- ใช้ transaction
+	tx := r.db.Begin()
+
+	if tx.Error != nil {
+		return tx.Error
+	}
+
+	// NOTE - where หา productID เพื่อลบ variant
+	if err := tx.Where("product_id = ?",id).Delete(&models.ProductVariant{}).Error; err !=nil{
+		tx.Rollback()
+		return err
+	}
+
+	// NOTE- ลบ Product
+	if err := tx.Delete(&models.Product{}, id).Error; err !=nil {
+		tx.Rollback()
+		return err
+	}
+
+	return tx.Commit().Error
 }

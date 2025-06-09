@@ -8,10 +8,10 @@ type Product struct {
 	Description string
 	Price float64
 	Image string
-	Stock int 
 	IsFeatured bool
 	IsOnSale bool
 	SalePrice *float64
 	CategoryID uint //NOTE FK
 	Category Category `gorm:"foreignKey:CategoryID"`
+	Variants []ProductVariant `gorm:"foreignKey:ProductID"`
 }

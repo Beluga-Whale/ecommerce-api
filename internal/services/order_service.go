@@ -72,17 +72,17 @@ func (s *OrderService) CreateOrder(userID uint, req dto.CreateOrderRequestDTO) (
 			return nil, errors.New("product not found")
 		}
 
-		if product.Stock < int(item.Quantity) {
-			return nil,errors.New("stock not enough")
-		}
+		// if product.Stock < int(item.Quantity) {
+		// 	return nil,errors.New("stock not enough")
+		// }
 
-		// NOTE - ตัด stock
-		product.Stock -= int(item.Quantity)
+		// // NOTE - ตัด stock
+		// product.Stock -= int(item.Quantity)
 
-		if err := s.orderRepo.UpdateProductStock(tx,product.ID,product.Stock); err !=nil {
-			tx.Rollback()
-			return nil, errors.New("failed to update product stock")
-		}
+		// if err := s.orderRepo.UpdateProductStock(tx,product.ID,product.Stock); err !=nil {
+		// 	tx.Rollback()
+		// 	return nil, errors.New("failed to update product stock")
+		// }
 
 		// NOTE - คิดเงินรวม
 		total += product.Price * float64(item.Quantity)

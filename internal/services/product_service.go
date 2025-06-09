@@ -33,13 +33,16 @@ func (s *ProductService) CreateProduct(product *models.Product) error {
 		return errors.New("Please provide product name and description")	
 	}
 
-	if product.Price < 0.0 {
+	if product.Price <= 0.0 {
 		return errors.New("Product price cannot be negative")
 	}
 
-	if product.Stock < 0 {
-		return errors.New("Product stock cannot be negative")
+	for _, v := range product.Variants {
+		if v.Stock < 0{
+			return errors.New("Product stock cannot be negative")
+		}
 	}
+
 
 	if product.Image == "" {
 		return errors.New("Product image is required")
@@ -71,8 +74,10 @@ func (s *ProductService) UpdateProduct(id uint, product *models.Product) error {
 		return errors.New("Product price cannot be negative")
 	}
 
-	if product.Stock < 0 {
-		return errors.New("Product stock cannot be negative")
+	for _, v := range product.Variants {
+		if v.Stock < 0{
+			return errors.New("Product stock cannot be negative")
+		}
 	}
 
 	existingProduct, err := s.productRepo.FindByID(id)
@@ -94,14 +99,24 @@ func (s *ProductService) UpdateProduct(id uint, product *models.Product) error {
 		return errors.New("Category not found")
 	}
 
+	var variantsUpdate = []models.ProductVariant{}
+
+	for _, v := range product.Variants {
+		variantsUpdate = append(variantsUpdate, models.ProductVariant{
+			Size: v.Size,
+			Stock: v.Stock,
+			SKU: v.SKU,
+		})
+	}
+
 	existingProduct.Name = product.Name
 	existingProduct.Description = product.Description
 	existingProduct.Price = product.Price
 	existingProduct.Image = product.Image
-	existingProduct.Stock = product.Stock
 	existingProduct.IsFeatured = product.IsFeatured
 	existingProduct.IsOnSale = product.IsOnSale
 	existingProduct.CategoryID = product.CategoryID
+	existingProduct.Variants = variantsUpdate
 
 	err = s.productRepo.Update(existingProduct)
 	if err != nil {

@@ -47,11 +47,18 @@ func (h *ProductHandler) CreateProduct(c *fiber.Ctx) error {
 		Description: req.Description,
 		Price:       req.Price,
 		Image:       req.Image,
-		Stock:       req.Stock,
-		IsFeatured: req.IsFeatured,
-		IsOnSale: 	req.IsOnSale,
-		SalePrice: req.SalePrice,
-		CategoryID: req.CategoryID,
+		IsFeatured:  req.IsFeatured,
+		IsOnSale:    req.IsOnSale,
+		SalePrice:   req.SalePrice,
+		CategoryID:  req.CategoryID,
+	}
+
+	for _, v := range req.Variants{
+		product.Variants = append(product.Variants, models.ProductVariant{
+			Size: v.Size,
+			Stock: v.Stock,
+			SKU: v.SKU,
+		})
 	}
 
 	err := h.productService.CreateProduct(product)
@@ -60,16 +67,26 @@ func (h *ProductHandler) CreateProduct(c *fiber.Ctx) error {
 		return JSONError(c, fiber.StatusBadRequest, err.Error())
 	}
 
+	var variantsDTOs []dto.ProductVariantDTO
+
+	for _, v:= range product.Variants {
+		variantsDTOs = append(variantsDTOs, dto.ProductVariantDTO{
+			Size: v.Size,
+			Stock: v.Stock,
+			SKU: v.SKU,
+		})
+	}
+
 	return JSONSuccess(c,fiber.StatusCreated, "Product created successfully", dto.ProductCreateResponseDTO{
 		Name:        product.Name,
 		Description: product.Description,
 		Price:       product.Price,
 		Image:       product.Image,
-		Stock:       product.Stock,
 		IsFeatured:  product.IsFeatured,
 		IsOnSale: 	 product.IsOnSale,
 		SalePrice:   product.SalePrice,
 		CategoryID:  product.CategoryID,
+		Variants:    variantsDTOs,
 	})
 }
 
@@ -97,11 +114,18 @@ func (h *ProductHandler) UpdateProduct(c *fiber.Ctx) error {
 		Description: req.Description,
 		Price:       req.Price,
 		Image:       req.Image,
-		Stock:       req.Stock,
 		IsFeatured:  req.IsFeatured,
 		IsOnSale:    req.IsOnSale,
 		SalePrice:   req.SalePrice,
 		CategoryID:  req.CategoryID,
+	}
+
+	for _, v := range req.Variants{
+		product.Variants = append(product.Variants, models.ProductVariant{
+			Size: v.Size,
+			Stock: v.Stock,
+			SKU: v.SKU,
+		})
 	}
 
 	err = h.productService.UpdateProduct(uint(id),product)
@@ -109,16 +133,26 @@ func (h *ProductHandler) UpdateProduct(c *fiber.Ctx) error {
 		return JSONError(c, fiber.StatusInternalServerError, err.Error())
 	}
 
+	var variantsDTOs []dto.ProductVariantDTO
+
+	for _, v:= range product.Variants {
+		variantsDTOs = append(variantsDTOs, dto.ProductVariantDTO{
+			Size: v.Size,
+			Stock: v.Stock,
+			SKU: v.SKU,
+		})
+	}
+
 	return JSONSuccess(c, fiber.StatusOK, "Product updated successfully", dto.ProductUpdateResponseDTO{
 		Name:        product.Name,
 		Description: product.Description,
 		Price:       product.Price,
 		Image:       product.Image,
-		Stock:       product.Stock,
 		IsFeatured:  product.IsFeatured,
 		IsOnSale:    product.IsOnSale,
 		SalePrice:   product.SalePrice,
 		CategoryID:  product.CategoryID,
+		Variants:    variantsDTOs,
 	})
 }
 
@@ -150,15 +184,25 @@ func (h *ProductHandler) GetProductByID(c *fiber.Ctx) error {
 		return JSONError(c, fiber.StatusNotFound, "Product not found")
 	}
 
+	var variantsDTOs []dto.ProductVariantDTO
+
+	for _, v:= range product.Variants {
+		variantsDTOs = append(variantsDTOs, dto.ProductVariantDTO{
+			Size: v.Size,
+			Stock: v.Stock,
+			SKU: v.SKU,
+		})
+	}
+
 	return JSONSuccess(c, fiber.StatusOK, "Product retrieved successfully", dto.ProductUpdateResponseDTO{
 		Name:        product.Name,
 		Description: product.Description,
 		Price:       product.Price,
 		Image:       product.Image,
-		Stock:       product.Stock,
 		IsFeatured:  product.IsFeatured,
 		IsOnSale:    product.IsOnSale,
 		CategoryID:  product.CategoryID,
+		Variants: 	 variantsDTOs,
 	})
 }
 
