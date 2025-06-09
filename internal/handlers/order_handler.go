@@ -56,9 +56,10 @@ func (h *OrderHandler) CreateOrder(c *fiber.Ctx) error {
 
 	for _, item := range order.OrderItem {
 		response.Items = append(response.Items, dto.OrderItemResponseDTO{
-			ProductID:       item.ProductID,
-			ProductName:     item.Product.Name, // ต้อง preload มาก่อน
+			VariantID:       item.ProductVariantID,
+			ProductName:     item.ProductVariant.Product.Name, // ต้อง preload มาก่อน
 			Quantity:        item.Quantity,
+			Size: 			 item.ProductVariant.Size,	
 			PriceAtPurchase: item.PriceAtPurchase,
 		})
 	}

@@ -3,7 +3,7 @@ package dto
 import "github.com/Beluga-Whale/ecommerce-api/internal/models"
 
 type CreateOrderItemDTO struct{
-	ProductID uint `json:"productID"`
+	VariantID uint `json:"variantID"`
 	Quantity uint `json:"quantity"`
 }
 
@@ -23,8 +23,9 @@ type OrderResponseDTO struct {
 }
 
 type OrderItemResponseDTO struct {
-	ProductID       uint    `json:"productID"`
+	VariantID       uint    `json:"variantID"`
 	ProductName     string  `json:"productName"`
+	Size            string  `json:"size"`
 	Quantity        uint    `json:"quantity"`
 	PriceAtPurchase float64 `json:"priceAtPurchase"`
 }

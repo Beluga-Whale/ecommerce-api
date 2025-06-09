@@ -37,13 +37,13 @@ func (s *OrderService) CreateOrder(userID uint, req dto.CreateOrderRequestDTO) (
 		return nil, errors.New("no item in order")
 	}
 
-	// NOTE - เก็บ productID เป็น slice []
-	productIDs := []uint{}
+	// NOTE - เก็บ productVariantID เป็น slice []
+	productVariantIDs := []uint{}
 	for _,item := range req.Items {
-		productIDs = append(productIDs, item.ProductID)
+		productVariantIDs = append(productVariantIDs, item.VariantID)
 	}
 
-	products,err := s.orderRepo.FindProductByID(productIDs)
+	productVariants,err := s.orderRepo.FindProductVariantByID(productVariantIDs)
 
 	if err != nil {
 		return nil,errors.New("fail to find product by productID")
@@ -67,30 +67,30 @@ func (s *OrderService) CreateOrder(userID uint, req dto.CreateOrderRequestDTO) (
 	orderItems := []models.OrderItem{}
 
 	for _,item := range req.Items{
-		product := s.productUtil.FindProductID(products, item.ProductID)
-		if product == nil {
-			return nil, errors.New("product not found")
+		productV := s.productUtil.FindProductVariantID(productVariants, item.VariantID)
+		if productV == nil {
+			return nil, errors.New("productVariant not found")
 		}
 
-		// if product.Stock < int(item.Quantity) {
-		// 	return nil,errors.New("stock not enough")
-		// }
+		if productV.Stock < int(item.Quantity){
+			return nil,errors.New("stock not enough")
+		}
 
 		// // NOTE - ตัด stock
-		// product.Stock -= int(item.Quantity)
+		productV.Stock -= int(item.Quantity)
 
-		// if err := s.orderRepo.UpdateProductStock(tx,product.ID,product.Stock); err !=nil {
-		// 	tx.Rollback()
-		// 	return nil, errors.New("failed to update product stock")
-		// }
+		if err := s.orderRepo.UpdateProductVariantStock(tx,productV.ID,productV.Stock); err !=nil {
+			tx.Rollback()
+			return nil, errors.New("failed to update product stock")
+		}
 
 		// NOTE - คิดเงินรวม
-		total += product.Price * float64(item.Quantity)
+		total += productV.Price * float64(item.Quantity)
 
 		orderItems = append(orderItems, models.OrderItem{
-			ProductID: product.ID,
+			ProductVariantID: productV.ID,
 			Quantity: item.Quantity,
-			PriceAtPurchase: product.Price,
+			PriceAtPurchase: productV.Price,
 		})
 	}
 
@@ -135,8 +135,8 @@ func (s *OrderService) CancelOrderAndRestoreStock( orderID uint) error {
 	if order.Status == models.Pending {
 		for _, item := range order.OrderItem {
 			// NOTE - หา order จาก orderID จากนั้นจะทำการ update stock ตาม Quantity ของ oderID ตัวนั้นๆ
-			if err := s.db.Model(&models.Product{}).
-				Where("id = ?",item.ProductID).
+			if err := s.db.Model(&models.ProductVariant{}).
+				Where("id = ?",item.ProductVariantID).
 				Update("stock", gorm.Expr("stock + ?",item.Quantity)).Error; err != nil {
 					return err
 				}

@@ -6,9 +6,9 @@ import (
 )
 
 type OrderRepositoryInterface interface {
-	FindProductByID(productIDs []uint)([]models.Product,error)
+	FindProductVariantByID(productVariantIDs []uint)([]models.ProductVariant,error)
 	Create(tx *gorm.DB,order *models.Order) error
-	UpdateProductStock(tx *gorm.DB,productID uint, newStock int) error
+	UpdateProductVariantStock(tx *gorm.DB,productVariantID uint, newStock int) error
 	FindByIDWithItemsAndProducts(orderID uint) (*models.Order, error)
 }
 
@@ -20,30 +20,30 @@ func NewOrderRepository(db *gorm.DB) *OrderRepository{
 	return &OrderRepository{db:db}
 }
 
-func (r *OrderRepository) FindProductByID(productIDs []uint)([]models.Product,error) {
-	var products []models.Product
+func (r *OrderRepository) FindProductVariantByID(productVariantIDs []uint)([]models.ProductVariant,error) {
+	var productVariants []models.ProductVariant
 
-	err := r.db.Where("id IN ?", productIDs).Find(&products).Error
+	err := r.db.Where("id IN ?", productVariantIDs).Find(&productVariants).Error
 
 	if err != nil {
 		return nil,err
 	}
 
-	return products,nil 
+	return productVariants,nil 
 }
 
 func (r *OrderRepository) Create(tx *gorm.DB,order *models.Order) error {
 	return tx.Create(order).Error
 }
 
-func (r *OrderRepository) UpdateProductStock(tx *gorm.DB,productID uint, newStock int) error {
-	return tx.Model(&models.Product{}).Where("id = ?",productID).Update("stock",newStock).Error
+func (r *OrderRepository) UpdateProductVariantStock(tx *gorm.DB,productVariantID uint, newStock int) error {
+	return tx.Model(&models.ProductVariant{}).Where("id = ?",productVariantID).Update("stock",newStock).Error
 }
 
 func (r *OrderRepository) FindByIDWithItemsAndProducts(orderID uint) (*models.Order, error) {
 	var order models.Order
 
-	if	err := r.db.Preload("OrderItem.Product").First(&order,orderID).Error; err != nil {
+	if	err := r.db.Preload("OrderItem.ProductVariant.Product").First(&order,orderID).Error; err != nil {
 		return nil,err
 	}
 

@@ -6,8 +6,8 @@ type OrderItem struct {
 	gorm.Model
 	OrderID uint //NOTE - FK
 	Order Order `gorm:"foreignKey:OrderID"`
-	ProductID uint //NOTE - FK
-	Product Product `gorm:"foreignKey:ProductID"`
+	ProductVariantID uint //NOTE - FK
+	ProductVariant   ProductVariant `gorm:"foreignKey:ProductVariantID"`
 	Quantity uint 
 	PriceAtPurchase float64
 }
