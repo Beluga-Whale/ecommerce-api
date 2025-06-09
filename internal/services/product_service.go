@@ -33,13 +33,13 @@ func (s *ProductService) CreateProduct(product *models.Product) error {
 		return errors.New("Please provide product name and description")	
 	}
 
-	if product.Price <= 0.0 {
-		return errors.New("Product price cannot be negative")
-	}
-
 	for _, v := range product.Variants {
 		if v.Stock < 0{
 			return errors.New("Product stock cannot be negative")
+		}
+
+		if v.Price < 0.0 {
+			return errors.New("Product price cannot be negative")
 		}
 	}
 
@@ -70,13 +70,13 @@ func (s *ProductService) UpdateProduct(id uint, product *models.Product) error {
 		return errors.New("Please provide product name and description")
 	}
 
-	if product.Price < 0.0 {
-		return errors.New("Product price cannot be negative")
-	}
-
 	for _, v := range product.Variants {
 		if v.Stock < 0{
 			return errors.New("Product stock cannot be negative")
+		}
+
+		if v.Price < 0.0 {
+			return errors.New("Product price cannot be negative")
 		}
 	}
 
@@ -106,6 +106,7 @@ func (s *ProductService) UpdateProduct(id uint, product *models.Product) error {
 			Size: v.Size,
 			Stock: v.Stock,
 			SKU: v.SKU,
+			Price: v.Price,
 		})
 	}
 

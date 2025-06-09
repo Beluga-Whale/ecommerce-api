@@ -45,7 +45,6 @@ func (h *ProductHandler) CreateProduct(c *fiber.Ctx) error {
 	product := &models.Product{
 		Name:        req.Name,
 		Description: req.Description,
-		Price:       req.Price,
 		Image:       req.Image,
 		IsFeatured:  req.IsFeatured,
 		IsOnSale:    req.IsOnSale,
@@ -58,6 +57,7 @@ func (h *ProductHandler) CreateProduct(c *fiber.Ctx) error {
 			Size: v.Size,
 			Stock: v.Stock,
 			SKU: v.SKU,
+			Price: v.Price,
 		})
 	}
 
@@ -74,13 +74,13 @@ func (h *ProductHandler) CreateProduct(c *fiber.Ctx) error {
 			Size: v.Size,
 			Stock: v.Stock,
 			SKU: v.SKU,
+			Price: v.Price,
 		})
 	}
 
 	return JSONSuccess(c,fiber.StatusCreated, "Product created successfully", dto.ProductCreateResponseDTO{
 		Name:        product.Name,
 		Description: product.Description,
-		Price:       product.Price,
 		Image:       product.Image,
 		IsFeatured:  product.IsFeatured,
 		IsOnSale: 	 product.IsOnSale,
@@ -112,7 +112,6 @@ func (h *ProductHandler) UpdateProduct(c *fiber.Ctx) error {
 	product := &models.Product{
 		Name:        req.Name,
 		Description: req.Description,
-		Price:       req.Price,
 		Image:       req.Image,
 		IsFeatured:  req.IsFeatured,
 		IsOnSale:    req.IsOnSale,
@@ -125,6 +124,7 @@ func (h *ProductHandler) UpdateProduct(c *fiber.Ctx) error {
 			Size: v.Size,
 			Stock: v.Stock,
 			SKU: v.SKU,
+			Price: v.Price,
 		})
 	}
 
@@ -140,13 +140,13 @@ func (h *ProductHandler) UpdateProduct(c *fiber.Ctx) error {
 			Size: v.Size,
 			Stock: v.Stock,
 			SKU: v.SKU,
+			Price: v.Price,
 		})
 	}
 
 	return JSONSuccess(c, fiber.StatusOK, "Product updated successfully", dto.ProductUpdateResponseDTO{
 		Name:        product.Name,
 		Description: product.Description,
-		Price:       product.Price,
 		Image:       product.Image,
 		IsFeatured:  product.IsFeatured,
 		IsOnSale:    product.IsOnSale,
@@ -191,13 +191,13 @@ func (h *ProductHandler) GetProductByID(c *fiber.Ctx) error {
 			Size: v.Size,
 			Stock: v.Stock,
 			SKU: v.SKU,
+			Price: v.Price,
 		})
 	}
 
 	return JSONSuccess(c, fiber.StatusOK, "Product retrieved successfully", dto.ProductUpdateResponseDTO{
 		Name:        product.Name,
 		Description: product.Description,
-		Price:       product.Price,
 		Image:       product.Image,
 		IsFeatured:  product.IsFeatured,
 		IsOnSale:    product.IsOnSale,
