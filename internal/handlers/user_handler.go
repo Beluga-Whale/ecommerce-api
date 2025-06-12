@@ -87,7 +87,6 @@ func (h *UserHandler) Login(c *fiber.Ctx) error {
 		HTTPOnly: true,
 		Secure:false,
 		SameSite: fiber.CookieSameSiteNoneMode, 
-		
 	})
 
 	return JSONSuccess(c,fiber.StatusOK,"Login successful",dto.LoginResponseDTO{

@@ -1,6 +1,10 @@
 package models
 
-import "gorm.io/gorm"
+import (
+	"time"
+
+	"gorm.io/gorm"
+)
 
 type Role string
 
@@ -11,8 +15,11 @@ const (
 
 type User struct {
 	gorm.Model
-	Name string
+	FirstName string
+	LastName string
 	Email string
   	Password string
+	Phone string
+	Date time.Time
   	Role Role `gorm:"type:role;default:'user'"`
 }
