@@ -31,6 +31,18 @@ func (s *UserService) Register(user *models.User)error {
 		return errors.New("Email and Password cannot be empty")
 	}
 
+	if user.FirstName == "" || user.LastName == "" {
+		return errors.New("FirstName and LastName cannot be empty")
+	}
+
+	if user.Phone == "" {
+		return errors.New("Phone cannot to be empty")
+	}
+
+	if user.BirthDate.IsZero(){
+		return errors.New("BirthData cannot to by empty")
+	}
+
 	// NOTE - เช็คว่ามี email ซ้ำไหม
 	existingUser, err := s.userRepo.GetUserByEmail(user.Email)
 	if err != nil {

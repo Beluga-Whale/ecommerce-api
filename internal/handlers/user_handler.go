@@ -40,6 +40,10 @@ func (h *UserHandler) Register(c *fiber.Ctx) error {
 	user := &models.User{
 		Email:    req.Email,
 		Password: req.Password,
+		FirstName: req.FirstName,
+		LastName:  req.LastName,
+		Phone:  req.Phone,
+		BirthDate: req.BirthDate,
 	}
 
 	err := h.userService.Register(user)

@@ -20,6 +20,6 @@ type User struct {
 	Email string
   	Password string
 	Phone string
-	Date time.Time
+	BirthDate time.Time
   	Role Role `gorm:"type:role;default:'user'"`
 }
