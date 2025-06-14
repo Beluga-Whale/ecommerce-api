@@ -5,7 +5,7 @@ import "gorm.io/gorm"
 type Product struct {
 	gorm.Model
 	Name string
-	Description string
+	Description string `gorm:"type:text"`
 	Price float64
 	Image string
 	IsFeatured bool
