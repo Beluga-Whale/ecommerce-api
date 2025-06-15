@@ -71,7 +71,7 @@ func (r *ProductRepository) FindAll(page uint, limit uint, minPrice int64, maxPr
 	offset := (page -1 ) * limit
 	pageTotal = (total + int64(limit) - 1) / int64(limit)
 
-	err = productQuery.Preload("Category").Preload("Variants").Offset(int(offset)).Limit(int(limit)).Order("id").Find(&products).Error
+	err = productQuery.Preload("Category").Preload("Variants").Preload("Images").Offset(int(offset)).Limit(int(limit)).Order("id").Find(&products).Error
 	return products, pageTotal,err
 }
 
