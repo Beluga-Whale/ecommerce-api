@@ -33,6 +33,17 @@ func (s *ProductService) CreateProduct(product *models.Product) error {
 		return errors.New("Please provide product name and description")	
 	}
 
+	if product.IsOnSale {
+		if product.SalePrice == nil || *product.SalePrice <= 0.0 {
+			return errors.New("Sale price must be greater than 0")
+		}
+	}
+
+	if product.IsOnSale == false && product.SalePrice != nil {
+		return errors.New("You can should is in sale true")
+	}
+
+
 	for _, v := range product.Variants {
 		if v.Stock < 0{
 			return errors.New("Product stock cannot be negative")
@@ -40,6 +51,16 @@ func (s *ProductService) CreateProduct(product *models.Product) error {
 
 		if v.Price < 0.0 {
 			return errors.New("Product price cannot be negative")
+		}
+
+		if product.IsOnSale && product.SalePrice != nil{
+			finalPrice := v.Price - *product.SalePrice
+			if finalPrice < 0 {
+				return fmt.Errorf("Final price of variant '%s' cannot be negative", v.Size)
+			}
+			if *product.SalePrice >= v.Price {
+				return fmt.Errorf("Sale price must be less than variant price for size '%s'", v.Size)
+			}
 		}
 	}
 
@@ -70,6 +91,16 @@ func (s *ProductService) UpdateProduct(id uint, product *models.Product) error {
 		return errors.New("Please provide product name and description")
 	}
 
+	if product.IsOnSale {
+		if product.SalePrice == nil || *product.SalePrice <= 0.0 {
+			return errors.New("Sale price must be greater than 0")
+		}
+	}
+
+	if product.IsOnSale == false && product.SalePrice != nil {
+		return errors.New("You can should is in sale true")
+	}
+
 	for _, v := range product.Variants {
 		if v.Stock < 0{
 			return errors.New("Product stock cannot be negative")
@@ -77,6 +108,16 @@ func (s *ProductService) UpdateProduct(id uint, product *models.Product) error {
 
 		if v.Price < 0.0 {
 			return errors.New("Product price cannot be negative")
+		}
+
+		if product.IsOnSale && product.SalePrice != nil{
+			finalPrice := v.Price - *product.SalePrice
+			if finalPrice < 0 {
+				return fmt.Errorf("Final price of variant '%s' cannot be negative", v.Size)
+			}
+			if *product.SalePrice >= v.Price {
+				return fmt.Errorf("Sale price must be less than variant price '%s'", v.Size)
+			}
 		}
 	}
 
@@ -112,10 +153,10 @@ func (s *ProductService) UpdateProduct(id uint, product *models.Product) error {
 
 	existingProduct.Name = product.Name
 	existingProduct.Description = product.Description
-	existingProduct.Price = product.Price
 	existingProduct.Image = product.Image
 	existingProduct.IsFeatured = product.IsFeatured
 	existingProduct.IsOnSale = product.IsOnSale
+	existingProduct.SalePrice = product.SalePrice
 	existingProduct.CategoryID = product.CategoryID
 	existingProduct.Variants = variantsUpdate
 

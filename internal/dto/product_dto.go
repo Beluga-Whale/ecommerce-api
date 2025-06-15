@@ -49,4 +49,5 @@ type ProductVariantDTO struct {
 	Stock int     `json:"stock" validate:"required,min=0"`
 	SKU   string  `json:"sku" validate:"required"`
 	Price float64 `json:"price" validate:"required,gt=0"`
+	FinalPrice float64 `json:"finalPrice"`
 }

@@ -6,7 +6,6 @@ type Product struct {
 	gorm.Model
 	Name string
 	Description string `gorm:"type:text"`
-	Price float64
 	Image string
 	IsFeatured bool
 	IsOnSale bool

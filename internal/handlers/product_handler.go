@@ -186,12 +186,23 @@ func (h *ProductHandler) GetProductByID(c *fiber.Ctx) error {
 
 	var variantsDTOs []dto.ProductVariantDTO
 
+
 	for _, v:= range product.Variants {
+		finalPrice := v.Price
+
+		if product.IsOnSale && product.SalePrice != nil {
+			finalPrice = v.Price - *product.SalePrice
+			if finalPrice < 0 {
+				finalPrice = 0 //NOTE - กันราคาติดลบ
+			}
+		}
+
 		variantsDTOs = append(variantsDTOs, dto.ProductVariantDTO{
 			Size: v.Size,
 			Stock: v.Stock,
 			SKU: v.SKU,
 			Price: v.Price,
+			FinalPrice: finalPrice,
 		})
 	}
 
@@ -224,11 +235,46 @@ func (h *ProductHandler) GetAllProducts(c *fiber.Ctx) error {
 
 	products, pageTotal ,err := h.productService.GetAllProducts(uint(page),uint(limit),int64(minPrice),int64(maxPrice),searchName,category)
 
+	var productsDTO []dto.ProductCreateResponseDTO
+
+	for _,product := range products {
+		var variantsDTOs []dto.ProductVariantDTO
+
+		for _, v := range product.Variants {
+			finalPrice := v.Price
+
+			if product.IsOnSale && product.SalePrice != nil {
+				finalPrice = v.Price - *product.SalePrice
+				if finalPrice < 0 {
+					finalPrice = 0
+				}
+			}
+
+			variantsDTOs = append(variantsDTOs, dto.ProductVariantDTO{
+				Size:       v.Size,
+				Stock:      v.Stock,
+				SKU:        v.SKU,
+				Price:      v.Price,
+				FinalPrice: finalPrice,
+			})
+		}
+		productsDTO = append(productsDTO, dto.ProductCreateResponseDTO{
+			Name:        product.Name,
+			Description: product.Description,
+			Image:       product.Image,
+			IsFeatured:  product.IsFeatured,
+			IsOnSale:    product.IsOnSale,
+			SalePrice:   product.SalePrice,
+			CategoryID:  product.CategoryID,
+			Variants:    variantsDTOs,
+		})
+	}
+
 	if err != nil {
 		return JSONError(c, fiber.StatusInternalServerError, err.Error())
 	}
 	return JSONSuccess(c, fiber.StatusOK, "Products retrieved successfully", fiber.Map{
-		"products":products,
+		"products":productsDTO,
 		"page": page,
 		"limit" : limit,
 		"pageTotal": pageTotal,
