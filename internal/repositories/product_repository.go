@@ -60,9 +60,6 @@ func (r *ProductRepository) FindAll(page uint, limit uint, minPrice int64, maxPr
     	}
 	}
 
-	// NOTE - Where price
-	productQuery = productQuery.Where("price >= ? AND price <= ?",minPrice,maxPrice)
-
 	if searchName != "" {
 		productQuery = productQuery.Where("name ILIKE ?", "%"+searchName+"%")
 	}
