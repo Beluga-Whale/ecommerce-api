@@ -45,7 +45,6 @@ func (h *ProductHandler) CreateProduct(c *fiber.Ctx) error {
 	product := &models.Product{
 		Name:        req.Name,
 		Description: req.Description,
-		Image:       req.Image,
 		IsFeatured:  req.IsFeatured,
 		IsOnSale:    req.IsOnSale,
 		SalePrice:   req.SalePrice,
@@ -58,6 +57,12 @@ func (h *ProductHandler) CreateProduct(c *fiber.Ctx) error {
 			Stock: v.Stock,
 			SKU: v.SKU,
 			Price: v.Price,
+		})
+	}
+
+	for _, i := range req.Images {
+		product.Images = append(product.Images, models.ProductImage{
+			URL: i.URL,
 		})
 	}
 
@@ -78,10 +83,17 @@ func (h *ProductHandler) CreateProduct(c *fiber.Ctx) error {
 		})
 	}
 
+	var imageURLs []dto.ProductImageDTO
+	for _, img := range product.Images {
+		imageURLs = append(imageURLs, dto.ProductImageDTO{
+			URL: img.URL,
+		})
+	}
+
 	return JSONSuccess(c,fiber.StatusCreated, "Product created successfully", dto.ProductCreateResponseDTO{
 		Name:        product.Name,
 		Description: product.Description,
-		Image:       product.Image,
+		Images:      imageURLs,
 		IsFeatured:  product.IsFeatured,
 		IsOnSale: 	 product.IsOnSale,
 		SalePrice:   product.SalePrice,
@@ -112,7 +124,6 @@ func (h *ProductHandler) UpdateProduct(c *fiber.Ctx) error {
 	product := &models.Product{
 		Name:        req.Name,
 		Description: req.Description,
-		Image:       req.Image,
 		IsFeatured:  req.IsFeatured,
 		IsOnSale:    req.IsOnSale,
 		SalePrice:   req.SalePrice,
@@ -127,6 +138,14 @@ func (h *ProductHandler) UpdateProduct(c *fiber.Ctx) error {
 			Price: v.Price,
 		})
 	}
+
+
+	for _, i := range req.Images {
+		product.Images = append(product.Images, models.ProductImage{
+			URL: i.URL,
+		})
+	}
+
 
 	err = h.productService.UpdateProduct(uint(id),product)
 	if err != nil {
@@ -144,10 +163,17 @@ func (h *ProductHandler) UpdateProduct(c *fiber.Ctx) error {
 		})
 	}
 
+	var imageURLs []dto.ProductImageDTO
+	for _, img := range product.Images {
+		imageURLs = append(imageURLs, dto.ProductImageDTO{
+			URL: img.URL,
+		})
+	}
+
 	return JSONSuccess(c, fiber.StatusOK, "Product updated successfully", dto.ProductUpdateResponseDTO{
 		Name:        product.Name,
 		Description: product.Description,
-		Image:       product.Image,
+		Images:      imageURLs,
 		IsFeatured:  product.IsFeatured,
 		IsOnSale:    product.IsOnSale,
 		SalePrice:   product.SalePrice,
@@ -185,8 +211,6 @@ func (h *ProductHandler) GetProductByID(c *fiber.Ctx) error {
 	}
 
 	var variantsDTOs []dto.ProductVariantDTO
-
-
 	for _, v:= range product.Variants {
 		finalPrice := v.Price
 
@@ -206,10 +230,19 @@ func (h *ProductHandler) GetProductByID(c *fiber.Ctx) error {
 		})
 	}
 
+
+	var imageURLs []dto.ProductImageDTO
+	for _, img := range product.Images {
+		imageURLs = append(imageURLs, dto.ProductImageDTO{
+			URL: img.URL,
+		})
+	}
+
+
 	return JSONSuccess(c, fiber.StatusOK, "Product retrieved successfully", dto.ProductUpdateResponseDTO{
 		Name:        product.Name,
 		Description: product.Description,
-		Image:       product.Image,
+		Images:      imageURLs,
 		IsFeatured:  product.IsFeatured,
 		IsOnSale:    product.IsOnSale,
 		CategoryID:  product.CategoryID,
@@ -235,6 +268,10 @@ func (h *ProductHandler) GetAllProducts(c *fiber.Ctx) error {
 
 	products, pageTotal ,err := h.productService.GetAllProducts(uint(page),uint(limit),int64(minPrice),int64(maxPrice),searchName,category)
 
+	if err != nil {
+		return JSONError(c, fiber.StatusInternalServerError, err.Error())
+	}
+
 	var productsDTO []dto.ProductCreateResponseDTO
 
 	for _,product := range products {
@@ -258,10 +295,18 @@ func (h *ProductHandler) GetAllProducts(c *fiber.Ctx) error {
 				FinalPrice: finalPrice,
 			})
 		}
+
+		var imageURLs []dto.ProductImageDTO
+		for _, img := range product.Images {
+			imageURLs = append(imageURLs, dto.ProductImageDTO{
+				URL: img.URL,
+			})
+		}
+
 		productsDTO = append(productsDTO, dto.ProductCreateResponseDTO{
 			Name:        product.Name,
 			Description: product.Description,
-			Image:       product.Image,
+			Images:      imageURLs,
 			IsFeatured:  product.IsFeatured,
 			IsOnSale:    product.IsOnSale,
 			SalePrice:   product.SalePrice,
@@ -270,9 +315,6 @@ func (h *ProductHandler) GetAllProducts(c *fiber.Ctx) error {
 		})
 	}
 
-	if err != nil {
-		return JSONError(c, fiber.StatusInternalServerError, err.Error())
-	}
 	return JSONSuccess(c, fiber.StatusOK, "Products retrieved successfully", fiber.Map{
 		"products":productsDTO,
 		"page": page,

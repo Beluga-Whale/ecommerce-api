@@ -14,6 +14,7 @@ type ProductRepositoryInterface interface {
 	FindAll(page uint, limit uint, minPrice int64, maxPrice int64, searchName string, category string) (productList []models.Product ,pageTotal int64,err error) 
 	Update(product *models.Product) error
 	Delete(id uint) error
+	// DeleteImageByProductID(productID uint) error
 }
 
 type ProductRepository struct {
@@ -91,6 +92,12 @@ func (r *ProductRepository) Update(product *models.Product) error {
 		return err
 	}
 
+	// NOTE - ลบ image เก่าออกก่อน
+	if err := tx.Unscoped().Where("product_id = ?", product.ID).Delete(&models.ProductImage{}).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+
 	if err := tx.Save(product).Error; err !=nil {
 		tx.Rollback()
 		return err
@@ -121,3 +128,7 @@ func (r *ProductRepository) Delete(id uint) error {
 
 	return tx.Commit().Error
 }
+
+// func (r*ProductRepository) DeleteImageByProductID(productID uint) error {
+// 	return r.db.Where("product_id",productID).Delete(&models.ProductImage{}).Error
+// }

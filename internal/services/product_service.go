@@ -65,8 +65,8 @@ func (s *ProductService) CreateProduct(product *models.Product) error {
 	}
 
 
-	if product.Image == "" {
-		return errors.New("Product image is required")
+	if len(product.Images) != 3 {
+		return errors.New("You must upload exactly 3 product images")
 	}
 
 	category,err := s.categoryRepo.FindByID(product.CategoryID)
@@ -151,9 +151,16 @@ func (s *ProductService) UpdateProduct(id uint, product *models.Product) error {
 		})
 	}
 
+	var urlUpdate =[]models.ProductImage{}
+	for _, i := range product.Images{
+		urlUpdate = append(urlUpdate, models.ProductImage{
+			URL: i.URL,
+		})
+	}
+
 	existingProduct.Name = product.Name
 	existingProduct.Description = product.Description
-	existingProduct.Image = product.Image
+	existingProduct.Images = urlUpdate
 	existingProduct.IsFeatured = product.IsFeatured
 	existingProduct.IsOnSale = product.IsOnSale
 	existingProduct.SalePrice = product.SalePrice

@@ -129,9 +129,10 @@ func ConnectDB() {
 		&models.OrderItem{},   // NOTE - ให้ตรวจสอบตาราง OrderItem
 		&models.Payment{},   // NOTE - ให้ตรวจสอบตาราง Payment
 		&models.Product{},   // NOTE - ให้ตรวจสอบตาราง Product
-		&models.ProductVariant{},
+		&models.ProductVariant{}, // NOTE - ให้ตรวจสอบตาราง ProductVariant
 		&models.Review{},   // NOTE - ให้ตรวจสอบตาราง Review
 		&models.User{},   // NOTE - ให้ตรวจสอบตาราง User
+		&models.ProductImage{}, // NOTE - ให้ตรวจสอบตาราง ProductImage
 	)
 	if err != nil {
 		log.Fatal("Failed to migrate database:", err)
