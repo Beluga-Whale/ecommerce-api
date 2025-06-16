@@ -304,6 +304,7 @@ func (h *ProductHandler) GetAllProducts(c *fiber.Ctx) error {
 		}
 
 		productsDTO = append(productsDTO, dto.ProductCreateResponseDTO{
+			ID: 		 product.ID,	
 			Name:        product.Name,
 			Description: product.Description,
 			Images:      imageURLs,
