@@ -32,7 +32,7 @@ func (r *ProductRepository) Create(product *models.Product) error {
 func (r *ProductRepository) FindByID(id uint) (*models.Product, error){
 	var product models.Product
 
-	err := r.db.Preload("Variants").First(&product,id).Error
+	err := r.db.Preload("Variants").Preload("Images").First(&product,id).Error
 
 	if errors.Is(err, gorm.ErrRecordNotFound){
 		return nil,nil
