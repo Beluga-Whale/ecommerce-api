@@ -245,6 +245,7 @@ func (h *ProductHandler) GetProductByID(c *fiber.Ctx) error {
 		Images:      imageURLs,
 		IsFeatured:  product.IsFeatured,
 		IsOnSale:    product.IsOnSale,
+		SalePrice:   product.SalePrice,
 		CategoryID:  product.CategoryID,
 		Variants: 	 variantsDTOs,
 	})
