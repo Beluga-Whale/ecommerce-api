@@ -91,6 +91,7 @@ func (h *ProductHandler) CreateProduct(c *fiber.Ctx) error {
 	}
 
 	return JSONSuccess(c,fiber.StatusCreated, "Product created successfully", dto.ProductCreateResponseDTO{
+		ID: 		 product.ID,
 		Name:        product.Name,
 		Description: product.Description,
 		Images:      imageURLs,

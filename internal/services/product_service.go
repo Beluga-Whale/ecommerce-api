@@ -39,7 +39,7 @@ func (s *ProductService) CreateProduct(product *models.Product) error {
 		}
 	}
 
-	if product.IsOnSale == false && product.SalePrice != nil {
+	if product.IsOnSale == false && *product.SalePrice > 0.0 {
 		return errors.New("You can should is in sale true")
 	}
 
@@ -97,7 +97,7 @@ func (s *ProductService) UpdateProduct(id uint, product *models.Product) error {
 		}
 	}
 
-	if product.IsOnSale == false && product.SalePrice != nil {
+	if product.IsOnSale == false && *product.SalePrice > 0.0 {
 		return errors.New("You can should is in sale true")
 	}
 
