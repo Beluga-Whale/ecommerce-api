@@ -33,6 +33,10 @@ func (s *ProductService) CreateProduct(product *models.Product) error {
 		return errors.New("Please provide product name and description")	
 	}
 
+	if product.Title == "" {
+		return errors.New("Please provide title product")
+	}
+
 	if product.IsOnSale {
 		if product.SalePrice == nil || *product.SalePrice <= 0.0 {
 			return errors.New("Sale price must be greater than 0")
@@ -89,6 +93,10 @@ func (s *ProductService) CreateProduct(product *models.Product) error {
 func (s *ProductService) UpdateProduct(id uint, product *models.Product) error {
 	if product.Name == "" || product.Description == "" {
 		return errors.New("Please provide product name and description")
+	}
+
+	if product.Title == "" {
+		return errors.New("Please provide title product")
 	}
 
 	if product.IsOnSale {
@@ -159,6 +167,7 @@ func (s *ProductService) UpdateProduct(id uint, product *models.Product) error {
 	}
 
 	existingProduct.Name = product.Name
+	existingProduct.Title = product.Title
 	existingProduct.Description = product.Description
 	existingProduct.Images = urlUpdate
 	existingProduct.IsFeatured = product.IsFeatured

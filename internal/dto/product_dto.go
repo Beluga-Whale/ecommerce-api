@@ -2,6 +2,7 @@ package dto
 
 type ProductCreateDTO struct {
 	Name        string              `json:"name" validate:"required,min=2,max=100"`
+	Title       string              `json:"title" validate:"required,min=2,max=100"`
 	Description string              `json:"description" validate:"required,min=10,max=500"`
 	Images      []ProductImageDTO   `json:"images" validate:"required,dive"`
 	Variants    []ProductVariantDTO `json:"variants" validate:"required,dive"`
@@ -14,6 +15,7 @@ type ProductCreateDTO struct {
 type ProductCreateResponseDTO struct {
 	ID          uint                `json:"id" validate:"required"`
 	Name        string              `json:"name" validate:"required,min=2,max=100"`
+	Title       string              `json:"title" validate:"required,min=2,max=100"`
 	Description string              `json:"description" validate:"required,min=10,max=500"`
 	Images      []ProductImageDTO   `json:"images" validate:"required,dive"`
 	Variants    []ProductVariantDTO `json:"variants" validate:"required,dive"`
@@ -25,6 +27,7 @@ type ProductCreateResponseDTO struct {
 
 type ProductUpdateDTO struct {
 	Name        string              `json:"name" validate:"required,min=2,max=100"`
+	Title       string              `json:"title" validate:"required,min=2,max=100"`
 	Description string              `json:"description" validate:"required,min=10,max=500"`
 	Images      []ProductImageDTO   `json:"images" validate:"required,dive"`
 	Variants    []ProductVariantDTO `json:"variants" validate:"required,dive"`
@@ -36,6 +39,7 @@ type ProductUpdateDTO struct {
 
 type ProductUpdateResponseDTO struct {
 	Name        string              `json:"name" validate:"required,min=2,max=100"`
+	Title       string              `json:"title" validate:"required,min=2,max=100"`
 	Description string              `json:"description" validate:"required,min=10,max=500"`
 	Images      []ProductImageDTO   `json:"images" validate:"required,dive"`
 	Variants    []ProductVariantDTO `json:"variants" validate:"required,dive"`

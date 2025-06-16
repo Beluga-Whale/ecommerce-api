@@ -93,6 +93,7 @@ func (h *ProductHandler) CreateProduct(c *fiber.Ctx) error {
 	return JSONSuccess(c,fiber.StatusCreated, "Product created successfully", dto.ProductCreateResponseDTO{
 		ID: 		 product.ID,
 		Name:        product.Name,
+		Title:       product.Title,
 		Description: product.Description,
 		Images:      imageURLs,
 		IsFeatured:  product.IsFeatured,
@@ -173,6 +174,7 @@ func (h *ProductHandler) UpdateProduct(c *fiber.Ctx) error {
 
 	return JSONSuccess(c, fiber.StatusOK, "Product updated successfully", dto.ProductUpdateResponseDTO{
 		Name:        product.Name,
+		Title: 		 product.Title,
 		Description: product.Description,
 		Images:      imageURLs,
 		IsFeatured:  product.IsFeatured,
@@ -242,6 +244,7 @@ func (h *ProductHandler) GetProductByID(c *fiber.Ctx) error {
 
 	return JSONSuccess(c, fiber.StatusOK, "Product retrieved successfully", dto.ProductUpdateResponseDTO{
 		Name:        product.Name,
+		Title:       product.Title,
 		Description: product.Description,
 		Images:      imageURLs,
 		IsFeatured:  product.IsFeatured,
@@ -308,6 +311,7 @@ func (h *ProductHandler) GetAllProducts(c *fiber.Ctx) error {
 		productsDTO = append(productsDTO, dto.ProductCreateResponseDTO{
 			ID: 		 product.ID,	
 			Name:        product.Name,
+			Title:       product.Title,
 			Description: product.Description,
 			Images:      imageURLs,
 			IsFeatured:  product.IsFeatured,
