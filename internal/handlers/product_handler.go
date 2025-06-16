@@ -44,6 +44,7 @@ func (h *ProductHandler) CreateProduct(c *fiber.Ctx) error {
 	}
 	product := &models.Product{
 		Name:        req.Name,
+		Title: 		 req.Title,
 		Description: req.Description,
 		IsFeatured:  req.IsFeatured,
 		IsOnSale:    req.IsOnSale,
@@ -125,6 +126,7 @@ func (h *ProductHandler) UpdateProduct(c *fiber.Ctx) error {
 
 	product := &models.Product{
 		Name:        req.Name,
+		Title: 		 req.Title,
 		Description: req.Description,
 		IsFeatured:  req.IsFeatured,
 		IsOnSale:    req.IsOnSale,
