@@ -260,7 +260,7 @@ func (h *ProductHandler) GetProductByID(c *fiber.Ctx) error {
 
 func (h *ProductHandler) GetAllProducts(c *fiber.Ctx) error {
 	page := c.QueryInt("page",1)
-	limit := c.QueryInt("limit",10)
+	limit := c.QueryInt("limit",12)
 	maxPrice := c.QueryInt("maxPrice",999999)
 	minPrice := c.QueryInt("minPrice",0)
 	searchName := c.Query("searchName","")
@@ -294,8 +294,8 @@ func (h *ProductHandler) GetAllProducts(c *fiber.Ctx) error {
 		sizeIDs = append(sizeIDs, i)
 	}
 
-	if limit <1  {
-		limit = 10
+	if limit <= 0 {
+		limit = 1000000
 	}
 
 	if minPrice > maxPrice {
