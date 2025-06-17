@@ -264,7 +264,7 @@ func (h *ProductHandler) GetAllProducts(c *fiber.Ctx) error {
 	maxPrice := c.QueryInt("maxPrice",999999)
 	minPrice := c.QueryInt("minPrice",0)
 	searchName := c.Query("searchName","")
-	category := c.Query("category")
+	category := c.Query("category","")
 
 	categoryArr := strings.Split(category,",")
 
@@ -273,6 +273,9 @@ func (h *ProductHandler) GetAllProducts(c *fiber.Ctx) error {
 	for _,i := range categoryArr {
 		i = strings.TrimSpace(i)
 		conId,err := strconv.Atoi(i)
+		if i == "" {
+			continue
+		}	
 		if err != nil {
 			return JSONError(c, fiber.StatusInternalServerError, "can'n to convert categoryID string to int")
 		}
