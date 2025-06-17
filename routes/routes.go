@@ -12,13 +12,12 @@ func SetUpRoutes(app *fiber.App, jwtUtil utils.JwtInterface, userHandler *handle
 	api.Post("/register", userHandler.Register)
 	api.Post("/login",userHandler.Login)
 	api.Get("/product", productHandler.GetAllProducts)
-
+	api.Get("/category", categoryHandler.GetAll)
 	// NOTE - Category Routes
 	protectedCategoryAdmin := api.Group("/category", middleware.AuthMiddleware(jwtUtil),middleware.RequireRole("admin"))
 	protectedCategoryAdmin.Post("/", categoryHandler.Create) 
 	protectedCategoryAdmin.Put("/:id", categoryHandler.Update) 
 	protectedCategoryAdmin.Delete("/:id", categoryHandler.Delete)
-	protectedCategoryAdmin.Get("/", categoryHandler.GetAll)
 
 	// NOTE - Product Routes
 	protectedProductAdmin := api.Group("/product", middleware.AuthMiddleware(jwtUtil), middleware.RequireRole("admin"))
