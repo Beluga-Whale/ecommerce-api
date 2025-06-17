@@ -50,12 +50,9 @@ func (r *ProductRepository) FindAll(page uint, limit uint, minPrice int64, maxPr
 
 	productQuery := r.db.Model(&models.Product{})
 
-	// NOTE - เช็คว่า Category เป็นค่าว่างมาไหม
-	if categoryIDs != nil {
-		// NOTE - ถ้าไม่เป็นค่าว่างต้องเปลี่ยนให้เป็น int
-    	if err == nil {
-        	productQuery = productQuery.Where("category_id IN ?", categoryIDs)
-    	}
+	// NOTE - เช็คว่า Category มากกว่า 0 ไหม
+	if len(categoryIDs) >0 {
+        productQuery = productQuery.Where("category_id IN ?", categoryIDs)
 	}
 
 	if searchName != "" {
