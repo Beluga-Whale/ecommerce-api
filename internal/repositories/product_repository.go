@@ -10,7 +10,7 @@ import (
 type ProductRepositoryInterface interface {
 	Create(product *models.Product) error
 	FindByID(id uint) (*models.Product, error)
-	FindAll(page uint, limit uint, minPrice int64, maxPrice int64, searchName string, categoryIDs []int) (productList []models.Product ,pageTotal int64,err error) 
+	FindAll(page uint, limit uint, minPrice int64, maxPrice int64, searchName string, categoryIDs []int,sizeIDs []string) (productList []models.Product ,pageTotal int64,err error) 
 	Update(product *models.Product) error
 	Delete(id uint) error
 	// DeleteImageByProductID(productID uint) error
@@ -44,7 +44,7 @@ func (r *ProductRepository) FindByID(id uint) (*models.Product, error){
 	return &product, nil
 }
 
-func (r *ProductRepository) FindAll(page uint, limit uint, minPrice int64, maxPrice int64, searchName string, categoryIDs []int) (productList []models.Product ,pageTotal int64,err error) {
+func (r *ProductRepository) FindAll(page uint, limit uint, minPrice int64, maxPrice int64, searchName string, categoryIDs []int,sizeIDs []string) (productList []models.Product ,pageTotal int64,err error) {
 	var products []models.Product
 	var total int64
 
@@ -53,6 +53,13 @@ func (r *ProductRepository) FindAll(page uint, limit uint, minPrice int64, maxPr
 	// NOTE - เช็คว่า Category มากกว่า 0 ไหม
 	if len(categoryIDs) >0 {
         productQuery = productQuery.Where("category_id IN ?", categoryIDs)
+	}
+
+	if len(sizeIDs) > 0 {
+		productQuery = productQuery.
+			Joins("JOIN product_variants ON product_variants.product_id = products.id").
+			Where("product_variants.size IN ?",sizeIDs).
+			Group("products.id")
 	}
 
 	if searchName != "" {
