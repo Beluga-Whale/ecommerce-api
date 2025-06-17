@@ -2,7 +2,6 @@ package repositories
 
 import (
 	"errors"
-	"strconv"
 
 	"github.com/Beluga-Whale/ecommerce-api/internal/models"
 	"gorm.io/gorm"
@@ -11,7 +10,7 @@ import (
 type ProductRepositoryInterface interface {
 	Create(product *models.Product) error
 	FindByID(id uint) (*models.Product, error)
-	FindAll(page uint, limit uint, minPrice int64, maxPrice int64, searchName string, category string) (productList []models.Product ,pageTotal int64,err error) 
+	FindAll(page uint, limit uint, minPrice int64, maxPrice int64, searchName string, categoryIDs []int) (productList []models.Product ,pageTotal int64,err error) 
 	Update(product *models.Product) error
 	Delete(id uint) error
 	// DeleteImageByProductID(productID uint) error
@@ -45,18 +44,17 @@ func (r *ProductRepository) FindByID(id uint) (*models.Product, error){
 	return &product, nil
 }
 
-func (r *ProductRepository) FindAll(page uint, limit uint, minPrice int64, maxPrice int64, searchName string, category string) (productList []models.Product ,pageTotal int64,err error) {
+func (r *ProductRepository) FindAll(page uint, limit uint, minPrice int64, maxPrice int64, searchName string, categoryIDs []int) (productList []models.Product ,pageTotal int64,err error) {
 	var products []models.Product
 	var total int64
 
 	productQuery := r.db.Model(&models.Product{})
 
 	// NOTE - เช็คว่า Category เป็นค่าว่างมาไหม
-	if category != "" {
+	if categoryIDs != nil {
 		// NOTE - ถ้าไม่เป็นค่าว่างต้องเปลี่ยนให้เป็น int
-    	catID, err := strconv.Atoi(category)
     	if err == nil {
-        	productQuery = productQuery.Where("category_id = ?", catID)
+        	productQuery = productQuery.Where("category_id IN ?", categoryIDs)
     	}
 	}
 

@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"strconv"
 	"strings"
 
 	"github.com/Beluga-Whale/ecommerce-api/internal/dto"
@@ -263,7 +264,20 @@ func (h *ProductHandler) GetAllProducts(c *fiber.Ctx) error {
 	maxPrice := c.QueryInt("maxPrice",999999)
 	minPrice := c.QueryInt("minPrice",0)
 	searchName := c.Query("searchName","")
-	category := c.Query("category","")
+	category := c.Query("category")
+
+	categoryArr := strings.Split(category,",")
+
+	var categoryIDs []int
+
+	for _,i := range categoryArr {
+		i = strings.TrimSpace(i)
+		conId,err := strconv.Atoi(i)
+		if err != nil {
+			return JSONError(c, fiber.StatusInternalServerError, "can'n to convert categoryID string to int")
+		}
+		categoryIDs = append(categoryIDs, conId)
+	}
 
 	if limit <1  {
 		limit = 10
@@ -273,7 +287,7 @@ func (h *ProductHandler) GetAllProducts(c *fiber.Ctx) error {
 		return JSONError(c, fiber.StatusInternalServerError, "minPrice must be less than maxPrice")
 	}
 
-	products, pageTotal ,err := h.productService.GetAllProducts(uint(page),uint(limit),int64(minPrice),int64(maxPrice),searchName,category)
+	products, pageTotal ,err := h.productService.GetAllProducts(uint(page),uint(limit),int64(minPrice),int64(maxPrice),searchName,categoryIDs)
 
 	if err != nil {
 		return JSONError(c, fiber.StatusInternalServerError, err.Error())
