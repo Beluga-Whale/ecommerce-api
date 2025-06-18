@@ -3,7 +3,7 @@ package dto
 type ProductCreateDTO struct {
 	Name        string              `json:"name" validate:"required,min=2,max=100"`
 	Title       string              `json:"title" validate:"required,min=2,max=100"`
-	Description string              `json:"description" validate:"required,min=10,max=500"`
+	Description string              `json:"description" validate:"required,min=10`
 	Images      []ProductImageDTO   `json:"images" validate:"required,dive"`
 	Variants    []ProductVariantDTO `json:"variants" validate:"required,dive"`
 	IsFeatured  bool                `json:"isFeatured" validate:"omitempty"`
@@ -16,7 +16,7 @@ type ProductCreateResponseDTO struct {
 	ID          uint                `json:"id" validate:"required"`
 	Name        string              `json:"name" validate:"required,min=2,max=100"`
 	Title       string              `json:"title" validate:"required,min=2,max=100"`
-	Description string              `json:"description" validate:"required,min=10,max=500"`
+	Description string              `json:"description" validate:"required,min=10`
 	Images      []ProductImageDTO   `json:"images" validate:"required,dive"`
 	Variants    []ProductVariantDTO `json:"variants" validate:"required,dive"`
 	IsFeatured  bool                `json:"isFeatured" validate:"omitempty"`
@@ -28,7 +28,7 @@ type ProductCreateResponseDTO struct {
 type ProductUpdateDTO struct {
 	Name        string              `json:"name" validate:"required,min=2,max=100"`
 	Title       string              `json:"title" validate:"required,min=2,max=100"`
-	Description string              `json:"description" validate:"required,min=10,max=500"`
+	Description string              `json:"description" validate:"required,min=10`
 	Images      []ProductImageDTO   `json:"images" validate:"required,dive"`
 	Variants    []ProductVariantDTO `json:"variants" validate:"required,dive"`
 	IsFeatured  bool                `json:"isFeatured" validate:"omitempty"`
@@ -40,7 +40,7 @@ type ProductUpdateDTO struct {
 type ProductUpdateResponseDTO struct {
 	Name        string              `json:"name" validate:"required,min=2,max=100"`
 	Title       string              `json:"title" validate:"required,min=2,max=100"`
-	Description string              `json:"description" validate:"required,min=10,max=500"`
+	Description string              `json:"description" validate:"required,min=10`
 	Images      []ProductImageDTO   `json:"images" validate:"required,dive"`
 	Variants    []ProductVariantDTO `json:"variants" validate:"required,dive"`
 	IsFeatured  bool                `json:"isFeatured" validate:"omitempty"`
