@@ -246,6 +246,7 @@ func (h *ProductHandler) GetProductByID(c *fiber.Ctx) error {
 
 
 	return JSONSuccess(c, fiber.StatusOK, "Product retrieved successfully", dto.ProductUpdateResponseDTO{
+		ID:          product.ID,
 		Name:        product.Name,
 		Title:       product.Title,
 		Description: product.Description,

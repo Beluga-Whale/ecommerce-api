@@ -38,6 +38,7 @@ type ProductUpdateDTO struct {
 }
 
 type ProductUpdateResponseDTO struct {
+	ID          uint                `json:"id" validate:"required"`
 	Name        string              `json:"name" validate:"required,min=2,max=100"`
 	Title       string              `json:"title" validate:"required,min=2,max=100"`
 	Description string              `json:"description" validate:"required,min=10`
