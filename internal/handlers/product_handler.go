@@ -228,6 +228,7 @@ func (h *ProductHandler) GetProductByID(c *fiber.Ctx) error {
 		}
 
 		variantsDTOs = append(variantsDTOs, dto.ProductVariantDTO{
+			VariantId: v.ID,
 			Size: v.Size,
 			Stock: v.Stock,
 			SKU: v.SKU,
@@ -325,6 +326,7 @@ func (h *ProductHandler) GetAllProducts(c *fiber.Ctx) error {
 			}
 
 			variantsDTOs = append(variantsDTOs, dto.ProductVariantDTO{
+				VariantId:  v.ID,
 				Size:       v.Size,
 				Stock:      v.Stock,
 				SKU:        v.SKU,

@@ -51,6 +51,7 @@ type ProductUpdateResponseDTO struct {
 }
 
 type ProductVariantDTO struct {
+	VariantId  uint    `json:"variantID"`
 	Size       string  `json:"size" validate:"required"`
 	Stock      int     `json:"stock" validate:"required,min=0"`
 	SKU        string  `json:"sku" validate:"required"`
