@@ -85,7 +85,7 @@ func (s *OrderService) CreateOrder(userID uint, req dto.CreateOrderRequestDTO) (
 		}
 
 		// NOTE - คิดเงินรวม
-		total += productV.Price * float64(item.Quantity)
+		total += (productV.Price - *productV.Product.SalePrice) * float64(item.Quantity)
 
 		orderItems = append(orderItems, models.OrderItem{
 			ProductVariantID: productV.ID,

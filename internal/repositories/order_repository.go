@@ -23,7 +23,7 @@ func NewOrderRepository(db *gorm.DB) *OrderRepository{
 func (r *OrderRepository) FindProductVariantByID(productVariantIDs []uint)([]models.ProductVariant,error) {
 	var productVariants []models.ProductVariant
 
-	err := r.db.Where("id IN ?", productVariantIDs).Find(&productVariants).Error
+	err := r.db.Preload("Product").Where("id IN ?", productVariantIDs).Find(&productVariants).Error
 
 	if err != nil {
 		return nil,err
