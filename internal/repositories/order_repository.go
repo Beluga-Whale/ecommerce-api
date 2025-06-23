@@ -43,7 +43,7 @@ func (r *OrderRepository) UpdateProductVariantStock(tx *gorm.DB,productVariantID
 func (r *OrderRepository) FindByIDWithItemsAndProducts(orderID uint) (*models.Order, error) {
 	var order models.Order
 
-	if	err := r.db.Preload("OrderItem.ProductVariant.Product").First(&order,orderID).Error; err != nil {
+	if	err := r.db.Preload("OrderItem.ProductVariant.Product").Preload("User").Preload("Coupon").First(&order,orderID).Error; err != nil {
 		return nil,err
 	}
 

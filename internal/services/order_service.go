@@ -96,9 +96,13 @@ func (s *OrderService) CreateOrder(userID uint, req dto.CreateOrderRequestDTO) (
 
 	order := models.Order{
 		UserID: 	userID,
+		FullName:   req.FullName,
 		Phone: 		req.Phone,
 		Address:  	req.Address,
-		Note: 		req.Note,
+		Province:   req.Province,
+		District:   req.District,
+		Subdistrict: req.Subdistrict,
+		Zipcode:    req.Zipcode,
 		TotalPrice: total,
 		Status: 	models.Pending,
 		OrderItem: 	orderItems,

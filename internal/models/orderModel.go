@@ -23,9 +23,13 @@ type Order struct {
 	CouponID *uint //NOTE FK แล้วสามารถเป็นค่าว่างได้ nullable
 	Coupon Coupon `gorm:"foreignKey:CouponID"`
 	Status Status `gorm:"type:status;default:'pending'"`
-	Note string
+	FullName string
 	Phone string
 	Address string
+	Province string
+	District string
+	Subdistrict string
+	Zipcode string
 	TotalPrice float64
 	OrderItem []OrderItem `gorm:"foreignKey:OrderID"`
 	PaymentExpireAt time.Time

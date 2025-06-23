@@ -9,14 +9,27 @@ type CreateOrderItemDTO struct{
 
 type CreateOrderRequestDTO struct {
 	Counpon *uint `json:"counponID"`
-	Note string `json:"note"`
+	FullName string `json:"fullName"`
 	Phone string `json:phone`
-	Address string `json:string`
+	Address string `json:address`
+	Province string `json:province`
+	District string `json:district`
+	Subdistrict string `json:subdistrict`
+	Zipcode string `json:zipcode`
 	Items []CreateOrderItemDTO `json:"items"`
 }
 
 type OrderResponseDTO struct {
 	OrderID    uint                    `json:"orderID"`
+	User       uint                    `json:"user"`
+	FullName   string  				   `json:"fullName"`
+	Phone 	   string 				   `json:phone`
+	Address    string 				   `json:address`
+	Province   string 				   `json:province`
+	District   string 				   `json:district`
+	Subdistrict string 				   `json:subdistrict`
+	Zipcode    string 				   `json:zipcode`
+	Coupon     uint		   			   `json:"coupon"`
 	Status     models.Status           `json:"status"`
 	TotalPrice float64                 `json:"totalPrice"`
 	Items      []OrderItemResponseDTO  `json:"items"`

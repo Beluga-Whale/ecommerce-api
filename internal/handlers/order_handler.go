@@ -51,13 +51,22 @@ func (h *OrderHandler) CreateOrder(c *fiber.Ctx) error {
 		OrderID: order.ID,
 		Status:  order.Status,
 		TotalPrice: order.TotalPrice,
+		User : order.User.ID,
+		FullName: order.FullName,
+		Phone:    order.Phone,
+		Address:  order.Address,
+		Province: order.Province,
+		District: order.District,
+		Subdistrict: order.Subdistrict,
+		Zipcode: order.Zipcode,
+		Coupon: order.Coupon.ID,
 		Items: []dto.OrderItemResponseDTO{},
 	}
 
 	for _, item := range order.OrderItem {
 		response.Items = append(response.Items, dto.OrderItemResponseDTO{
 			VariantID:       item.ProductVariantID,
-			ProductName:     item.ProductVariant.Product.Name, // ต้อง preload มาก่อน
+			ProductName:     item.ProductVariant.Product.Name, 
 			Quantity:        item.Quantity,
 			Size: 			 item.ProductVariant.Size,	
 			PriceAtPurchase: item.PriceAtPurchase,
