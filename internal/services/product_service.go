@@ -175,6 +175,7 @@ func (s *ProductService) UpdateProduct(id uint, product *models.Product) error {
 	existingProduct.SalePrice = product.SalePrice
 	existingProduct.CategoryID = product.CategoryID
 	existingProduct.Variants = variantsUpdate
+	
 
 	err = s.productRepo.Update(existingProduct)
 	if err != nil {

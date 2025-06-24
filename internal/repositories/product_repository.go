@@ -86,13 +86,13 @@ func (r *ProductRepository) Update(product *models.Product) error {
 	}
 
 	// NOTE - ลบ variants เก่าออกก่อน
-	if err := tx.Unscoped().Where("product_id = ?", product.ID).Delete(&models.ProductVariant{}).Error; err != nil {
+	if err := tx.Where("product_id = ?", product.ID).Delete(&models.ProductVariant{}).Error; err != nil {
 		tx.Rollback()
 		return err
 	}
 
 	// NOTE - ลบ image เก่าออกก่อน
-	if err := tx.Unscoped().Where("product_id = ?", product.ID).Delete(&models.ProductImage{}).Error; err != nil {
+	if err := tx.Where("product_id = ?", product.ID).Delete(&models.ProductImage{}).Error; err != nil {
 		tx.Rollback()
 		return err
 	}
@@ -119,7 +119,7 @@ func (r *ProductRepository) Delete(id uint) error {
 		return err
 	}
 
-	// NOTE- ลบ Product
+	// NOTE - ลบ Product
 	if err := tx.Delete(&models.Product{}, id).Error; err !=nil {
 		tx.Rollback()
 		return err
