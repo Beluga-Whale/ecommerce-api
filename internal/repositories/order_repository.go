@@ -10,6 +10,7 @@ type OrderRepositoryInterface interface {
 	Create(tx *gorm.DB,order *models.Order) error
 	UpdateProductVariantStock(tx *gorm.DB,productVariantID uint, newStock int) error
 	FindByIDWithItemsAndProducts(orderID uint) (*models.Order, error)
+	UpdateStatusOrder(orderId *uint, status models.Status) error
 }
 
 type OrderRepository struct {
@@ -49,4 +50,12 @@ func (r *OrderRepository) FindByIDWithItemsAndProducts(orderID uint) (*models.Or
 
 	return &order,nil
 
+}
+
+func (r *OrderRepository) UpdateStatusOrder(orderId *uint, status models.Status) error {
+	if err := r.db.Model(&models.Order{}).Where("id = ?",*orderId).Update("status",status).Error; err != nil {
+		return err
+	}
+
+	return nil
 }

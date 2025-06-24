@@ -2,6 +2,7 @@ package services
 
 import (
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/Beluga-Whale/ecommerce-api/internal/dto"
@@ -14,6 +15,7 @@ import (
 type OrderServiceInterface interface {
 	CreateOrder(userID uint, req dto.CreateOrderRequestDTO) (*models.Order, error)
 	CancelOrderAndRestoreStock( orderID uint) error
+	UpdateStatusOrder(orderID *uint, status models.Status) error
 }
 
 type OrderService struct {
@@ -150,5 +152,18 @@ func (s *OrderService) CancelOrderAndRestoreStock( orderID uint) error {
 			return err
 		}
 	}
+	return nil
+}
+
+func (s *OrderService) UpdateStatusOrder(orderID *uint, status models.Status) error {
+
+	if orderID == nil {
+		return errors.New("no order id")
+	}
+
+	if err := s.orderRepo.UpdateStatusOrder(orderID,status); err != nil {
+		return fmt.Errorf("orderRepo.UpdateStatusOrder failed: %w", err)
+	}
+
 	return nil
 }

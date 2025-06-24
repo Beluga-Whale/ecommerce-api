@@ -42,3 +42,9 @@ type OrderItemResponseDTO struct {
 	Quantity        uint    `json:"quantity"`
 	PriceAtPurchase float64 `json:"priceAtPurchase"`
 }
+
+
+type UpdateStatusOrderDTO struct {
+	OrderID  uint  			  `json:"orderID"`
+	Status   models.Status    `json:"status"`
+}

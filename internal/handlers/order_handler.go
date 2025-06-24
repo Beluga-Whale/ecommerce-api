@@ -20,13 +20,12 @@ func NewOrderHandler(OrderService services.OrderServiceInterface) *OrderHandler 
 	return &OrderHandler{OrderService:OrderService}
 }
 
-
 func (h *OrderHandler) CreateOrder(c *fiber.Ctx) error {
 	// NOTE - สร้างตัวแปรเก็บ reqBody
 	var req dto.CreateOrderRequestDTO
 
 	if err := c.BodyParser(&req); err !=nil {
-		return JSONError(c, fiber.StatusBadRequest,"Invalid request bod")
+		return JSONError(c, fiber.StatusBadRequest,"Invalid request body")
 	}
 
 	// NOTE - เอา UserIDจาก local
@@ -76,4 +75,19 @@ func (h *OrderHandler) CreateOrder(c *fiber.Ctx) error {
 
 	return JSONSuccess(c, fiber.StatusCreated, "Order created successfully", response)
 	
+}
+
+func (h *OrderHandler) UpdateStatusOrder(c *fiber.Ctx) error {
+	var req dto.UpdateStatusOrderDTO
+
+	if err := c.BodyParser(&req); err != nil {
+		return JSONError(c, fiber.StatusBadRequest,"Invalid request body")
+	}
+
+	if err := h.OrderService.UpdateStatusOrder(&req.OrderID,req.Status); err !=nil{
+		return JSONError(c, fiber.StatusInternalServerError, "Unable to update order status")
+	}
+
+	return JSONSuccess(c,fiber.StatusOK,"Update Status Order Sucess",nil)
+
 }
