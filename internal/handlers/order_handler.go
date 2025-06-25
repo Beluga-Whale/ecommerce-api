@@ -86,12 +86,15 @@ func (h *OrderHandler) UpdateStatusOrder(c *fiber.Ctx) error {
 	expectedToken := "Bearer " + os.Getenv("STRIPE_WEBHOOK_SECRET")
 	if authHeader != expectedToken {
 		return JSONError(c, fiber.StatusUnauthorized, "Unauthorized - missing token")	}
+fmt.Println(">> PATCH /user/order called")
+fmt.Println(">> Auth Header:", authHeader)
 
-	var req dto.UpdateStatusOrderDTO
+var req dto.UpdateStatusOrderDTO
+if err := c.BodyParser(&req); err != nil {
+	return JSONError(c, fiber.StatusBadRequest, "Invalid request body")
+}
 
-	fmt.Println(">> PATCH /user/order called")
-	fmt.Println(">> Auth Header:", authHeader)
-	fmt.Printf(">> Parsed OrderID: %d, Status: %s\n", req.OrderId, req.Status)
+fmt.Printf(">> Parsed OrderID: %d, Status: %s\n", req.OrderId, req.Status)
 	if err := c.BodyParser(&req); err != nil {
 		return JSONError(c, fiber.StatusBadRequest,"Invalid request body")
 	}
