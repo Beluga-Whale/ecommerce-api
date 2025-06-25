@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"os"
 	"strconv"
 
 	"github.com/Beluga-Whale/ecommerce-api/internal/dto"
@@ -78,6 +79,11 @@ func (h *OrderHandler) CreateOrder(c *fiber.Ctx) error {
 }
 
 func (h *OrderHandler) UpdateStatusOrder(c *fiber.Ctx) error {
+	authHeader := c.Get("Authorization")
+	expectedToken := "Bearer " + os.Getenv("STRIPE_WEBHOOK_SECRET")
+	if authHeader != expectedToken {
+		return JSONError(c, fiber.StatusUnauthorized, "Unauthorized - missing token")	}
+
 	var req dto.UpdateStatusOrderDTO
 
 	if err := c.BodyParser(&req); err != nil {

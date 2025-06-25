@@ -14,6 +14,7 @@ func SetUpRoutes(app *fiber.App, jwtUtil utils.JwtInterface, userHandler *handle
 	api.Get("/category", categoryHandler.GetAll)
 	api.Get("/product", productHandler.GetAllProducts)
 	api.Get("/product/:id", productHandler.GetProductByID)
+	api.Patch("/user/order", orderHandler.UpdateStatusOrder)
 	// NOTE - Category Routes
 	protectedCategoryAdmin := api.Group("/category", middleware.AuthMiddleware(jwtUtil),middleware.RequireRole("admin"))
 	protectedCategoryAdmin.Post("/", categoryHandler.Create) 
@@ -30,13 +31,5 @@ func SetUpRoutes(app *fiber.App, jwtUtil utils.JwtInterface, userHandler *handle
 	// NOTE - User use createOnly
 	protectedOrderUser := api.Group("/user/order", middleware.AuthMiddleware(jwtUtil), middleware.RequireRole("user"))
 	protectedOrderUser.Post("/", orderHandler.CreateOrder)
-
-
-	// Protected Routes
-	protected := api.Group("/user", middleware.AuthMiddleware(jwtUtil))
-	protected.Get("/profile", userHandler.GetProfile) // <- คุณต้องมี handler นี้ก่อน
-
-	// Admin Routes
-	admin := api.Group("/admin", middleware.AuthMiddleware(jwtUtil), middleware.RequireRole("admin"))
-	admin.Get("/dashboard", userHandler.AdminDashboard) // <- handler นี้เฉพาะ admin
+	
 }
