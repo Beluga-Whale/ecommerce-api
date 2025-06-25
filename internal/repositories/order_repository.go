@@ -11,6 +11,7 @@ type OrderRepositoryInterface interface {
 	UpdateProductVariantStock(tx *gorm.DB,productVariantID uint, newStock int) error
 	FindByIDWithItemsAndProducts(orderID uint) (*models.Order, error)
 	UpdateStatusOrder(orderId *uint, status models.Status) error
+	FindOrderById(orderID uint) (*models.Order, error)
 }
 
 type OrderRepository struct {
@@ -58,4 +59,16 @@ func (r *OrderRepository) UpdateStatusOrder(orderId *uint, status models.Status)
 	}
 
 	return nil
+}
+
+func (r *OrderRepository) FindOrderById(orderID uint) (*models.Order, error) {
+	var order models.Order
+	err := r.db.Preload("User").Preload("Coupon").Preload("OrderItem").Where("id = ?", orderID).First(&order).Error
+
+	if err != nil {
+		return nil, err
+	}
+	
+	return &order, nil
+
 }

@@ -11,6 +11,8 @@ import (
 
 type OrderHandlerInterface interface{
 	CreateOrder(c *fiber.Ctx) error
+	UpdateStatusOrder(c *fiber.Ctx) error
+	GetOrderByID(c *fiber.Ctx) error 
 }
 
 type OrderHandler struct {
@@ -96,4 +98,50 @@ func (h *OrderHandler) UpdateStatusOrder(c *fiber.Ctx) error {
 
 	return JSONSuccess(c,fiber.StatusOK,"Update Status Order Sucess",nil)
 
+}
+
+func (h *OrderHandler) GetOrderByID(c *fiber.Ctx) error {
+	id, err := c.ParamsInt("id")
+	if err != nil {
+		return JSONError(c, fiber.StatusBadRequest, "Invalid order ID")
+	}
+
+	order,err := h.OrderService.GetOrderByID(uint(id))
+	if err != nil {
+		return JSONError(c, fiber.StatusInternalServerError,  "Error go get order by ID")
+	}
+
+	if order == nil {
+		return JSONError(c, fiber.StatusNotFound, "Order not found")
+	}
+
+
+
+
+	var orderItems []dto.OrderItemResponseDTO
+
+	for _, item := range order.OrderItem {
+		orderItems = append(orderItems, dto.OrderItemResponseDTO{
+			VariantID:       item.ProductVariantID,
+			ProductName:     item.ProductVariant.Product.Name,
+			Size:            item.ProductVariant.Size,
+			Quantity:        item.Quantity,
+			PriceAtPurchase: item.PriceAtPurchase,
+		})
+	}
+
+	return JSONSuccess(c,fiber.StatusOK,"Get Order By ID Success", dto.OrderByIDResponseDTO{
+		OrderID:   order.ID,
+		Status:    order.Status,
+		FullName:  order.FullName,
+		Phone:     order.Phone,
+		Address:   order.Address,
+		Province:  order.Province,
+		District:  order.District,
+		Subdistrict: order.Subdistrict,
+		Zipcode:   order.Zipcode,
+		Coupon:     order.Coupon,
+		OrderItem: orderItems,
+		PaymentExpireAt: order.PaymentExpireAt.Format("2006-01-02 15:04:05"),
+	})
 }

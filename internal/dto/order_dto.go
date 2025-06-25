@@ -48,3 +48,18 @@ type UpdateStatusOrderDTO struct {
 	OrderID  uint  			  `json:"orderID"`
 	Status   models.Status    `json:"status"`
 }
+
+type OrderByIDResponseDTO struct {
+	OrderID    uint                    `json:"orderID"`
+	Status    models.Status           `json:"status"`
+	FullName   string  				   `json:"fullName"`
+	Phone 	   string 				   `json:phone`
+	Address    string 				   `json:address`
+	Province   string 				   `json:province`
+	District   string 				   `json:district`
+	Subdistrict string 				   `json:subdistrict`
+	Zipcode    string 				   `json:zipcode`
+	Coupon     models.Coupon         `json:"coupon"`
+	OrderItem  []OrderItemResponseDTO     `json:"orderItem"`
+	PaymentExpireAt string              `json:"paymentExpireAt"`
+}

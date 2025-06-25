@@ -16,6 +16,7 @@ type OrderServiceInterface interface {
 	CreateOrder(userID uint, req dto.CreateOrderRequestDTO) (*models.Order, error)
 	CancelOrderAndRestoreStock( orderID uint) error
 	UpdateStatusOrder(orderID *uint, status models.Status) error
+	GetOrderByID(orderID uint) (*models.Order, error)
 }
 
 type OrderService struct {
@@ -166,4 +167,17 @@ func (s *OrderService) UpdateStatusOrder(orderID *uint, status models.Status) er
 	}
 
 	return nil
+}
+
+func (s *OrderService) GetOrderByID(orderID uint) (*models.Order, error) {
+	order, err := s.orderRepo.FindOrderById(orderID)
+	if err != nil {
+		return nil, fmt.Errorf("orderRepo.FindByIDWithItemsAndProducts failed: %w", err)
+	}
+
+	if order == nil {
+		return nil, errors.New("order not found")
+	}
+
+	return order, nil
 }
