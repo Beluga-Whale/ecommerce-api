@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"os"
 	"strconv"
 
@@ -88,11 +89,14 @@ func (h *OrderHandler) UpdateStatusOrder(c *fiber.Ctx) error {
 
 	var req dto.UpdateStatusOrderDTO
 
+	fmt.Println(">> PATCH /user/order called")
+	fmt.Println(">> Auth Header:", authHeader)
+	fmt.Printf(">> Parsed OrderID: %d, Status: %s\n", req.OrderId, req.Status)
 	if err := c.BodyParser(&req); err != nil {
 		return JSONError(c, fiber.StatusBadRequest,"Invalid request body")
 	}
 
-	if err := h.OrderService.UpdateStatusOrder(&req.OrderID,req.Status); err !=nil{
+	if err := h.OrderService.UpdateStatusOrder(&req.OrderId,req.Status); err !=nil{
 		return JSONError(c, fiber.StatusInternalServerError, "Unable to update order status")
 	}
 

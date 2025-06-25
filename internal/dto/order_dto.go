@@ -45,8 +45,8 @@ type OrderItemResponseDTO struct {
 
 
 type UpdateStatusOrderDTO struct {
-	OrderID  uint  			  `json:"orderID"`
-	Status   models.Status    `json:"status"`
+	OrderId uint           `json:"orderId"`
+	Status  models.Status  `json:"status"`
 }
 
 type OrderByIDResponseDTO struct {
