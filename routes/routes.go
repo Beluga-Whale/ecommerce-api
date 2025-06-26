@@ -14,7 +14,6 @@ func SetUpRoutes(app *fiber.App, jwtUtil utils.JwtInterface, userHandler *handle
 	api.Get("/category", categoryHandler.GetAll)
 	api.Get("/product", productHandler.GetAllProducts)
 	api.Get("/product/:id", productHandler.GetProductByID)
-	api.Patch("/user/order", orderHandler.UpdateStatusOrder)
 	api.Get("/user/order/:id", orderHandler.GetOrderByID)
 	// NOTE - Category Routes
 	protectedCategoryAdmin := api.Group("/category", middleware.AuthMiddleware(jwtUtil),middleware.RequireRole("admin"))
@@ -32,5 +31,6 @@ func SetUpRoutes(app *fiber.App, jwtUtil utils.JwtInterface, userHandler *handle
 	// NOTE - User use createOnly
 	protectedOrderUser := api.Group("/user/order", middleware.AuthMiddleware(jwtUtil), middleware.RequireRole("user"))
 	protectedOrderUser.Post("/", orderHandler.CreateOrder)
-	
+	protectedOrderUser.Patch("/", orderHandler.UpdateStatusOrder)
+
 }

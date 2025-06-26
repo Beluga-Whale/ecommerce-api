@@ -32,8 +32,9 @@ func (h *OrderHandler) CreateOrder(c *fiber.Ctx) error {
 	}
 
 	// NOTE - เอา UserIDจาก local
-	// ดึง userID จาก Locals แล้วแปลง string -> uint
+	// NOTE - ดึง userID จาก Locals แล้วแปลง string -> uint
 	userIDStr, ok := c.Locals("userID").(string)
+
 	if !ok {
 		return JSONError(c, fiber.StatusUnauthorized, "Unauthorized")
 	}
@@ -83,19 +84,30 @@ func (h *OrderHandler) CreateOrder(c *fiber.Ctx) error {
 func (h *OrderHandler) UpdateStatusOrder(c *fiber.Ctx) error {
 	authHeader := c.Get("Authorization")
 	expectedToken := "Bearer " + os.Getenv("STRIPE_WEBHOOK_SECRET")
+
 	if authHeader != expectedToken {
 		return JSONError(c, fiber.StatusUnauthorized, "Unauthorized - missing token")	}
-var req dto.UpdateStatusOrderDTO
-if err := c.BodyParser(&req); err != nil {
-	return JSONError(c, fiber.StatusBadRequest, "Invalid request body")
-}
+	var req dto.UpdateStatusOrderDTO
 
 	if err := c.BodyParser(&req); err != nil {
 		return JSONError(c, fiber.StatusBadRequest,"Invalid request body")
 	}
 
-	if err := h.OrderService.UpdateStatusOrder(&req.OrderId,req.Status); err !=nil{
-		return JSONError(c, fiber.StatusInternalServerError, "Unable to update order status")
+	// NOTE - เอา UserIDจาก local
+	// NOTE - ดึง userID จาก Locals แล้วแปลง string -> uint
+	userIDStr, ok := c.Locals("userID").(string)
+
+	if !ok {
+		return JSONError(c, fiber.StatusUnauthorized, "Unauthorized")
+	}
+
+	userIDUint, err := strconv.ParseUint(userIDStr, 10, 64)
+	if err != nil {
+		return JSONError(c, fiber.StatusInternalServerError, "Invalid user ID format")
+	}
+
+	if err := h.OrderService.UpdateStatusOrder(&req.OrderId,req.Status,uint(userIDUint)); err !=nil{
+		return JSONError(c, fiber.StatusInternalServerError, err.Error())
 	}
 
 	return JSONSuccess(c,fiber.StatusOK,"Update Status Order Sucess",nil)
@@ -116,9 +128,6 @@ func (h *OrderHandler) GetOrderByID(c *fiber.Ctx) error {
 	if order == nil {
 		return JSONError(c, fiber.StatusNotFound, "Order not found")
 	}
-
-
-
 
 	var orderItems []dto.OrderItemResponseDTO
 
@@ -147,3 +156,4 @@ func (h *OrderHandler) GetOrderByID(c *fiber.Ctx) error {
 		PaymentExpireAt: order.PaymentExpireAt.Format("2006-01-02 15:04:05"),
 	})
 }
+

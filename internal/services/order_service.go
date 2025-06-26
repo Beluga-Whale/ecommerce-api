@@ -15,7 +15,7 @@ import (
 type OrderServiceInterface interface {
 	CreateOrder(userID uint, req dto.CreateOrderRequestDTO) (*models.Order, error)
 	CancelOrderAndRestoreStock( orderID uint) error
-	UpdateStatusOrder(orderID *uint, status models.Status) error
+	UpdateStatusOrder(orderID *uint, status models.Status,userId uint) error
 	GetOrderByID(orderID uint) (*models.Order, error)
 }
 
@@ -156,10 +156,25 @@ func (s *OrderService) CancelOrderAndRestoreStock( orderID uint) error {
 	return nil
 }
 
-func (s *OrderService) UpdateStatusOrder(orderID *uint, status models.Status) error {
+func (s *OrderService) UpdateStatusOrder(orderID *uint, status models.Status,userId uint) error {
 
 	if orderID == nil {
 		return errors.New("no order id")
+	}
+
+	// NOTE - เช็คว่า orderID มีค่าไหม
+	order, err := s.orderRepo.FindOrderById(*orderID)
+	if err != nil {
+		return  fmt.Errorf("orderRepo.FindByIDWithItemsAndProducts failed: %w", err)
+	}
+
+	if order == nil {
+		return errors.New("order not found")
+	}
+
+	// NOTE - เช็คว่า userID ตรงกับ order.UserID ไหม
+	if order.UserID != userId {
+		return errors.New("unauthorized to update this order")
 	}
 
 	if err := s.orderRepo.UpdateStatusOrder(orderID,status); err != nil {
