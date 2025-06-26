@@ -16,7 +16,7 @@ type OrderServiceInterface interface {
 	CreateOrder(userID uint, req dto.CreateOrderRequestDTO) (*models.Order, error)
 	CancelOrderAndRestoreStock( orderID uint) error
 	UpdateStatusOrder(orderID *uint, status models.Status,userId uint) error
-	GetOrderByID(orderID uint) (*models.Order, error)
+	GetOrderByID(orderID uint, userIDUint uint) (*models.Order, error)
 }
 
 type OrderService struct {
@@ -161,6 +161,10 @@ func (s *OrderService) UpdateStatusOrder(orderID *uint, status models.Status,use
 	if orderID == nil {
 		return errors.New("no order id")
 	}
+	
+	fmt.Println("req.OrderId:", *orderID)
+	fmt.Println("req.Status:", status)
+	fmt.Println("req.UserId:", userId)
 
 	// NOTE - เช็คว่า orderID มีค่าไหม
 	order, err := s.orderRepo.FindOrderById(*orderID)
@@ -184,7 +188,7 @@ func (s *OrderService) UpdateStatusOrder(orderID *uint, status models.Status,use
 	return nil
 }
 
-func (s *OrderService) GetOrderByID(orderID uint) (*models.Order, error) {
+func (s *OrderService) GetOrderByID(orderID uint, userIDUint uint) (*models.Order, error) {
 	order, err := s.orderRepo.FindOrderById(orderID)
 	if err != nil {
 		return nil, fmt.Errorf("orderRepo.FindByIDWithItemsAndProducts failed: %w", err)
@@ -193,6 +197,12 @@ func (s *OrderService) GetOrderByID(orderID uint) (*models.Order, error) {
 	if order == nil {
 		return nil, errors.New("order not found")
 	}
+
+	// NOTE - เช็คว่า userID ตรงกับ order.UserID ไหม
+	if order.UserID != userIDUint {
+		return nil, errors.New("unauthorized to update this order")
+	}
+
 
 	return order, nil
 }

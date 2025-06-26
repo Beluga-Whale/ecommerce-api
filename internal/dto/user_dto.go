@@ -23,4 +23,5 @@ type LoginRequestDTO struct {
 
 type LoginResponseDTO struct {
 	Token string `json:"token"`
+	UserID uint   `json:"userId"`
 }

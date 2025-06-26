@@ -77,7 +77,7 @@ func (h *UserHandler) Login(c *fiber.Ctx) error {
 		Password: req.Password,
 	}
 
-	token,err := h.userService.Login(user)
+	token,userId,err := h.userService.Login(user)
 	if err != nil {
 		return JSONError(c, fiber.StatusUnauthorized, err.Error())
 	}
@@ -95,6 +95,7 @@ func (h *UserHandler) Login(c *fiber.Ctx) error {
 
 	return JSONSuccess(c,fiber.StatusOK,"Login successful",dto.LoginResponseDTO{
 		Token:  token,
+		UserID: userId,
 	})
 }
 

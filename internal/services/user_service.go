@@ -12,7 +12,7 @@ import (
 
 type UserServiceInterface interface {
 	Register(user *models.User)error
-	Login(user *models.User) (string,error)
+	Login(user *models.User) (string,uint,error)
 }
 
 type UserService struct {
@@ -60,23 +60,23 @@ func (s *UserService) Register(user *models.User)error {
 
 }
 
-func (s *UserService) Login(user *models.User) (string,error) {
+func (s *UserService) Login(user *models.User) (string,uint,error) {
 	// NOTE - เช็คว่ามี email เป็นค่าว่างไหม
 	if user.Email == "" || user.Password == "" {
-		return "",errors.New("Email and Password cannot be empty")
+		return "",0,errors.New("Email and Password cannot be empty")
 	}
 
 	// NOTE - เช็คว่ามี email นี้ใน ฐานข้อมูลไหม
 	dbUser, err := s.userRepo.GetUserByEmail(user.Email)
 
 	if err != nil || dbUser == nil {
-		return "", errors.New("User not found")
+		return "",0, errors.New("User not found")
 	}
 
 	err = s.hashPassword.ComparePassword(dbUser.Password, user.Password)
 
 	if err != nil {
-		return "", errors.New("Invalid email or password")
+		return "",0, errors.New("Invalid email or password")
 	}
 
 	userIDStr := strconv.FormatUint(uint64(dbUser.ID), 10)
@@ -84,9 +84,9 @@ func (s *UserService) Login(user *models.User) (string,error) {
 	token, err  := s.jwtUtil.GenerateJWT(dbUser.Email, string(dbUser.Role), userIDStr)
 
 	if err != nil {
-		return "", errors.New("Error generating JWT token")
+		return "", 0,errors.New("Error generating JWT token")
 	}
 
 
-	return token,nil
+	return token,dbUser.ID,nil
 }

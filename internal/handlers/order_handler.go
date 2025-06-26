@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"os"
 	"strconv"
 
@@ -85,6 +86,8 @@ func (h *OrderHandler) UpdateStatusOrder(c *fiber.Ctx) error {
 	authHeader := c.Get("Authorization")
 	expectedToken := "Bearer " + os.Getenv("STRIPE_WEBHOOK_SECRET")
 
+	fmt.Println("Auth Header:", authHeader)
+
 	if authHeader != expectedToken {
 		return JSONError(c, fiber.StatusUnauthorized, "Unauthorized - missing token")	}
 	var req dto.UpdateStatusOrderDTO
@@ -93,7 +96,21 @@ func (h *OrderHandler) UpdateStatusOrder(c *fiber.Ctx) error {
 		return JSONError(c, fiber.StatusBadRequest,"Invalid request body")
 	}
 
-	// NOTE - เอา UserIDจาก local
+	if err := h.OrderService.UpdateStatusOrder(&req.OrderId,req.Status,req.UserId); err !=nil{
+		return JSONError(c, fiber.StatusInternalServerError, err.Error())
+	}
+
+	return JSONSuccess(c,fiber.StatusOK,"Update Status Order Sucess",nil)
+
+}
+
+func (h *OrderHandler) GetOrderByID(c *fiber.Ctx) error {
+	orderId, err := c.ParamsInt("id")
+	if err != nil {
+		return JSONError(c, fiber.StatusBadRequest, "Invalid order ID")
+	}
+
+// NOTE - เอา UserIDจาก local
 	// NOTE - ดึง userID จาก Locals แล้วแปลง string -> uint
 	userIDStr, ok := c.Locals("userID").(string)
 
@@ -106,21 +123,7 @@ func (h *OrderHandler) UpdateStatusOrder(c *fiber.Ctx) error {
 		return JSONError(c, fiber.StatusInternalServerError, "Invalid user ID format")
 	}
 
-	if err := h.OrderService.UpdateStatusOrder(&req.OrderId,req.Status,uint(userIDUint)); err !=nil{
-		return JSONError(c, fiber.StatusInternalServerError, err.Error())
-	}
-
-	return JSONSuccess(c,fiber.StatusOK,"Update Status Order Sucess",nil)
-
-}
-
-func (h *OrderHandler) GetOrderByID(c *fiber.Ctx) error {
-	id, err := c.ParamsInt("id")
-	if err != nil {
-		return JSONError(c, fiber.StatusBadRequest, "Invalid order ID")
-	}
-
-	order,err := h.OrderService.GetOrderByID(uint(id))
+	order,err := h.OrderService.GetOrderByID(uint(orderId), uint(userIDUint))
 	if err != nil {
 		return JSONError(c, fiber.StatusInternalServerError,  "Error go get order by ID")
 	}
