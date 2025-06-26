@@ -141,9 +141,9 @@ func (h *OrderHandler) GetOrderByID(c *fiber.Ctx) error {
 		Province:  order.Province,
 		District:  order.District,
 		Subdistrict: order.Subdistrict,
-		Zipcode:   order.Zipcode,
+		Zipcode:    order.Zipcode,
 		Coupon:     order.Coupon,
-		OrderItem: orderItems,
+		OrderItem:  orderItems,
 		PaymentExpireAt: order.PaymentExpireAt.Format("2006-01-02 15:04:05"),
 	})
 }

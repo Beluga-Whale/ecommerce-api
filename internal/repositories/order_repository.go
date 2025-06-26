@@ -63,7 +63,7 @@ func (r *OrderRepository) UpdateStatusOrder(orderId *uint, status models.Status)
 
 func (r *OrderRepository) FindOrderById(orderID uint) (*models.Order, error) {
 	var order models.Order
-	err := r.db.Preload("User").Preload("Coupon").Preload("OrderItem").Where("id = ?", orderID).First(&order).Error
+	err := r.db.Preload("User").Preload("Coupon").Preload("OrderItem.ProductVariant.Product").Where("id = ?", orderID).First(&order).Error
 
 	if err != nil {
 		return nil, err
