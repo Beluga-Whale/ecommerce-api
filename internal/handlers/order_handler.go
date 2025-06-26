@@ -105,25 +105,13 @@ func (h *OrderHandler) UpdateStatusOrder(c *fiber.Ctx) error {
 }
 
 func (h *OrderHandler) GetOrderByID(c *fiber.Ctx) error {
+	userId := c.QueryInt("userId",0)
 	orderId, err := c.ParamsInt("id")
 	if err != nil {
 		return JSONError(c, fiber.StatusBadRequest, "Invalid order ID")
 	}
 
-// NOTE - เอา UserIDจาก local
-	// NOTE - ดึง userID จาก Locals แล้วแปลง string -> uint
-	userIDStr, ok := c.Locals("userID").(string)
-
-	if !ok {
-		return JSONError(c, fiber.StatusUnauthorized, "Unauthorized")
-	}
-
-	userIDUint, err := strconv.ParseUint(userIDStr, 10, 64)
-	if err != nil {
-		return JSONError(c, fiber.StatusInternalServerError, "Invalid user ID format")
-	}
-
-	order,err := h.OrderService.GetOrderByID(uint(orderId), uint(userIDUint))
+	order,err := h.OrderService.GetOrderByID(uint(orderId),uint(userId))
 	if err != nil {
 		return JSONError(c, fiber.StatusInternalServerError,  "Error go get order by ID")
 	}

@@ -7,7 +7,9 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func SetUpRoutes(app *fiber.App, jwtUtil utils.JwtInterface, userHandler *handlers.UserHandler, categoryHandler *handlers.CategoryHandler, productHandler *handlers.ProductHandler, orderHandler *handlers.OrderHandler ) {
+func SetUpRoutes(app *fiber.App, jwtUtil utils.JwtInterface, userHandler *handlers.UserHandler, categoryHandler *handlers.CategoryHandler, productHandler *handlers.ProductHandler, orderHandler *handlers.OrderHandler, paymentHandler *handlers.StripeHandler ) {
+
+
 	api := app.Group("/api")
 	api.Post("/register", userHandler.Register)
 	api.Post("/login",userHandler.Login)
@@ -15,6 +17,11 @@ func SetUpRoutes(app *fiber.App, jwtUtil utils.JwtInterface, userHandler *handle
 	api.Get("/product", productHandler.GetAllProducts)
 	api.Get("/product/:id", productHandler.GetProductByID)
 	api.Get("/user/order/:id", orderHandler.GetOrderByID)
+
+	// NOTE  - Payment	
+	api.Post("/stripe/payment-intent",paymentHandler.CreatePaymentIntent)
+	api.Post("/stripe/webhook", paymentHandler.Webhook)
+
 	// NOTE - Category Routes
 	protectedCategoryAdmin := api.Group("/category", middleware.AuthMiddleware(jwtUtil),middleware.RequireRole("admin"))
 	protectedCategoryAdmin.Post("/", categoryHandler.Create) 
@@ -32,6 +39,6 @@ func SetUpRoutes(app *fiber.App, jwtUtil utils.JwtInterface, userHandler *handle
 	protectedOrderUser := api.Group("/user/order", middleware.AuthMiddleware(jwtUtil), middleware.RequireRole("user"))
 	protectedOrderUser.Post("/", orderHandler.CreateOrder)
 	protectedOrderUser.Patch("/", orderHandler.UpdateStatusOrder)
-	protectedOrderUser.Get("/:id", orderHandler.GetOrderByID)
+	
 
 }

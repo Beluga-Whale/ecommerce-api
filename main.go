@@ -34,14 +34,12 @@ func main() {
 		AllowCredentials: true,
 	}))
 
-
-
 	// NOTE - Create Repositories
 	userRepo := repositories.NewUserRepository(config.DB)
 	categoryRepo := repositories.NewCategoryRepository(config.DB)
 	productRepo := repositories.NewProductRepository(config.DB)
 	orderRepo := repositories.NewOrderRepository(config.DB)
-
+	
 
 	// NOTE - Utilities
 	hashPassword := utils.NewPasswordUtil()
@@ -59,9 +57,10 @@ func main() {
 	categoryHandler := handlers.NewCategoryHandler(categoryService)
 	productHandler := handlers.NewProductHandler(productService)
 	orderHandler := handlers.NewOrderHandler(orderService)
+	PaymentHandler := handlers.NewStripeHandler(orderService)
 
 	// NOTE - Set Up Routes
-	routes.SetUpRoutes(app ,jwtUtil,userHandler,categoryHandler,productHandler,orderHandler)
+	routes.SetUpRoutes(app ,jwtUtil,userHandler,categoryHandler,productHandler,orderHandler,PaymentHandler)
 	
 
 	// NOTE -ทำงานเพื่อการนับถอยหลังเช็ค order
