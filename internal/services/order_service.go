@@ -20,7 +20,7 @@ type OrderServiceInterface interface {
 	GetAllOrderByUserId(userIDUint uint) ([]models.Order,error)
 	UpdateStatusByUser(userIDUint uint,orderID *uint, status models.Status) error
 	GetAllOrdersAdmin() ([]models.Order,error)
-
+	UpdateStatusByAdmin(orderID *uint, status models.Status) error
 }
 
 type OrderService struct {
@@ -253,4 +253,26 @@ func (s *OrderService) GetAllOrdersAdmin() ([]models.Order,error) {
 	}
 
 	return orders,nil
+}
+
+func (s *OrderService) UpdateStatusByAdmin(orderID *uint, status models.Status) error {
+	if orderID == nil {
+		return errors.New("no order id")
+	}
+
+	// NOTE - เช็คว่า orderID มีค่าไหม
+	order, err := s.orderRepo.FindOrderById(*orderID)
+	if err != nil {
+		return  fmt.Errorf("orderRepo.FindByIDWithItemsAndProducts failed: %w", err)
+	}
+
+	if order == nil {
+		return errors.New("order not found")
+	}
+
+	if err = s.orderRepo.UpdateStatusOrderByUserId(uint(*orderID),status); err !=nil{
+		return errors.New("Order can not update status")
+	}
+
+	return nil
 }

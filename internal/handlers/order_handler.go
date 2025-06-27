@@ -16,7 +16,7 @@ type OrderHandlerInterface interface{
 	GetOrderByID(c *fiber.Ctx) error 
 	UpdateOrderStatusByUser(c *fiber.Ctx) error
 	GetAllOrders(c *fiber.Ctx) error
-
+	UpdateOrderStatusByAdmin(c *fiber.Ctx) error
 }
 
 type OrderHandler struct {
@@ -248,4 +248,26 @@ func (h *OrderHandler)	GetAllOrders(c *fiber.Ctx) error {
 	}
 
 	return JSONSuccess(c,fiber.StatusOK,"Get All Order Success",orderResponse)
+}
+
+func (h *OrderHandler) UpdateOrderStatusByAdmin(c *fiber.Ctx) error{
+	
+	orderID, err := c.ParamsInt("id")
+	if err != nil {
+		return JSONError(c, fiber.StatusBadRequest, "Invalid product ID")
+	}
+
+	var req dto.UpdateStatusByUserOrderDTO
+	if err := c.BodyParser(&req); err != nil {
+		return JSONError(c, fiber.StatusBadRequest, "Invalid request body")
+	}
+	orderIDUint := uint(orderID)
+	err = h.OrderService.UpdateStatusByAdmin( &orderIDUint, req.Status)
+	
+	if err != nil {
+    	return JSONError(c, fiber.StatusInternalServerError, fmt.Sprintf("Update status failed: %v", err))
+	}
+
+	return JSONSuccess(c, fiber.StatusOK, "Update status success", nil)
+
 }

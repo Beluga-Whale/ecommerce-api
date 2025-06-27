@@ -98,7 +98,7 @@ func (r *OrderRepository) UpdateStatusOrderByUserId(orderID uint,status models.S
 func (r *OrderRepository) FindAll() ([]models.Order,error){
 	var orders []models.Order
 	
-	err := r.db.Preload("Coupon").Preload("OrderItem.ProductVariant.Product").Find(&orders).Error
+	err := r.db.Preload("Coupon").Preload("OrderItem.ProductVariant.Product").Order("id DESC").Find(&orders).Error
 
 	return orders,err
 }
