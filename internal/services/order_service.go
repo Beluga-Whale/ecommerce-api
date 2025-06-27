@@ -17,6 +17,7 @@ type OrderServiceInterface interface {
 	CancelOrderAndRestoreStock( orderID uint) error
 	UpdateStatusOrder(orderID *uint, status models.Status,userId uint) error
 	GetOrderByID(orderID uint, userIDUint uint) (*models.Order, error)
+	GetAllOrderByUserId(userIDUint uint) ([]models.Order,error)
 }
 
 type OrderService struct {
@@ -205,4 +206,15 @@ func (s *OrderService) GetOrderByID(orderID uint, userIDUint uint) (*models.Orde
 
 
 	return order, nil
+}
+
+func (s *OrderService) GetAllOrderByUserId(userIDUint uint) ([]models.Order,error) {
+
+	orderAll, err := s.orderRepo.FindAllOrderByUserId(userIDUint)
+
+	if err != nil {
+		return nil,errors.New("Error to find to order")
+	}
+
+	return orderAll,nil
 }

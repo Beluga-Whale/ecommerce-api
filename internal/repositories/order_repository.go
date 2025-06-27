@@ -12,6 +12,7 @@ type OrderRepositoryInterface interface {
 	FindByIDWithItemsAndProducts(orderID uint) (*models.Order, error)
 	UpdateStatusOrder(orderId *uint, status models.Status) error
 	FindOrderById(orderID uint) (*models.Order, error)
+	FindAllOrderByUserId(userIDUint uint) ([]models.Order,error)
 }
 
 type OrderRepository struct {
@@ -70,5 +71,16 @@ func (r *OrderRepository) FindOrderById(orderID uint) (*models.Order, error) {
 	}
 	
 	return &order, nil
-
 }
+
+func (r *OrderRepository) FindAllOrderByUserId(userIDUint uint) ([]models.Order,error) {
+	var orderAll []models.Order
+
+	err := r.db.Preload("Coupon").Preload("OrderItem.ProductVariant.Product").Where("user_id = ?",userIDUint).Order("id DESC").Find(&orderAll).Error
+	if err != nil {
+		return nil,err
+	}
+
+	return orderAll,nil
+}
+

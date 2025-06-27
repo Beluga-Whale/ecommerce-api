@@ -64,3 +64,11 @@ type OrderByIDResponseDTO struct {
 	OrderItem  []OrderItemResponseDTO  `json:"orderItem"`
 	PaymentExpireAt string             `json:"paymentExpireAt"`
 }
+
+type OrderListResponseDTO struct {
+	OrderID     uint    `json:"orderID"`
+	TotalPrice  float64 `json:"totalPrice"`
+	Status      string  `json:"status"`
+	ItemCount   int     `json:"itemCount"`
+	CreatedAt   string  `json:"createdAt"`
+}

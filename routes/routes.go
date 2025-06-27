@@ -39,6 +39,6 @@ func SetUpRoutes(app *fiber.App, jwtUtil utils.JwtInterface, userHandler *handle
 	protectedOrderUser := api.Group("/user/order", middleware.AuthMiddleware(jwtUtil), middleware.RequireRole("user"))
 	protectedOrderUser.Post("/", orderHandler.CreateOrder)
 	protectedOrderUser.Patch("/", orderHandler.UpdateStatusOrder)
-	
+	protectedOrderUser.Get("/",orderHandler.GetAllOrderByUserId)
 
 }

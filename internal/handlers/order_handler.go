@@ -148,3 +148,34 @@ func (h *OrderHandler) GetOrderByID(c *fiber.Ctx) error {
 	})
 }
 
+func (h*OrderHandler) GetAllOrderByUserId(c *fiber.Ctx) error {
+
+	// NOTE - เอา UserIDจาก local
+	// NOTE - ดึง userID จาก Locals แล้วแปลง string -> uint
+	userIDStr, ok := c.Locals("userID").(string)
+
+	if !ok {
+		return JSONError(c, fiber.StatusUnauthorized, "Unauthorized")
+	}
+
+	userIDUint, err := strconv.ParseUint(userIDStr, 10, 64)
+	if err != nil {
+		return JSONError(c, fiber.StatusInternalServerError, "Invalid user ID format")
+	}
+
+	orderAll, err :=h.OrderService.GetAllOrderByUserId(uint(userIDUint))
+
+	var orderList []dto.OrderListResponseDTO
+
+	for _, order := range orderAll {
+	orderList = append(orderList, dto.OrderListResponseDTO{
+		OrderID:    order.ID,
+		TotalPrice: order.TotalPrice,
+		Status:     string(order.Status),
+		ItemCount:  len(order.OrderItem),
+		CreatedAt:  order.CreatedAt.Format("2006-01-02 15:04:05"),
+	})
+	}
+
+	return JSONSuccess(c, fiber.StatusOK, "Get All Orders Success", orderList)
+}
