@@ -2,7 +2,6 @@ package services
 
 import (
 	"errors"
-	"fmt"
 	"strconv"
 
 	"github.com/Beluga-Whale/ecommerce-api/internal/models"
@@ -80,7 +79,6 @@ func (s *UserService) Login(user *models.User) (string,uint,error) {
 	}
 
 	userIDStr := strconv.FormatUint(uint64(dbUser.ID), 10)
-	fmt.Print(userIDStr)
 	token, err  := s.jwtUtil.GenerateJWT(dbUser.Email, string(dbUser.Role), userIDStr)
 
 	if err != nil {

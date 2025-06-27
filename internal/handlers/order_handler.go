@@ -14,6 +14,7 @@ type OrderHandlerInterface interface{
 	CreateOrder(c *fiber.Ctx) error
 	UpdateStatusOrder(c *fiber.Ctx) error
 	GetOrderByID(c *fiber.Ctx) error 
+	UpdateOrderStatusByUser(c *fiber.Ctx) error
 }
 
 type OrderHandler struct {
@@ -86,8 +87,6 @@ func (h *OrderHandler) UpdateStatusOrder(c *fiber.Ctx) error {
 	authHeader := c.Get("Authorization")
 	expectedToken := "Bearer " + os.Getenv("STRIPE_WEBHOOK_SECRET")
 
-	fmt.Println("Auth Header:", authHeader)
-
 	if authHeader != expectedToken {
 		return JSONError(c, fiber.StatusUnauthorized, "Unauthorized - missing token")	}
 	var req dto.UpdateStatusOrderDTO
@@ -144,6 +143,7 @@ func (h *OrderHandler) GetOrderByID(c *fiber.Ctx) error {
 		Zipcode:    order.Zipcode,
 		Coupon:     order.Coupon,
 		OrderItem:  orderItems,
+		TotalPrice: order.TotalPrice,
 		CreatedAt:  order.CreatedAt.Format("2006-01-02 15:04:05"),
 		PaymentExpireAt: order.PaymentExpireAt.Format("2006-01-02 15:04:05"),
 	})
@@ -179,4 +179,36 @@ func (h*OrderHandler) GetAllOrderByUserId(c *fiber.Ctx) error {
 	}
 
 	return JSONSuccess(c, fiber.StatusOK, "Get All Orders Success", orderList)
+}
+
+func (h *OrderHandler) UpdateOrderStatusByUser(c *fiber.Ctx) error {
+
+	orderID, err := c.ParamsInt("id")
+	if err != nil {
+		return JSONError(c, fiber.StatusBadRequest, "Invalid product ID")
+	}
+
+	var req dto.UpdateStatusByUserOrderDTO
+
+	if err := c.BodyParser(&req); err != nil {
+		return JSONError(c, fiber.StatusBadRequest, "Invalid request body")
+	}
+
+	userIDStr, ok := c.Locals("userID").(string)
+	if !ok {
+		return JSONError(c, fiber.StatusUnauthorized, "Unauthorized")
+	}
+	userIDUint, err := strconv.ParseUint(userIDStr, 10, 64)
+	if err != nil {
+		return JSONError(c, fiber.StatusBadRequest, "Invalid user ID")
+	}
+
+	orderIDUint := uint(orderID)
+	err = h.OrderService.UpdateStatusByUser(uint(userIDUint), &orderIDUint, req.Status)
+	
+	if err != nil {
+    	return JSONError(c, fiber.StatusInternalServerError, fmt.Sprintf("Update status failed: %v", err))
+	}
+
+	return JSONSuccess(c, fiber.StatusOK, "Update status success", nil)
 }

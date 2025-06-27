@@ -62,6 +62,7 @@ type OrderByIDResponseDTO struct {
 	Zipcode    string 				   `json:"zipcode"`
 	Coupon     models.Coupon           `json:"coupon"`
 	OrderItem  []OrderItemResponseDTO  `json:"orderItem"`
+	TotalPrice  float64 `json:"totalPrice"`
 	PaymentExpireAt string             `json:"paymentExpireAt"`
 	CreatedAt string `json:"createdAt"`
 }
@@ -72,4 +73,8 @@ type OrderListResponseDTO struct {
 	Status      string  `json:"status"`
 	ItemCount   int     `json:"itemCount"`
 	CreatedAt   string  `json:"createdAt"`
+}
+
+type UpdateStatusByUserOrderDTO struct {
+	Status  models.Status  `json:"status"`
 }

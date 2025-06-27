@@ -13,6 +13,7 @@ type OrderRepositoryInterface interface {
 	UpdateStatusOrder(orderId *uint, status models.Status) error
 	FindOrderById(orderID uint) (*models.Order, error)
 	FindAllOrderByUserId(userIDUint uint) ([]models.Order,error)
+	UpdateStatusOrderByUserId(orderID uint,status models.Status) error
 }
 
 type OrderRepository struct {
@@ -82,5 +83,14 @@ func (r *OrderRepository) FindAllOrderByUserId(userIDUint uint) ([]models.Order,
 	}
 
 	return orderAll,nil
+}
+
+func (r *OrderRepository) UpdateStatusOrderByUserId(orderID uint,status models.Status) error{
+	err := r.db.Model(&models.Order{}).Where("id = ?",orderID).Update("status",status).Error
+
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
