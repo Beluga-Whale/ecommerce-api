@@ -144,6 +144,7 @@ func (h *OrderHandler) GetOrderByID(c *fiber.Ctx) error {
 		Zipcode:    order.Zipcode,
 		Coupon:     order.Coupon,
 		OrderItem:  orderItems,
+		CreatedAt:  order.CreatedAt.Format("2006-01-02 15:04:05"),
 		PaymentExpireAt: order.PaymentExpireAt.Format("2006-01-02 15:04:05"),
 	})
 }

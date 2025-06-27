@@ -63,6 +63,7 @@ type OrderByIDResponseDTO struct {
 	Coupon     models.Coupon           `json:"coupon"`
 	OrderItem  []OrderItemResponseDTO  `json:"orderItem"`
 	PaymentExpireAt string             `json:"paymentExpireAt"`
+	CreatedAt string `json:"createdAt"`
 }
 
 type OrderListResponseDTO struct {
