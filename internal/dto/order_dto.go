@@ -78,3 +78,12 @@ type OrderListResponseDTO struct {
 type UpdateStatusByUserOrderDTO struct {
 	Status  models.Status  `json:"status"`
 }
+
+type OrderListDataTableDTOResponse struct {
+	OrderID     uint    `json:"orderID"`
+	CreatedAt  string  `json:"createdAt"`
+	UserName   string  `json:"userName"`
+	Status     models.Status `json:"status"`
+	TotalPrice  float64 `json:"totalPrice"`
+	OrderItem  []OrderItemResponseDTO  `json:"orderItem"`
+}

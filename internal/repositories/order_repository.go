@@ -14,6 +14,7 @@ type OrderRepositoryInterface interface {
 	FindOrderById(orderID uint) (*models.Order, error)
 	FindAllOrderByUserId(userIDUint uint) ([]models.Order,error)
 	UpdateStatusOrderByUserId(orderID uint,status models.Status) error
+	FindAll() ([]models.Order,error)
 }
 
 type OrderRepository struct {
@@ -94,3 +95,10 @@ func (r *OrderRepository) UpdateStatusOrderByUserId(orderID uint,status models.S
 	return nil
 }
 
+func (r *OrderRepository) FindAll() ([]models.Order,error){
+	var orders []models.Order
+	
+	err := r.db.Preload("Coupon").Preload("OrderItem.ProductVariant.Product").Find(&orders).Error
+
+	return orders,err
+}

@@ -15,6 +15,8 @@ type OrderHandlerInterface interface{
 	UpdateStatusOrder(c *fiber.Ctx) error
 	GetOrderByID(c *fiber.Ctx) error 
 	UpdateOrderStatusByUser(c *fiber.Ctx) error
+	GetAllOrders(c *fiber.Ctx) error
+
 }
 
 type OrderHandler struct {
@@ -211,4 +213,39 @@ func (h *OrderHandler) UpdateOrderStatusByUser(c *fiber.Ctx) error {
 	}
 
 	return JSONSuccess(c, fiber.StatusOK, "Update status success", nil)
+}
+
+func (h *OrderHandler)	GetAllOrders(c *fiber.Ctx) error {
+	orders, err := h.OrderService.GetAllOrdersAdmin()
+
+	if err != nil {
+		return JSONError(c, fiber.StatusInternalServerError,"Get Order Error")	
+	}
+
+	var orderResponse []dto.OrderListDataTableDTOResponse
+
+	for _, item := range orders {
+		var orderItemResponse []dto.OrderItemResponseDTO
+
+		for _, v := range item.OrderItem {
+			orderItemResponse = append(orderItemResponse, dto.OrderItemResponseDTO{
+				VariantID:       v.ProductVariantID,
+				ProductName:     v.ProductVariant.Product.Name,
+				Size:            v.ProductVariant.Size,
+				Quantity:        v.Quantity,
+				PriceAtPurchase: v.PriceAtPurchase,
+			})
+		}
+
+		orderResponse = append(orderResponse, dto.OrderListDataTableDTOResponse{
+			OrderID:    item.ID,
+			CreatedAt:  item.CreatedAt.Format("2006-01-02 15:04:05"),
+			UserName:   item.FullName,
+			Status:     item.Status,
+			TotalPrice: item.TotalPrice,
+			OrderItem:  orderItemResponse,
+		})
+	}
+
+	return JSONSuccess(c,fiber.StatusOK,"Get All Order Success",orderResponse)
 }

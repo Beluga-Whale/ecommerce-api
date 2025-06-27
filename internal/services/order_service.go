@@ -19,6 +19,8 @@ type OrderServiceInterface interface {
 	GetOrderByID(orderID uint, userIDUint uint) (*models.Order, error)
 	GetAllOrderByUserId(userIDUint uint) ([]models.Order,error)
 	UpdateStatusByUser(userIDUint uint,orderID *uint, status models.Status) error
+	GetAllOrdersAdmin() ([]models.Order,error)
+
 }
 
 type OrderService struct {
@@ -241,4 +243,14 @@ func (s *OrderService) UpdateStatusByUser(userIDUint uint,orderID *uint, status 
 
 	return nil
 	
+}
+
+func (s *OrderService) GetAllOrdersAdmin() ([]models.Order,error) {
+	orders,err := s.orderRepo.FindAll()
+
+	if err != nil {
+		return nil,err
+	}
+
+	return orders,nil
 }
