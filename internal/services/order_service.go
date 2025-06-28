@@ -22,6 +22,7 @@ type OrderServiceInterface interface {
 	GetAllOrdersAdmin() ([]models.Order,error)
 	UpdateStatusByAdmin(orderID *uint, status models.Status) error
 	GetDashboardSummary() (*dto.DashboardSummaryDTO, error)
+	GetProductTop() ([]dto.TopProductDTO,error)
 }
 
 type OrderService struct {
@@ -378,4 +379,13 @@ func (s *OrderService) GetDashboardSummary() (*dto.DashboardSummaryDTO, error) {
 	}
 	
 	return summary, nil
+}
+
+func (s *OrderService) GetProductTop() ([]dto.TopProductDTO,error) {
+	topProduct,err := s.orderRepo.GetTop5ProductsBySales()
+	if err != nil {
+		return nil,errors.New("Error to query top product")
+	}
+
+	return topProduct,nil
 }

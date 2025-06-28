@@ -18,6 +18,7 @@ type OrderHandlerInterface interface{
 	GetAllOrders(c *fiber.Ctx) error
 	UpdateOrderStatusByAdmin(c *fiber.Ctx) error
 	GetSummary(c *fiber.Ctx) error
+	GetTopProduct( c *fiber.Ctx) error
 }
 
 type OrderHandler struct {
@@ -152,7 +153,7 @@ func (h *OrderHandler) GetOrderByID(c *fiber.Ctx) error {
 	})
 }
 
-func (h*OrderHandler) GetAllOrderByUserId(c *fiber.Ctx) error {
+func (h *OrderHandler) GetAllOrderByUserId(c *fiber.Ctx) error {
 
 	// NOTE - เอา UserIDจาก local
 	// NOTE - ดึง userID จาก Locals แล้วแปลง string -> uint
@@ -297,4 +298,23 @@ func (h *OrderHandler) GetSummary(c *fiber.Ctx) error {
 		StatusShipped: summary.StatusShipped,
 		StatusCancel: summary.StatusCancel,
 	})
+}
+
+func (h *OrderHandler) GetTopProduct( c *fiber.Ctx) error {
+	productsTop, err := h.OrderService.GetProductTop()
+	if err != nil {
+		return JSONError(c, fiber.StatusInternalServerError, "Error to get top product")
+	}
+
+	var productTopList []dto.TopProductDTO
+
+	for _,item := range productsTop {
+		productTopList = append(productTopList, dto.TopProductDTO{
+			ProductID: item.ProductID,
+			Name: item.Name,
+			TotalSold: item.TotalSold,
+		})
+	}
+
+	return JSONSuccess(c, fiber.StatusOK, "Get summary success", productTopList)
 }

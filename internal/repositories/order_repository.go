@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"github.com/Beluga-Whale/ecommerce-api/internal/dto"
 	"github.com/Beluga-Whale/ecommerce-api/internal/models"
 	"gorm.io/gorm"
 )
@@ -15,6 +16,7 @@ type OrderRepositoryInterface interface {
 	FindAllOrderByUserId(userIDUint uint) ([]models.Order,error)
 	UpdateStatusOrderByUserId(orderID uint,status models.Status) error
 	FindAll() ([]models.Order,error)
+	GetTop5ProductsBySales() ([]dto.TopProductDTO, error)
 }
 
 type OrderRepository struct {
@@ -101,4 +103,25 @@ func (r *OrderRepository) FindAll() ([]models.Order,error){
 	err := r.db.Preload("Coupon").Preload("OrderItem.ProductVariant.Product").Order("id DESC").Find(&orders).Error
 
 	return orders,err
+}
+
+func (r *OrderRepository) GetTop5ProductsBySales() ([]dto.TopProductDTO, error) {
+	var topProduct []dto.TopProductDTO
+
+	err := r.db.
+		Table("orders").
+		Select("products.id as product_id, products.name, SUM(order_items.quantity) as total_sold").
+		Joins("JOIN order_items on orders.id = order_items.order_id").
+		Joins("JOIN product_variants ON product_variants.id = order_items.product_variant_id").
+		Joins("JOIN products ON products.id = product_variants.product_id").
+		Group("products.id, products.name").
+		Order("total_sold DESC").
+		Limit(5).
+		Scan(&topProduct).Error
+
+	if err != nil {
+		return nil, err
+	}
+	return topProduct, nil
+
 }

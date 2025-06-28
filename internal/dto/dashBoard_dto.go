@@ -16,3 +16,9 @@ type DashboardSummaryDTO struct {
 	StatusShipped         int     `json:"statusShipped"`
 	StatusCancel          int     `json:"statusCancel"`
 }
+
+type TopProductDTO struct {
+	ProductID uint   `json:"productId"`
+	Name      string `json:"name"`
+	TotalSold uint   `json:"totalSold"`
+}
