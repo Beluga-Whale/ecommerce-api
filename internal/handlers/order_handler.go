@@ -19,6 +19,7 @@ type OrderHandlerInterface interface{
 	UpdateOrderStatusByAdmin(c *fiber.Ctx) error
 	GetSummary(c *fiber.Ctx) error
 	GetTopProduct( c *fiber.Ctx) error
+	GetSalesChart(c *fiber.Ctx) error
 }
 
 type OrderHandler struct {
@@ -317,4 +318,22 @@ func (h *OrderHandler) GetTopProduct( c *fiber.Ctx) error {
 	}
 
 	return JSONSuccess(c, fiber.StatusOK, "Get summary success", productTopList)
+}
+
+func (h *OrderHandler) GetSalesChart(c *fiber.Ctx) error {
+	result, err := h.OrderService.GetSalesChartData()
+	if err != nil {
+		return JSONError(c, fiber.StatusInternalServerError,"failed to get sales data")	
+	}
+
+	var saleList []dto.SalesPerMonthDTO
+
+	for _,s := range result{
+		saleList = append(saleList, dto.SalesPerMonthDTO{
+			Date: s.Date,
+			TotalSale: s.TotalSale,
+		})
+	}
+
+	return JSONSuccess(c,fiber.StatusOK,"Get All Order Success",saleList)
 }

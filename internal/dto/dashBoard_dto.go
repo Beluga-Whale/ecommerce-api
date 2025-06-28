@@ -1,5 +1,7 @@
 package dto
 
+import "time"
+
 type DashboardSummaryDTO struct {
 	OrderTotal            int     `json:"orderTotal"`
 	OrdersThisMonth       int     `json:"ordersThisMonth"`
@@ -21,4 +23,9 @@ type TopProductDTO struct {
 	ProductID uint   `json:"productId"`
 	Name      string `json:"name"`
 	TotalSold uint   `json:"totalSold"`
+}
+
+type SalesPerMonthDTO struct {
+	Date      time.Time `json:"date"`
+	TotalSale float64   `json:"totalSale"`
 }

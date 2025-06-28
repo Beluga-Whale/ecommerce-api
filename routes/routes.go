@@ -52,4 +52,5 @@ func SetUpRoutes(app *fiber.App, jwtUtil utils.JwtInterface, userHandler *handle
 	protectedDashboardAdmin := api.Group("/admin/dashboard", middleware.AuthMiddleware(jwtUtil), middleware.RequireRole("admin"))
 	protectedDashboardAdmin.Get("/",orderHandler.GetSummary)	
 	protectedDashboardAdmin.Get("/topproduct",orderHandler.GetTopProduct)	
+	protectedDashboardAdmin.Get("/slatePerday",orderHandler.GetSalesChart)
 }

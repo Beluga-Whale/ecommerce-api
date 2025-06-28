@@ -23,6 +23,7 @@ type OrderServiceInterface interface {
 	UpdateStatusByAdmin(orderID *uint, status models.Status) error
 	GetDashboardSummary() (*dto.DashboardSummaryDTO, error)
 	GetProductTop() ([]dto.TopProductDTO,error)
+	 GetSalesChartData() ([]dto.SalesPerMonthDTO, error)
 }
 
 type OrderService struct {
@@ -388,4 +389,14 @@ func (s *OrderService) GetProductTop() ([]dto.TopProductDTO,error) {
 	}
 
 	return topProduct,nil
+}
+
+
+func (s *OrderService) GetSalesChartData() ([]dto.SalesPerMonthDTO, error) {
+	result , err := s.orderRepo.GetSalesPerDay()
+
+	if err != nil {
+		return nil,errors.New("Error to query salePreDay")
+	}
+	return result,nil
 }

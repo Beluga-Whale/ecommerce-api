@@ -17,6 +17,7 @@ type OrderRepositoryInterface interface {
 	UpdateStatusOrderByUserId(orderID uint,status models.Status) error
 	FindAll() ([]models.Order,error)
 	GetTop5ProductsBySales() ([]dto.TopProductDTO, error)
+	GetSalesPerDay() ([]dto.SalesPerMonthDTO, error) 
 }
 
 type OrderRepository struct {
@@ -124,4 +125,22 @@ func (r *OrderRepository) GetTop5ProductsBySales() ([]dto.TopProductDTO, error) 
 	}
 	return topProduct, nil
 
+}
+
+func (r *OrderRepository) 	GetSalesPerDay() ([]dto.SalesPerMonthDTO, error) {
+	var result []dto.SalesPerMonthDTO
+
+	err := r.db.
+		Model(&models.Order{}).
+		Select("DATE_TRUNC('day', created_at) as date, SUM(total_price) as total_sale").
+		Where("status = ?", "paid").
+		Group("date").
+		Order("date ASC").
+		Scan(&result).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	return result, nil
 }
