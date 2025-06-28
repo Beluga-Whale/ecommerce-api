@@ -294,6 +294,7 @@ func (s *OrderService) GetDashboardSummary() (*dto.DashboardSummaryDTO, error) {
 	startOfLastMonth := startOfThisMonth.AddDate(0, -1, 0)
 	endOfLastMonth := startOfThisMonth.Add(-time.Nanosecond)
 
+	var orderTotal int64
 	var ordersThisMonth int64
 	var ordersLastMonth int64
 	var revenueThisMonth float64
@@ -302,6 +303,9 @@ func (s *OrderService) GetDashboardSummary() (*dto.DashboardSummaryDTO, error) {
 	var customersLastMonth int64
 
 	//NOTE - Orders
+
+	s.db.Model(&models.Order{}).Count(&orderTotal)
+
 	s.db.Model(&models.Order{}).
 		Where("created_at >= ?", startOfThisMonth).
 		Count(&ordersThisMonth)
@@ -335,15 +339,16 @@ func (s *OrderService) GetDashboardSummary() (*dto.DashboardSummaryDTO, error) {
 	customerGrowth := percentDiff(float64(customersThisMonth), float64(customersLastMonth))
 
 	summary := &dto.DashboardSummaryDTO{
-	OrdersThisMonth:       int(ordersThisMonth),
-	OrdersLastMonth:       int(ordersLastMonth),
-	OrderGrowthPercent:    orderGrowth,
-	RevenueThisMonth:      revenueThisMonth,
-	RevenueLastMonth:      revenueLastMonth,
-	RevenueGrowthPercent:  revenueGrowth,
-	CustomersThisMonth:    int(customersThisMonth),
-	CustomersLastMonth:    int(customersLastMonth),
-	CustomerGrowthPercent: customerGrowth,
-}
+		OrderTotal: 		   int(orderTotal),
+		OrdersThisMonth:       int(ordersThisMonth),
+		OrdersLastMonth:       int(ordersLastMonth),
+		OrderGrowthPercent:    orderGrowth,
+		RevenueThisMonth:      revenueThisMonth,
+		RevenueLastMonth:      revenueLastMonth,
+		RevenueGrowthPercent:  revenueGrowth,
+		CustomersThisMonth:    int(customersThisMonth),
+		CustomersLastMonth:    int(customersLastMonth),
+		CustomerGrowthPercent: customerGrowth,
+	}
 	return summary, nil
 }

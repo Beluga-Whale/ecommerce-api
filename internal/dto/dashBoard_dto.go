@@ -1,6 +1,7 @@
 package dto
 
 type DashboardSummaryDTO struct {
+	OrderTotal            int     `json:"orderTotal"`
 	OrdersThisMonth       int     `json:"ordersThisMonth"`
 	OrdersLastMonth       int     `json:"ordersLastMonth"`
 	OrderGrowthPercent    float64 `json:"orderGrowthPercent"`

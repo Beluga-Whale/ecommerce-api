@@ -282,6 +282,7 @@ func (h *OrderHandler) GetSummary(c *fiber.Ctx) error {
 	}
 
 	return JSONSuccess(c, fiber.StatusOK, "Get summary success", dto.DashboardSummaryDTO{
+		OrderTotal: summary.OrderTotal,
 		OrdersThisMonth:summary.OrdersThisMonth,
 		OrdersLastMonth:summary.OrdersLastMonth,
 		OrderGrowthPercent:summary.OrderGrowthPercent,
