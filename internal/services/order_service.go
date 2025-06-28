@@ -21,6 +21,7 @@ type OrderServiceInterface interface {
 	UpdateStatusByUser(userIDUint uint,orderID *uint, status models.Status) error
 	GetAllOrdersAdmin() ([]models.Order,error)
 	UpdateStatusByAdmin(orderID *uint, status models.Status) error
+	GetDashboardSummary() (*dto.DashboardSummaryDTO, error)
 }
 
 type OrderService struct {
@@ -275,4 +276,74 @@ func (s *OrderService) UpdateStatusByAdmin(orderID *uint, status models.Status) 
 	}
 
 	return nil
+}
+
+func percentDiff(current, previous float64) float64 {
+	if previous == 0 {
+		if current > 0 {
+			return 100
+		}
+		return 0
+	}
+	return ((current - previous) / previous) * 100
+}
+
+func (s *OrderService) GetDashboardSummary() (*dto.DashboardSummaryDTO, error) {
+	now := time.Now()
+	startOfThisMonth := time.Date(now.Year(), now.Month(), 1, 0, 0, 0, 0, now.Location())
+	startOfLastMonth := startOfThisMonth.AddDate(0, -1, 0)
+	endOfLastMonth := startOfThisMonth.Add(-time.Nanosecond)
+
+	var ordersThisMonth int64
+	var ordersLastMonth int64
+	var revenueThisMonth float64
+	var revenueLastMonth float64
+	var customersThisMonth int64
+	var customersLastMonth int64
+
+	//NOTE - Orders
+	s.db.Model(&models.Order{}).
+		Where("created_at >= ?", startOfThisMonth).
+		Count(&ordersThisMonth)
+
+	s.db.Model(&models.Order{}).
+		Where("created_at >= ? AND created_at <= ?", startOfLastMonth, endOfLastMonth).
+		Count(&ordersLastMonth)
+
+	//NOTE - Revenue
+	s.db.Model(&models.Order{}).
+		Where("created_at >= ?", startOfThisMonth).
+		Select("SUM(total_price)").Scan(&revenueThisMonth)
+
+	s.db.Model(&models.Order{}).
+		Where("created_at >= ? AND created_at <= ?", startOfLastMonth, endOfLastMonth).
+		Select("SUM(total_price)").Scan(&revenueLastMonth)
+
+	//NOTE - Customers
+	s.db.Model(&models.Order{}).
+		Where("created_at >= ?", startOfThisMonth).
+		Distinct("user_id").Count(&customersThisMonth)
+
+	s.db.Model(&models.Order{}).
+		Where("created_at >= ? AND created_at <= ?", startOfLastMonth, endOfLastMonth).
+		Distinct("user_id").Count(&customersLastMonth)
+
+
+	//NOTE - Growth percent
+	orderGrowth := percentDiff(float64(ordersThisMonth), float64(ordersLastMonth))
+	revenueGrowth := percentDiff(revenueThisMonth, revenueLastMonth)
+	customerGrowth := percentDiff(float64(customersThisMonth), float64(customersLastMonth))
+
+	summary := &dto.DashboardSummaryDTO{
+	OrdersThisMonth:       int(ordersThisMonth),
+	OrdersLastMonth:       int(ordersLastMonth),
+	OrderGrowthPercent:    orderGrowth,
+	RevenueThisMonth:      revenueThisMonth,
+	RevenueLastMonth:      revenueLastMonth,
+	RevenueGrowthPercent:  revenueGrowth,
+	CustomersThisMonth:    int(customersThisMonth),
+	CustomersLastMonth:    int(customersLastMonth),
+	CustomerGrowthPercent: customerGrowth,
+}
+	return summary, nil
 }

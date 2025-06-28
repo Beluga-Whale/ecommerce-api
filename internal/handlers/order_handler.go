@@ -17,6 +17,7 @@ type OrderHandlerInterface interface{
 	UpdateOrderStatusByUser(c *fiber.Ctx) error
 	GetAllOrders(c *fiber.Ctx) error
 	UpdateOrderStatusByAdmin(c *fiber.Ctx) error
+	GetSummary(c *fiber.Ctx) error
 }
 
 type OrderHandler struct {
@@ -270,4 +271,25 @@ func (h *OrderHandler) UpdateOrderStatusByAdmin(c *fiber.Ctx) error{
 
 	return JSONSuccess(c, fiber.StatusOK, "Update status success", nil)
 
+}
+
+func (h *OrderHandler) GetSummary(c *fiber.Ctx) error {
+	summary, err := h.OrderService.GetDashboardSummary()
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "Failed to fetch summary",
+		})
+	}
+
+	return JSONSuccess(c, fiber.StatusOK, "Get summary success", dto.DashboardSummaryDTO{
+		OrdersThisMonth:summary.OrdersThisMonth,
+		OrdersLastMonth:summary.OrdersLastMonth,
+		OrderGrowthPercent:summary.OrderGrowthPercent,
+		RevenueThisMonth:summary.RevenueThisMonth,
+		RevenueLastMonth:summary.RevenueLastMonth,
+		RevenueGrowthPercent:summary.RevenueGrowthPercent,
+		CustomersThisMonth:summary.CustomersThisMonth,
+		CustomersLastMonth:summary.CustomersLastMonth,
+		CustomerGrowthPercent:summary.CustomerGrowthPercent,
+	})
 }
