@@ -301,6 +301,28 @@ func (s *OrderService) GetDashboardSummary() (*dto.DashboardSummaryDTO, error) {
 	var revenueLastMonth float64
 	var customersThisMonth int64
 	var customersLastMonth int64
+	var statusPending int64
+	var statusPaid int64
+	var statusShipped int64
+	var statusCancel int64
+
+
+	// NOTE - Status
+	s.db.Model(&models.Order{}).
+		Where("status = ?","pending").
+		Count(&statusPending)
+
+	s.db.Model(&models.Order{}).
+		Where("status = ?","paid").
+		Count(&statusPaid)
+
+	s.db.Model(&models.Order{}).
+		Where("status = ?","shipped").
+		Count(&statusShipped)
+
+	s.db.Model(&models.Order{}).
+		Where("status = ?","cancel").
+		Count(&statusCancel)
 
 	//NOTE - Orders
 
@@ -349,6 +371,11 @@ func (s *OrderService) GetDashboardSummary() (*dto.DashboardSummaryDTO, error) {
 		CustomersThisMonth:    int(customersThisMonth),
 		CustomersLastMonth:    int(customersLastMonth),
 		CustomerGrowthPercent: customerGrowth,
+		StatusPending: 		   int(statusPending),
+		StatusPaid:            int(statusPaid),
+		StatusShipped:         int(statusShipped),
+		StatusCancel:          int(statusCancel),
 	}
+	
 	return summary, nil
 }

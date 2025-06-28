@@ -11,4 +11,8 @@ type DashboardSummaryDTO struct {
 	CustomersThisMonth    int     `json:"customersThisMonth"`
 	CustomersLastMonth    int     `json:"customersLastMonth"`
 	CustomerGrowthPercent float64 `json:"customerGrowthPercent"`
+	StatusPending         int     `json:"statusPending"`
+	StatusPaid            int     `json:"statusPaid"`
+	StatusShipped         int     `json:"statusShipped"`
+	StatusCancel          int     `json:"statusCancel"`
 }

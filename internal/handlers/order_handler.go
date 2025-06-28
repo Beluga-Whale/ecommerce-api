@@ -292,5 +292,9 @@ func (h *OrderHandler) GetSummary(c *fiber.Ctx) error {
 		CustomersThisMonth:summary.CustomersThisMonth,
 		CustomersLastMonth:summary.CustomersLastMonth,
 		CustomerGrowthPercent:summary.CustomerGrowthPercent,
+		StatusPending: summary.StatusPending,
+		StatusPaid: summary.StatusPaid,
+		StatusShipped: summary.StatusShipped,
+		StatusCancel: summary.StatusCancel,
 	})
 }
