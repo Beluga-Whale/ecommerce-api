@@ -29,3 +29,15 @@ type SalesPerMonthDTO struct {
 	Date      time.Time `json:"date"`
 	TotalSale float64   `json:"totalSale"`
 }
+
+type CustomerDTO struct {
+	ID            uint      `json:"id"`
+	Name          string    `json:"name"`
+	Email         string    `json:"email"`
+	Phone         string    `json:"phone"`
+	FirstName     string    `json:"firstName"`
+	LastName      string    `json:"lastName"`
+	Orders        int       `json:"orders"`
+	TotalSpent    float64   `json:"totalSpent"`
+	LastOrderDate time.Time `json:"lastOrderDate"`
+}

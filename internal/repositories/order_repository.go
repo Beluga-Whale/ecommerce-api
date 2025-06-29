@@ -19,6 +19,7 @@ type OrderRepositoryInterface interface {
 	GetTop5ProductsBySales() ([]dto.TopProductDTO, error)
 	GetSalesPerDay() ([]dto.SalesPerMonthDTO, error) 
 	Delete(id uint) error
+	GetUserDetail() ([]dto.CustomerDTO,error)
 }
 
 type OrderRepository struct {
@@ -158,4 +159,22 @@ func (r *OrderRepository) Delete(id uint) error {
 	}
 
 	return tx.Commit().Error
+}
+
+func (r *OrderRepository) GetUserDetail() ([]dto.CustomerDTO,error) {
+	var result []dto.CustomerDTO
+
+	err := r.db.
+		Table("orders").
+		Select("users.id, users.name, users.email,users.phone,users.first_name,users.last_name,COUNT(orders.id) as orders, SUM(orders.total_price) as total_spent, max(orders.created_at) as last_order_date").
+		Joins("JOIN users on users.id = orders.user_id").
+		Group("users.id, users.name").
+		Order("orders DESC").
+		Scan(&result).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	return result, nil
 }

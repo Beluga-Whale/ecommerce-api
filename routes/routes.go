@@ -54,4 +54,5 @@ func SetUpRoutes(app *fiber.App, jwtUtil utils.JwtInterface, userHandler *handle
 	protectedDashboardAdmin.Get("/",orderHandler.GetSummary)	
 	protectedDashboardAdmin.Get("/topproduct",orderHandler.GetTopProduct)	
 	protectedDashboardAdmin.Get("/slatePerday",orderHandler.GetSalesChart)
+	protectedDashboardAdmin.Get("/customer",orderHandler.GetCustomer)
 }

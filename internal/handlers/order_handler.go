@@ -21,6 +21,7 @@ type OrderHandlerInterface interface{
 	GetTopProduct( c *fiber.Ctx) error
 	GetSalesChart(c *fiber.Ctx) error
 	DeleteOrder(c *fiber.Ctx) error
+	GetCustomer(c *fiber.Ctx) error
 }
 
 type OrderHandler struct {
@@ -352,4 +353,14 @@ func (h *OrderHandler) DeleteOrder(c *fiber.Ctx) error{
 
 
 	return JSONSuccess(c, fiber.StatusOK, "Order deleted successfully", nil)
+}
+
+func (h *OrderHandler) GetCustomer(c *fiber.Ctx) error {
+	customers,err := h.OrderService.GetCustomerDetail()
+
+	if err != nil {
+		return JSONError(c, fiber.StatusInternalServerError, "Error to get customer")
+	}
+
+	return JSONSuccess(c,fiber.StatusCreated, "Product created successfully",customers)
 }

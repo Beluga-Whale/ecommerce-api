@@ -25,6 +25,7 @@ type OrderServiceInterface interface {
 	GetProductTop() ([]dto.TopProductDTO,error)
 	GetSalesChartData() ([]dto.SalesPerMonthDTO, error)
 	DeleteOrder(id uint) error
+	GetCustomerDetail() ([]dto.CustomerDTO,error)
 }
 
 type OrderService struct {
@@ -419,4 +420,14 @@ func ( s *OrderService) DeleteOrder(id uint) error {
 	}
 	return nil
 
+}
+
+func (s *OrderService) GetCustomerDetail() ([]dto.CustomerDTO,error){
+	customers,err := s.orderRepo.GetUserDetail()
+
+	if err != nil {
+		return nil,errors.New("Error to query customer detail")
+	}
+
+	return customers,nil
 }
