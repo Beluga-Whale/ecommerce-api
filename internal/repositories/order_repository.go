@@ -169,7 +169,7 @@ func (r *OrderRepository) GetUserDetail() ([]dto.CustomerDTO,error) {
 		Select("users.id, users.name, users.email,users.phone,users.first_name,users.last_name,COUNT(orders.id) as orders, SUM(orders.total_price) as total_spent, max(orders.created_at) as last_order_date").
 		Joins("JOIN users on users.id = orders.user_id").
 		Group("users.id, users.name").
-		Order("orders DESC").
+		Order("users.id asc").
 		Scan(&result).Error
 
 	if err != nil {
