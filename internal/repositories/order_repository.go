@@ -18,6 +18,7 @@ type OrderRepositoryInterface interface {
 	FindAll() ([]models.Order,error)
 	GetTop5ProductsBySales() ([]dto.TopProductDTO, error)
 	GetSalesPerDay() ([]dto.SalesPerMonthDTO, error) 
+	Delete(id uint) error
 }
 
 type OrderRepository struct {
@@ -143,4 +144,18 @@ func (r *OrderRepository) 	GetSalesPerDay() ([]dto.SalesPerMonthDTO, error) {
 	}
 
 	return result, nil
+}
+
+func (r *OrderRepository) Delete(id uint) error {
+	tx := r.db.Begin()
+	if tx.Error != nil {
+		return tx.Error
+	}
+
+	if err := tx.Delete(&models.Order{}, id).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	return tx.Commit().Error
 }

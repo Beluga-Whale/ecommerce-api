@@ -47,6 +47,7 @@ func SetUpRoutes(app *fiber.App, jwtUtil utils.JwtInterface, userHandler *handle
 	protectedOrderAdmin := api.Group("/admin/order", middleware.AuthMiddleware(jwtUtil), middleware.RequireRole("admin"))
 	protectedOrderAdmin.Get("/",orderHandler.GetAllOrders)
 	protectedOrderAdmin.Patch("/:id/status",orderHandler.UpdateOrderStatusByAdmin)
+	protectedOrderAdmin.Delete("/:id",orderHandler.DeleteOrder)
 
 	// NOTE - Admin dashBoard
 	protectedDashboardAdmin := api.Group("/admin/dashboard", middleware.AuthMiddleware(jwtUtil), middleware.RequireRole("admin"))

@@ -20,6 +20,7 @@ type OrderHandlerInterface interface{
 	GetSummary(c *fiber.Ctx) error
 	GetTopProduct( c *fiber.Ctx) error
 	GetSalesChart(c *fiber.Ctx) error
+	DeleteOrder(c *fiber.Ctx) error
 }
 
 type OrderHandler struct {
@@ -336,4 +337,19 @@ func (h *OrderHandler) GetSalesChart(c *fiber.Ctx) error {
 	}
 
 	return JSONSuccess(c,fiber.StatusOK,"Get All Order Success",saleList)
+}
+
+func (h *OrderHandler) DeleteOrder(c *fiber.Ctx) error{
+	id, err := c.ParamsInt("id")
+	if err != nil {
+		return JSONError(c, fiber.StatusBadRequest, "Invalid order ID")
+	}
+
+	err = h.OrderService.DeleteOrder(uint(id))
+	if err != nil {
+		return JSONError(c, fiber.StatusInternalServerError, err.Error())
+	}
+
+
+	return JSONSuccess(c, fiber.StatusOK, "Order deleted successfully", nil)
 }

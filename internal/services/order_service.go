@@ -23,7 +23,8 @@ type OrderServiceInterface interface {
 	UpdateStatusByAdmin(orderID *uint, status models.Status) error
 	GetDashboardSummary() (*dto.DashboardSummaryDTO, error)
 	GetProductTop() ([]dto.TopProductDTO,error)
-	 GetSalesChartData() ([]dto.SalesPerMonthDTO, error)
+	GetSalesChartData() ([]dto.SalesPerMonthDTO, error)
+	DeleteOrder(id uint) error
 }
 
 type OrderService struct {
@@ -399,4 +400,23 @@ func (s *OrderService) GetSalesChartData() ([]dto.SalesPerMonthDTO, error) {
 		return nil,errors.New("Error to query salePreDay")
 	}
 	return result,nil
+}
+
+func ( s *OrderService) DeleteOrder(id uint) error {
+	existingOrder , err := s.orderRepo.FindOrderById(uint(id))
+
+	if err != nil {
+		return  errors.New("Error finding product")
+	}
+	if existingOrder == nil {
+		return errors.New("Product not found")
+	}
+
+	err = s.orderRepo.Delete(id)
+
+	if err != nil {
+		return errors.New("Error deleting order")
+	}
+	return nil
+
 }
