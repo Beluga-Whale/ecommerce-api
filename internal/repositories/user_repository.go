@@ -76,7 +76,7 @@ func (r *UserRepository) UpdateProfile(userID uint, req dto.UserUpdateProfileDTO
 		updates["birth_date"] = *req.BirthDate
 	}
 	if req.Avatar != nil {
-		updates["profile_image"] = *req.Avatar
+		updates["avatar"] = *req.Avatar
 	}
 
 	if len(updates) == 0 {
