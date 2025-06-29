@@ -17,7 +17,6 @@ type ProductHandlerInterface interface{
 	DeleteProduct(c *fiber.Ctx) error
 	GetProductByID(c *fiber.Ctx) error
 	GetAllProducts(c *fiber.Ctx) error
-
 }
 
 type ProductHandler struct {

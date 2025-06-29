@@ -59,4 +59,5 @@ func SetUpRoutes(app *fiber.App, jwtUtil utils.JwtInterface, userHandler *handle
 	// NOTE  - Profile User
 	protectedProfileUser := api.Group("/user/profile", middleware.AuthMiddleware(jwtUtil), middleware.RequireRole("user"))
 	protectedProfileUser.Get("/",userHandler.GetProfile)
+	protectedProfileUser.Patch("/",userHandler.UpdateProfile)
 }

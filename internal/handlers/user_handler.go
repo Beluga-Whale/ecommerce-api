@@ -12,6 +12,14 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+type UserHandlerInterface interface{
+	Register(c *fiber.Ctx) error
+	Login(c *fiber.Ctx) error
+	GetProfile(c *fiber.Ctx) error
+	UpdateProfile(c *fiber.Ctx) error
+}
+
+
 type UserHandler struct {
 	userService services.UserServiceInterface
 }
@@ -101,7 +109,7 @@ func (h *UserHandler) Login(c *fiber.Ctx) error {
 }
 
 func (h *UserHandler) GetProfile(c *fiber.Ctx) error {
-		// NOTE - เอา UserIDจาก local
+	// NOTE - เอา UserIDจาก local
 	// NOTE - ดึง userID จาก Locals แล้วแปลง string -> uint
 	userIDStr, ok := c.Locals("userID").(string)
 
@@ -127,8 +135,40 @@ func (h *UserHandler) GetProfile(c *fiber.Ctx) error {
 	})
 }
 
-func (h *UserHandler) AdminDashboard(c *fiber.Ctx) error {
-	return c.JSON(fiber.Map{
-		"message": "Welcome to Admin Dashboard!",
-	})
+func (h *UserHandler) UpdateProfile(c *fiber.Ctx) error {
+	var req dto.UserUpdateProfileDTO
+	if err := c.BodyParser(&req); err != nil {
+		return JSONError(c, fiber.StatusBadRequest, "Invalid request body")
+	}	
+
+	// NOTE - Validate request body
+	if err := Validate.Struct(req); err != nil {
+		// NOTE - บอกว่า field ไหนผิด
+		var messages []string
+		for _, err := range err.(validator.ValidationErrors) {
+			messages = append(messages, err.Field()+" is "+err.Tag())
+		}
+		return JSONError(c, fiber.StatusBadRequest, strings.Join(messages, ", "))
+	}
+
+	// NOTE - เอา UserIDจาก local
+	// NOTE - ดึง userID จาก Locals แล้วแปลง string -> uint
+	userIDStr, ok := c.Locals("userID").(string)
+
+	if !ok {
+		return JSONError(c, fiber.StatusUnauthorized, "Unauthorized")
+	}
+
+	userIDUint, err := strconv.ParseUint(userIDStr, 10, 64)
+	if err != nil {
+		return JSONError(c, fiber.StatusInternalServerError, "Invalid user ID format")
+	}
+
+	err = h.userService.UpdateProfile(uint(userIDUint), req)
+	
+	if err != nil {
+		return JSONError(c, fiber.StatusInternalServerError, "Failed to update profile")
+	}
+
+	return JSONSuccess(c, fiber.StatusOK, "Profile updated successfully", nil)
 }

@@ -35,3 +35,12 @@ type UserProfileDTO struct {
 	BirthDate time.Time `json:"birthDate"`
 	Avatar string `json:"avatar"`
 }
+
+
+type UserUpdateProfileDTO struct {
+	FirstName   *string    `json:"firstName"`
+	LastName    *string    `json:"lastName"`
+	Phone       *string    `json:"phone"`
+	BirthDate   *time.Time `json:"birthDate"`
+	Avatar      *string `json:"avatar"`
+}

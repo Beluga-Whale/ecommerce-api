@@ -4,6 +4,7 @@ import (
 	"errors"
 	"strconv"
 
+	"github.com/Beluga-Whale/ecommerce-api/internal/dto"
 	"github.com/Beluga-Whale/ecommerce-api/internal/models"
 	"github.com/Beluga-Whale/ecommerce-api/internal/repositories"
 	"github.com/Beluga-Whale/ecommerce-api/internal/utils"
@@ -13,6 +14,8 @@ type UserServiceInterface interface {
 	Register(user *models.User)error
 	Login(user *models.User) (string,uint,error)
 	GetProfile(userIDUint uint) (*models.User,error)
+	UpdateProfile(userID uint, req dto.UserUpdateProfileDTO)  error
+	
 }
 
 type UserService struct {
@@ -98,4 +101,14 @@ func (s *UserService) GetProfile(userIDUint uint) (*models.User,error) {
 	}
 
 	return profileUser,nil
+}
+
+func (s *UserService) UpdateProfile(userID uint, req dto.UserUpdateProfileDTO)  error {
+	err := s.userRepo.UpdateProfile(userID,req)
+
+	if err != nil {
+		return errors.New("Error got get profile")
+	}
+
+	return nil
 }
