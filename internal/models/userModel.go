@@ -15,6 +15,7 @@ const (
 
 type User struct {
 	gorm.Model
+	Avatar     string
 	FirstName string
 	LastName string
 	Email string

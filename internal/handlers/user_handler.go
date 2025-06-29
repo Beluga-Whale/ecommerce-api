@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"strconv"
 	"strings"
 	"time"
 
@@ -100,10 +101,29 @@ func (h *UserHandler) Login(c *fiber.Ctx) error {
 }
 
 func (h *UserHandler) GetProfile(c *fiber.Ctx) error {
-	email := c.Locals("userEmail").(string)
-	return c.JSON(fiber.Map{
-		"message": "User Profile",
-		"email":   email,
+		// NOTE - เอา UserIDจาก local
+	// NOTE - ดึง userID จาก Locals แล้วแปลง string -> uint
+	userIDStr, ok := c.Locals("userID").(string)
+
+	if !ok {
+		return JSONError(c, fiber.StatusUnauthorized, "Unauthorized")
+	}
+
+	userIDUint, err := strconv.ParseUint(userIDStr, 10, 64)
+	if err != nil {
+		return JSONError(c, fiber.StatusInternalServerError, "Invalid user ID format")
+	}
+
+	user,err := h.userService.GetProfile(uint(userIDUint))
+
+	return JSONSuccess(c,fiber.StatusOK,"Get Profile Successful",dto.UserProfileDTO{
+		UserID: user.ID,
+		Email: user.Email,
+		FirstName: user.FirstName,
+		LastName: user.LastName,
+		Phone: user.Phone,
+		BirthDate: user.BirthDate,
+		Avatar: user.Avatar,
 	})
 }
 

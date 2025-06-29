@@ -12,6 +12,7 @@ import (
 type UserServiceInterface interface {
 	Register(user *models.User)error
 	Login(user *models.User) (string,uint,error)
+	GetProfile(userIDUint uint) (*models.User,error)
 }
 
 type UserService struct {
@@ -87,4 +88,14 @@ func (s *UserService) Login(user *models.User) (string,uint,error) {
 
 
 	return token,dbUser.ID,nil
+}
+
+func (s *UserService) GetProfile(userIDUint uint) (*models.User,error) {
+	profileUser,err := s.userRepo.GetProfileByUserId(uint(userIDUint))
+
+	if err != nil {
+		return nil,errors.New("Error got get profile")
+	}
+
+	return profileUser,nil
 }
