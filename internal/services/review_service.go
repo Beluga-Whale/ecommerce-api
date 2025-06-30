@@ -11,7 +11,7 @@ import (
 type ReviewServiceInterface interface {
 	GetReviewsByUserID(userIDUint uint) ([]models.Review , error) 
 	CreateReview(userIDUint uint, req dto.CreateReviewDTO) error
-	GetReviewAll(productId uint ) ([]dto.ReviewAllProduct,error)
+	GetReviewAll(productId uint ) (dto.ReviewAllProductSummaryResponse,error)
 }
 
 type ReviewService struct{
@@ -50,12 +50,33 @@ func (s *ReviewService) CreateReview(userIDUint uint, req dto.CreateReviewDTO) e
 	return s.reviewRepo.Create(review)
 }
 
-func (s *ReviewService) GetReviewAll(productId uint ) ([]dto.ReviewAllProduct ,error) {
-	review, err := s.reviewRepo.GetReviewAllByProductId(productId)
+func (s *ReviewService) GetReviewAll(productId uint ) (dto.ReviewAllProductSummaryResponse,error) {
+	var response dto.ReviewAllProductSummaryResponse
 
+	// NOTE - Get all reviews
+	reviews, err := s.reviewRepo.GetReviewAllByProductId(productId)
 	if err != nil {
-		return nil,errors.New("Error to get all review Product")
+		return response, errors.New("Error to get all review Product")
 	}
 
-	return review,nil
+	// NOTE - Calculate average rating
+	avg, err := s.reviewRepo.GetAverageRatingByProductId(productId)
+	if err != nil {
+		return response, errors.New("Error to get average rating")
+	}
+
+	// NOTE - Count per star
+	countMap := make(map[int]int)
+	for _, review := range reviews {
+		countMap[int(review.Rating)]++
+	}
+
+	response = dto.ReviewAllProductSummaryResponse{
+		Average:      avg,
+		Total:        len(reviews),
+		CountPerStar: countMap,
+		ReviewList:   reviews,
+	}
+
+	return response, nil
 }

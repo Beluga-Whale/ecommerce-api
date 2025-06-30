@@ -85,11 +85,10 @@ func (h *ReviewHandler) GetReviewProductAllByProductId(c *fiber.Ctx) error {
 		return JSONError(c, fiber.StatusBadRequest, "Invalid product ID")
 	}
 
-	reviews,err := h.ReviewService.GetReviewAll(uint(productId))
-
+	response, err := h.ReviewService.GetReviewAll(uint(productId))
 	if err != nil {
-		return JSONError(c, fiber.StatusBadRequest, err.Error())
+		return JSONError(c, fiber.StatusInternalServerError, err.Error())
 	}
 
-	return JSONSuccess(c, fiber.StatusCreated, "Get Review Product successfully", reviews)
+	return JSONSuccess(c, fiber.StatusOK, "Get Review Product successfully", response)
 }

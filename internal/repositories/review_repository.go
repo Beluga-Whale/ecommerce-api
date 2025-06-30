@@ -11,6 +11,7 @@ type ReviewRepositoryInterface interface{
 	Create(review *models.Review ) error 
 	HasPurchasedProduct(userID uint, productID uint) (bool, error)
 	GetReviewAllByProductId(productId uint) ([]dto.ReviewAllProduct,error)
+	 GetAverageRatingByProductId(productId uint) (float64, error)
 }
 
 type ReviewRepository struct {
@@ -58,4 +59,14 @@ func (r *ReviewRepository)GetReviewAllByProductId(productId uint) ([]dto.ReviewA
 	}
 	return reviews,nil
 	
+}
+
+func (r *ReviewRepository) GetAverageRatingByProductId(productId uint) (float64, error) {
+	var avg float64
+	err := r.db.Model(&models.Review{}).
+		Select("COALESCE(AVG(rating), 0)").
+		Where("product_id = ?", productId).
+		Scan(&avg).Error
+
+	return avg, err
 }
