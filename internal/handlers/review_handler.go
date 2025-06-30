@@ -11,6 +11,7 @@ import (
 type ReviewHandlerInterface interface{
 	GetUserReviews(c *fiber.Ctx) error 
 	CreateReviews(c *fiber.Ctx) error 
+	GetReviewProductAllByProductId(c *fiber.Ctx)
 }
 
 type ReviewHandler struct {
@@ -76,4 +77,19 @@ func (h *ReviewHandler)	CreateReviews(c *fiber.Ctx) error {
 	}
 
 	return JSONSuccess(c, fiber.StatusCreated, "Review created successfully", nil)
+}
+
+func (h *ReviewHandler) GetReviewProductAllByProductId(c *fiber.Ctx) error {
+	productId, err := c.ParamsInt("id")
+	if err != nil {
+		return JSONError(c, fiber.StatusBadRequest, "Invalid product ID")
+	}
+
+	reviews,err := h.ReviewService.GetReviewAll(uint(productId))
+
+	if err != nil {
+		return JSONError(c, fiber.StatusBadRequest, err.Error())
+	}
+
+	return JSONSuccess(c, fiber.StatusCreated, "Get Review Product successfully", reviews)
 }

@@ -11,6 +11,7 @@ import (
 type ReviewServiceInterface interface {
 	GetReviewsByUserID(userIDUint uint) ([]models.Review , error) 
 	CreateReview(userIDUint uint, req dto.CreateReviewDTO) error
+	GetReviewAll(productId uint ) ([]dto.ReviewAllProduct,error)
 }
 
 type ReviewService struct{
@@ -47,4 +48,14 @@ func (s *ReviewService) CreateReview(userIDUint uint, req dto.CreateReviewDTO) e
 		Comment:   req.Comment,
 	}
 	return s.reviewRepo.Create(review)
+}
+
+func (s *ReviewService) GetReviewAll(productId uint ) ([]dto.ReviewAllProduct ,error) {
+	review, err := s.reviewRepo.GetReviewAllByProductId(productId)
+
+	if err != nil {
+		return nil,errors.New("Error to get all review Product")
+	}
+
+	return review,nil
 }

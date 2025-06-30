@@ -11,3 +11,11 @@ type ReviewResponse struct {
 	Rating    int64  `json:"rating"`
 	Comment   string `json:"comment"`
 }
+
+type ReviewAllProduct struct {
+	FirstName string `json:"firstName"`
+	LastName  string `json:"lastName"`
+	ProductID uint   `json:"productId"`
+	Rating    int64  `json:"rating"`
+	Comment   string `json:"comment"`
+}

@@ -1,8 +1,7 @@
 package repositories
 
 import (
-	"fmt"
-
+	"github.com/Beluga-Whale/ecommerce-api/internal/dto"
 	"github.com/Beluga-Whale/ecommerce-api/internal/models"
 	"gorm.io/gorm"
 )
@@ -11,6 +10,7 @@ type ReviewRepositoryInterface interface{
 	GetUserReviews(userIDUint uint) ([]models.Review, error)
 	Create(review *models.Review ) error 
 	HasPurchasedProduct(userID uint, productID uint) (bool, error)
+	GetReviewAllByProductId(productId uint) ([]dto.ReviewAllProduct,error)
 }
 
 type ReviewRepository struct {
@@ -33,8 +33,7 @@ func (r *ReviewRepository) Create(review *models.Review) error {
 
 func (r *ReviewRepository)HasPurchasedProduct(userID uint, productID uint) (bool, error){
 	var count int64
-	fmt.Println("userID",userID)
-	fmt.Println("productID",productID)
+
 	err := r.db.
 		Table("orders").
 		Joins("JOIN order_items ON orders.id = order_items.order_id").
@@ -43,4 +42,20 @@ func (r *ReviewRepository)HasPurchasedProduct(userID uint, productID uint) (bool
 		Count(&count).Error
 
 	return count > 0, err
+}
+
+func (r *ReviewRepository)GetReviewAllByProductId(productId uint) ([]dto.ReviewAllProduct,error){
+	var reviews []dto.ReviewAllProduct
+
+	err := r.db.Table("products").
+		Joins("JOIN reviews ON products.id = reviews.product_id").
+		Joins("JOIN users ON  reviews.user_id = users.id").
+		Where("products.id = ? ",productId).
+		Scan(&reviews).Error
+
+	if err != nil {
+		return nil, err
+	}
+	return reviews,nil
+	
 }

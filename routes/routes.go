@@ -7,7 +7,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func SetUpRoutes(app *fiber.App, jwtUtil utils.JwtInterface, userHandler *handlers.UserHandler, categoryHandler *handlers.CategoryHandler, productHandler *handlers.ProductHandler, orderHandler *handlers.OrderHandler, paymentHandler *handlers.StripeHandler, ReviewHandler *handlers.ReviewHandler ) {
+func SetUpRoutes(app *fiber.App, jwtUtil utils.JwtInterface, userHandler *handlers.UserHandler, categoryHandler *handlers.CategoryHandler, productHandler *handlers.ProductHandler, orderHandler *handlers.OrderHandler, paymentHandler *handlers.StripeHandler, reviewHandler *handlers.ReviewHandler ) {
 
 
 	api := app.Group("/api")
@@ -17,6 +17,7 @@ func SetUpRoutes(app *fiber.App, jwtUtil utils.JwtInterface, userHandler *handle
 	api.Get("/product", productHandler.GetAllProducts)
 	api.Get("/product/:id", productHandler.GetProductByID)
 	api.Get("/user/order/:id", orderHandler.GetOrderByID)
+	api.Get("product/review-all/:id",reviewHandler.GetReviewProductAllByProductId)
 
 	// NOTE  - Payment	
 	api.Post("/stripe/payment-intent",paymentHandler.CreatePaymentIntent)
@@ -63,6 +64,6 @@ func SetUpRoutes(app *fiber.App, jwtUtil utils.JwtInterface, userHandler *handle
 
 	// NOTE - Review
 	protectedReviewUser := api.Group("/user/review", middleware.AuthMiddleware(jwtUtil), middleware.RequireRole("user"))
-	protectedReviewUser.Get("/",ReviewHandler.GetUserReviews)
-	protectedReviewUser.Post("/",ReviewHandler.CreateReviews)
+	protectedReviewUser.Get("/",reviewHandler.GetUserReviews)
+	protectedReviewUser.Post("/",reviewHandler.CreateReviews)
 }
