@@ -39,7 +39,7 @@ func main() {
 	categoryRepo := repositories.NewCategoryRepository(config.DB)
 	productRepo := repositories.NewProductRepository(config.DB)
 	orderRepo := repositories.NewOrderRepository(config.DB)
-	
+	reviewRepo := repositories.NewReviewRepository(config.DB)
 
 	// NOTE - Utilities
 	hashPassword := utils.NewPasswordUtil()
@@ -51,6 +51,7 @@ func main() {
 	categoryService := services.NewCategoryService(categoryRepo)
 	productService := services.NewProductService(productRepo,categoryRepo)
 	orderService := services.NewOrderService(config.DB,orderRepo, productUtil)
+	reviewService := services.NewReviewService(reviewRepo)
 	
 	// NOTE - Create Handlers
 	userHandler := handlers.NewUserHandler(userService)
@@ -58,9 +59,10 @@ func main() {
 	productHandler := handlers.NewProductHandler(productService)
 	orderHandler := handlers.NewOrderHandler(orderService)
 	PaymentHandler := handlers.NewStripeHandler(orderService)
+	ReviewHandler := handlers.NewReviewHandler(reviewService)
 
 	// NOTE - Set Up Routes
-	routes.SetUpRoutes(app ,jwtUtil,userHandler,categoryHandler,productHandler,orderHandler,PaymentHandler)
+	routes.SetUpRoutes(app ,jwtUtil,userHandler,categoryHandler,productHandler,orderHandler,PaymentHandler,ReviewHandler)
 	
 
 	// NOTE -ทำงานเพื่อการนับถอยหลังเช็ค order

@@ -135,6 +135,7 @@ func (h *OrderHandler) GetOrderByID(c *fiber.Ctx) error {
 			Size:            item.ProductVariant.Size,
 			Quantity:        item.Quantity,
 			PriceAtPurchase: item.PriceAtPurchase,
+			ProductID:       item.ProductVariant.ProductID,
 		})
 	}
 

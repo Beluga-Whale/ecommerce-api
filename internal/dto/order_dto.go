@@ -41,6 +41,7 @@ type OrderItemResponseDTO struct {
 	Size            string  `json:"size"`
 	Quantity        uint    `json:"quantity"`
 	PriceAtPurchase float64 `json:"priceAtPurchase"`
+	ProductID       uint    `json:"productId"`
 }
 
 

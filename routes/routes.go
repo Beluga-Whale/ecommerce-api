@@ -7,7 +7,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func SetUpRoutes(app *fiber.App, jwtUtil utils.JwtInterface, userHandler *handlers.UserHandler, categoryHandler *handlers.CategoryHandler, productHandler *handlers.ProductHandler, orderHandler *handlers.OrderHandler, paymentHandler *handlers.StripeHandler ) {
+func SetUpRoutes(app *fiber.App, jwtUtil utils.JwtInterface, userHandler *handlers.UserHandler, categoryHandler *handlers.CategoryHandler, productHandler *handlers.ProductHandler, orderHandler *handlers.OrderHandler, paymentHandler *handlers.StripeHandler, ReviewHandler *handlers.ReviewHandler ) {
 
 
 	api := app.Group("/api")
@@ -60,4 +60,9 @@ func SetUpRoutes(app *fiber.App, jwtUtil utils.JwtInterface, userHandler *handle
 	protectedProfileUser := api.Group("/user/profile", middleware.AuthMiddleware(jwtUtil), middleware.RequireRole("user"))
 	protectedProfileUser.Get("/",userHandler.GetProfile)
 	protectedProfileUser.Patch("/",userHandler.UpdateProfile)
+
+	// NOTE - Review
+	protectedReviewUser := api.Group("/user/review", middleware.AuthMiddleware(jwtUtil), middleware.RequireRole("user"))
+	protectedReviewUser.Get("/",ReviewHandler.GetUserReviews)
+	protectedReviewUser.Post("/",ReviewHandler.CreateReviews)
 }

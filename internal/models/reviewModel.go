@@ -8,6 +8,6 @@ type Review struct {
 	User User `gorm:"foreignKey:UserID"`
 	ProductID uint //NOTE - FK
 	Product Product `gorm:"foreignKey:ProductID"`
-	Rating uint 
+	Rating int64 
 	Comment string
 }
