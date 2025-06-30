@@ -13,6 +13,7 @@ const (
 	Paid Status = "paid"
 	Shipped Status = "shipped"
 	Cancel Status = "cancel"
+	Complete Status = "complete"
 )
 
 
