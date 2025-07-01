@@ -352,6 +352,7 @@ func (h *ProductHandler) GetAllProducts(c *fiber.Ctx) error {
 			IsOnSale:    product.IsOnSale,
 			SalePrice:   product.SalePrice,
 			CategoryID:  product.CategoryID,
+			CategoryName: product.Category.Name,
 			Variants:    variantsDTOs,
 		})
 	}

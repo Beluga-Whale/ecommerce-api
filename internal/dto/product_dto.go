@@ -13,16 +13,17 @@ type ProductCreateDTO struct {
 }
 
 type ProductCreateResponseDTO struct {
-	ID          uint                `json:"id" validate:"required"`
-	Name        string              `json:"name" validate:"required,min=2,max=100"`
-	Title       string              `json:"title" validate:"required,min=2,max=100"`
-	Description string              `json:"description" validate:"required,min=10`
-	Images      []ProductImageDTO   `json:"images" validate:"required,dive"`
-	Variants    []ProductVariantDTO `json:"variants" validate:"required,dive"`
-	IsFeatured  bool                `json:"isFeatured" validate:"omitempty"`
-	IsOnSale    bool                `json:"isOnSale" validate:"omitempty"`
-	SalePrice   *float64            `json:"salePrice"`
-	CategoryID  uint                `json:"categoryID"`
+	ID           uint                `json:"id" validate:"required"`
+	Name         string              `json:"name" validate:"required,min=2,max=100"`
+	Title        string              `json:"title" validate:"required,min=2,max=100"`
+	Description  string              `json:"description" validate:"required,min=10`
+	Images       []ProductImageDTO   `json:"images" validate:"required,dive"`
+	Variants     []ProductVariantDTO `json:"variants" validate:"required,dive"`
+	IsFeatured   bool                `json:"isFeatured" validate:"omitempty"`
+	IsOnSale     bool                `json:"isOnSale" validate:"omitempty"`
+	SalePrice    *float64            `json:"salePrice"`
+	CategoryID   uint                `json:"categoryID"`
+	CategoryName string              `json:"categoryName"`
 }
 
 type ProductUpdateDTO struct {
