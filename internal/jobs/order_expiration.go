@@ -13,7 +13,7 @@ import (
 func StartOrderExpirationJob(db *gorm.DB, orderService *services.OrderService) {
 	c := cron.New()
 
-	c.AddFunc("@every 10s", func() {
+	c.AddFunc("@every 15m", func() {
 		// NOTE -เวลาปัจจุบัน
 		now := time.Now()
 
