@@ -121,7 +121,7 @@ func (s *OrderService) CreateOrder(userID uint, req dto.CreateOrderRequestDTO) (
 		PaymentExpireAt: time.Now().Add(10 *time.Second),
 	}
 
-	// NOTE - create Order
+	// NOTE - create  Order
 
 
 	if err := s.orderRepo.Create(tx,&order); err != nil {
