@@ -58,10 +58,10 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/commerce-api-app:latest
-            sudo docker stop taskmanage-backend || true
-            sudo docker rm taskmanage-backend || true
+            sudo docker stop ecommerce-api || true
+            sudo docker rm ecommerce-api || true
             sudo docker run -d \
-              --name taskmanage-backend \
+              --name ecommerce-api \
               --env-file /home/ubuntu/.env \
               -e APP_ENV=production \
               -p 80:8080  \
