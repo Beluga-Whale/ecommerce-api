@@ -36,7 +36,6 @@ func (h *StripeHandler) CreatePaymentIntent(c *fiber.Ctx) error {
 		})
 	}
 
-	fmt.Println("Stripe Secret Key:", os.Getenv("STRIPE_SECRET_KEY"))
 	stripe.Key = os.Getenv("STRIPE_SECRET_KEY")
 
 	params := &stripe.PaymentIntentParams{

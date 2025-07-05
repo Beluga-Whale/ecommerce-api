@@ -31,6 +31,9 @@ jobs:
       - name: Install dependencies
         run: go mod tidy
 
+      - name: Generate .env.test
+        run: echo "STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }}" >> .env.test
+
       - name: Run Tests
         run: APP_ENV=test go test ./...
 
