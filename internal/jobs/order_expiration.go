@@ -22,7 +22,7 @@ func StartOrderExpirationJob(db *gorm.DB, orderService *services.OrderService) {
 		if err := db.Model(&models.Order{}).
 			Where("status = ? AND payment_expire_at <= ?", models.Pending, now).
 			Find(&orders).Error; err != nil {
-			log.Printf("Error finding expired orders",err)
+			log.Printf("Error finding expired orders: %v", err)
 			return
 		}
 
@@ -38,6 +38,6 @@ func StartOrderExpirationJob(db *gorm.DB, orderService *services.OrderService) {
 	})
 
 	c.Start()
-	log.Printf("Order expiration cron jon started")
+	log.Printf("Order expiration cron job started")
 }
 
