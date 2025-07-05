@@ -1,0 +1,44 @@
+name: Backend CI/CD
+
+on:
+  push:
+    branches: main
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:13
+        env:
+          POSTGRES_DB: ecom_test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+        ports:
+          - 5433:5432
+        options: --health-cmd "pg_isready -U postgres" --health-interval 10s --health-timeout 5s --health-retries 5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.24.0
+
+      - name: Install dependencies
+        run: go mod tidy
+
+      - name: Run Tests
+        run: APP_ENV=test go test ./...
+
+      - name: Build Docker Image
+        run: docker build -f Dockerfile.prod -t commerce-api-app .
+
+      - name: Push to Docker Hub
+        run: |
+          echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+          docker tag commerce-api-app ${{ secrets.DOCKER_USERNAME }}/commerce-api-app:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/commerce-api-app:latest
