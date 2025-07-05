@@ -97,9 +97,9 @@ func (h *UserHandler) Login(c *fiber.Ctx) error {
 		Name: "jwt",
 		Value: token,
 		Expires: time.Now().Add(time.Hour*72),
-		// Domain: ".belugatasks.dev",
+		Domain: ".belugaecommerce.xyz",
 		HTTPOnly: true,
-		Secure:false,
+		Secure:true,
 		SameSite: fiber.CookieSameSiteNoneMode, 
 	})
 
