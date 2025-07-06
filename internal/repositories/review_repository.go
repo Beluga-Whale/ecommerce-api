@@ -49,9 +49,11 @@ func (r *ReviewRepository)GetReviewAllByProductId(productId uint) ([]dto.ReviewA
 	var reviews []dto.ReviewAllProduct
 
 	err := r.db.Table("products").
+		Select(`users.first_name, users.last_name, reviews.product_id, reviews.rating, reviews.comment, users.avatar, reviews.created_at`).
 		Joins("JOIN reviews ON products.id = reviews.product_id").
 		Joins("JOIN users ON  reviews.user_id = users.id").
 		Where("products.id = ? ",productId).
+		Order("reviews.created_at DESC").
 		Scan(&reviews).Error
 
 	if err != nil {
