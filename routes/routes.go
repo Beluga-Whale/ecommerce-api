@@ -13,6 +13,7 @@ func SetUpRoutes(app *fiber.App, jwtUtil utils.JwtInterface, userHandler *handle
 	api := app.Group("/api")
 	api.Post("/register", userHandler.Register)
 	api.Post("/login",userHandler.Login)
+	api.Post("/logout",userHandler.Logout)
 	api.Get("/category", categoryHandler.GetAll)
 	api.Get("/product", productHandler.GetAllProducts)
 	api.Get("/product/:id", productHandler.GetProductByID)

@@ -17,6 +17,7 @@ type UserHandlerInterface interface{
 	Login(c *fiber.Ctx) error
 	GetProfile(c *fiber.Ctx) error
 	UpdateProfile(c *fiber.Ctx) error
+	Logout(c *fiber.Ctx) error
 	// AddReview(c *fiber.Ctx) error
 }
 
@@ -97,7 +98,7 @@ func (h *UserHandler) Login(c *fiber.Ctx) error {
 		Name: "jwt",
 		Value: token,
 		Expires: time.Now().Add(time.Hour*72),
-		Domain: "belugaecommerce.xyz",
+		Domain: ".belugaecommerce.xyz",
 		HTTPOnly: true,
 		Secure:true,
 		SameSite: fiber.CookieSameSiteNoneMode, 
@@ -172,6 +173,23 @@ func (h *UserHandler) UpdateProfile(c *fiber.Ctx) error {
 	}
 
 	return JSONSuccess(c, fiber.StatusOK, "Profile updated successfully", nil)
+}
+
+func (h *UserHandler) Logout(c *fiber.Ctx) error{
+	c.Cookie(&fiber.Cookie{
+		Name:     "jwt",
+		Value:    "",
+		Expires:  time.Now().Add(-time.Hour), // expire ย้อนหลัง
+		Domain:   ".belugaecommerce.xyz",     // ต้องตรงกับตอน set
+		Path:     "/",
+		Secure:   true,
+		HTTPOnly: true,
+		SameSite: fiber.CookieSameSiteNoneMode,
+	})
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "Logout successful",
+	})
 }
 
 // func (h *UserHandler) AddReview(c *fiber.Ctx) error {
