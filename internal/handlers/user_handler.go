@@ -100,6 +100,7 @@ func (h *UserHandler) Login(c *fiber.Ctx) error {
 		Expires: time.Now().Add(time.Hour*72),
 		Domain: ".belugaecommerce.xyz",
 		HTTPOnly: true,
+		// Secure:false,
 		Secure:true,
 		SameSite: fiber.CookieSameSiteNoneMode, 
 	})
@@ -179,8 +180,8 @@ func (h *UserHandler) Logout(c *fiber.Ctx) error{
 	c.Cookie(&fiber.Cookie{
 		Name:     "jwt",
 		Value:    "",
-		Expires:  time.Now().Add(-time.Hour), // expire ย้อนหลัง
-		Domain:   ".belugaecommerce.xyz",     // ต้องตรงกับตอน set
+		Expires:  time.Now().Add(-time.Hour), 
+		Domain:   ".belugaecommerce.xyz",     
 		Path:     "/",
 		Secure:   true,
 		HTTPOnly: true,
