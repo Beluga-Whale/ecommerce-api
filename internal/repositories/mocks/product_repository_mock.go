@@ -27,8 +27,16 @@ func (m *ProductRepositoryMock) FindByID(id uint) (*models.Product, error){
 	return nil, args.Error(1)
 }
 
-func (m *ProductRepositoryMock) FindAll(page uint, limit uint, minPrice int64, maxPrice int64, searchName string, category string) ([]models.Product, int64, error) {
-	args := m.Called(page, limit, minPrice, maxPrice, searchName, category)
+func (m *ProductRepositoryMock) FindAll(
+	page uint,
+	limit uint,
+	minPrice int64,
+	maxPrice int64,
+	searchName string,
+	categoryIDs []int,
+	sizeIDs []string,
+) ([]models.Product, int64, error) {
+	args := m.Called(page, limit, minPrice, maxPrice, searchName, categoryIDs, sizeIDs)
 
 	var products []models.Product
 	if res, ok := args.Get(0).([]models.Product); ok {
@@ -44,6 +52,7 @@ func (m *ProductRepositoryMock) FindAll(page uint, limit uint, minPrice int64, m
 
 	return products, pageTotal, err
 }
+
 
 func (m *ProductRepositoryMock) Update(product *models.Product) error{
 	args := m.Called(product)
