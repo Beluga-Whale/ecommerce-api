@@ -44,89 +44,72 @@ func NewOrderService(db *gorm.DB,orderRepo repositories.OrderRepositoryInterface
 
 
 func (s *OrderService) CreateOrder(userID uint, req dto.CreateOrderRequestDTO) (*models.Order, error) {
-	// NOTE - เช็ค ว่า req มีมาจิรงไหม
-    if len(req.Items) == 0 {
+	if len(req.Items) == 0 {
 		return nil, errors.New("no item in order")
 	}
 
-	// NOTE - เก็บ productVariantID เป็น slice []
-	productVariantIDs := []uint{}
-	for _,item := range req.Items {
-		productVariantIDs = append(productVariantIDs, item.VariantID)
+	//NOTE - เก็บ VariantID
+	variantIDs := []uint{}
+	for _, item := range req.Items {
+		variantIDs = append(variantIDs, item.VariantID)
 	}
 
-	productVariants,err := s.orderRepo.FindProductVariantByID(productVariantIDs)
-
+	//NOTE - ดึง variant ทั้งหมด
+	variants, err := s.orderRepo.FindProductVariantByID(variantIDs)
 	if err != nil {
-		return nil,errors.New("fail to find product by productID")
+		return nil, errors.New("fail to find product by productID")
 	}
 
-	// NOTE - Create Transaction
+	//NOTE -  validate + calculate
+	orderItems, total, err := s.validateAndCalculate(req.Items, variants)
+	if err != nil {
+		return nil, err
+	}
+
+	//NOTE - transaction
 	tx := s.db.Begin()
 	if tx.Error != nil {
 		return nil, tx.Error
 	}
 
-	// NOTE - recover
 	defer func() {
-		if r:= recover(); r!= nil {
+		if r := recover(); r != nil {
 			tx.Rollback()
 			panic(r)
 		}
 	}()
 
-	var total float64
-	orderItems := []models.OrderItem{}
-
-	for _,item := range req.Items{
-		productV := s.productUtil.FindProductVariantID(productVariants, item.VariantID)
-		if productV == nil {
-			return nil, errors.New("productVariant not found")
-		}
-
-		if productV.Stock < int(item.Quantity){
-			return nil,errors.New("stock not enough")
-		}
-
-		// // NOTE - ตัด stock
+	//NOTE - ตัด stock ทีละ variant
+	for _, item := range req.Items {
+		productV := s.productUtil.FindProductVariantID(variants, item.VariantID)
 		productV.Stock -= int(item.Quantity)
 
-		if err := s.orderRepo.UpdateProductVariantStock(tx,productV.ID,productV.Stock); err !=nil {
+		if err := s.orderRepo.UpdateProductVariantStock(tx, productV.ID, productV.Stock); err != nil {
 			tx.Rollback()
 			return nil, errors.New("failed to update product stock")
 		}
-
-		// NOTE - คิดเงินรวม
-		total += (productV.Price - *productV.Product.SalePrice) * float64(item.Quantity)
-
-		orderItems = append(orderItems, models.OrderItem{
-			ProductVariantID: productV.ID,
-			Quantity: item.Quantity,
-			PriceAtPurchase: productV.Price,
-		})
 	}
 
+	//NOTE - สร้าง order struct
 	order := models.Order{
-		UserID: 	userID,
-		FullName:   req.FullName,
-		Phone: 		req.Phone,
-		Address:  	req.Address,
-		Province:   req.Province,
-		District:   req.District,
-		Subdistrict: req.Subdistrict,
-		Zipcode:    req.Zipcode,
-		TotalPrice: total,
-		Status: 	models.Pending,
-		OrderItem: 	orderItems,
-		PaymentExpireAt: time.Now().Add(10 *time.Second),
+		UserID:          userID,
+		FullName:        req.FullName,
+		Phone:           req.Phone,
+		Address:         req.Address,
+		Province:        req.Province,
+		District:        req.District,
+		Subdistrict:     req.Subdistrict,
+		Zipcode:         req.Zipcode,
+		TotalPrice:      total,
+		Status:          models.Pending,
+		OrderItem:       orderItems,
+		PaymentExpireAt: time.Now().Add(10 * time.Second),
 	}
 
-	// NOTE - create Order
-
-
-	if err := s.orderRepo.Create(tx,&order); err != nil {
+	//NOTE - บันทึก order
+	if err := s.orderRepo.Create(tx, &order); err != nil {
 		tx.Rollback()
-		return nil,err
+		return nil, err
 	}
 
 	if err := tx.Commit().Error; err != nil {
@@ -138,8 +121,9 @@ func (s *OrderService) CreateOrder(userID uint, req dto.CreateOrderRequestDTO) (
 		return nil, err
 	}
 
-	return orderWithProducts,nil
+	return orderWithProducts, nil
 }
+
 
 func (s *OrderService) CancelOrderAndRestoreStock( orderID uint) error {
 	var order models.Order
@@ -430,4 +414,32 @@ func (s *OrderService) GetCustomerDetail() ([]dto.CustomerDTO,error){
 	}
 
 	return customers,nil
+}
+
+func (s *OrderService) validateAndCalculate(
+	items []dto.CreateOrderItemDTO,
+	variants []models.ProductVariant,
+) ([]models.OrderItem, float64, error) {
+	var total float64
+	orderItems := []models.OrderItem{}
+
+	for _, item := range items {
+		productV := s.productUtil.FindProductVariantID(variants, item.VariantID)
+		if productV == nil {
+			return nil, 0, errors.New("productVariant not found")
+		}
+		if productV.Stock < int(item.Quantity) {
+			return nil, 0, errors.New("stock not enough")
+		}
+
+		total += (productV.Price - *productV.Product.SalePrice) * float64(item.Quantity)
+
+		orderItems = append(orderItems, models.OrderItem{
+			ProductVariantID: productV.ID,
+			Quantity:         item.Quantity,
+			PriceAtPurchase:  productV.Price,
+		})
+	}
+
+	return orderItems, total, nil
 }
