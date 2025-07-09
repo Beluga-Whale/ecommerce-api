@@ -40,7 +40,7 @@ func (m *OrderRepositoryMock)FindByIDWithItemsAndProducts(orderID uint) (*models
 	if order,ok := args.Get(0).(*models.Order);ok {
 		return order,nil
 	}
-	return nil,args.Error(0)
+	return nil,args.Error(1)
 }
 
 func (m *OrderRepositoryMock)UpdateStatusOrder(orderId *uint, status models.Status) error {
@@ -53,7 +53,7 @@ func (m *OrderRepositoryMock)FindOrderById(orderID uint) (*models.Order, error){
 	if order,ok := args.Get(0).(*models.Order);ok {
 		return order,nil
 	}
-	return nil,args.Error(0)
+	return nil,args.Error(1)
 }
 
 func (m *OrderRepositoryMock)FindAllOrderByUserId(userIDUint uint) ([]models.Order,error){
@@ -61,7 +61,7 @@ func (m *OrderRepositoryMock)FindAllOrderByUserId(userIDUint uint) ([]models.Ord
 	if order,ok := args.Get(0).([]models.Order);ok {
 		return order,nil
 	}
-	return nil,args.Error(0)
+	return nil,args.Error(1)
 }
 
 
@@ -75,7 +75,7 @@ func (m *OrderRepositoryMock)FindAll() ([]models.Order,error) {
 	if order,ok := args.Get(0).([]models.Order);ok {
 		return order,nil
 	}
-	return nil,args.Error(0)
+	return nil,args.Error(1)
 }
 
 func (m *OrderRepositoryMock)GetTop5ProductsBySales() ([]dto.TopProductDTO, error){
@@ -83,14 +83,14 @@ func (m *OrderRepositoryMock)GetTop5ProductsBySales() ([]dto.TopProductDTO, erro
 	if topProduct,ok := args.Get(0).([]dto.TopProductDTO);ok {
 		return topProduct,nil
 	}
-	return nil,args.Error(0)
+	return nil,args.Error(1)
 }
 func (m *OrderRepositoryMock)GetSalesPerDay() ([]dto.SalesPerMonthDTO, error) {
 	args := m.Called()
 	if salePerMonth,ok := args.Get(0).([]dto.SalesPerMonthDTO);ok {
 		return salePerMonth,nil
 	}
-	return nil,args.Error(0)
+	return nil,args.Error(1)
 }
 
 func (m *OrderRepositoryMock)Delete(id uint) error{
@@ -103,5 +103,5 @@ func (m *OrderRepositoryMock)GetUserDetail() ([]dto.CustomerDTO,error) {
 	if customer,ok := args.Get(0).([]dto.CustomerDTO);ok {
 		return customer,nil
 	}
-	return nil,args.Error(0)
+	return nil,args.Error(1)
 }

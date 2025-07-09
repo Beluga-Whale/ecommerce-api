@@ -26,6 +26,10 @@ type OrderServiceInterface interface {
 	GetSalesChartData() ([]dto.SalesPerMonthDTO, error)
 	DeleteOrder(id uint) error
 	GetCustomerDetail() ([]dto.CustomerDTO,error)
+	validateAndCalculate(
+	items []dto.CreateOrderItemDTO,
+	variants []models.ProductVariant,
+) ([]models.OrderItem, float64, error)
 }
 
 type OrderService struct {
@@ -191,7 +195,6 @@ func (s *OrderService) GetOrderByID(orderID uint, userIDUint uint) (*models.Orde
 	if order.UserID != userIDUint {
 		return nil, errors.New("unauthorized to update this order")
 	}
-
 
 	return order, nil
 }
