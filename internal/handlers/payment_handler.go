@@ -48,7 +48,6 @@ func (h *StripeHandler) CreatePaymentIntent(c *fiber.Ctx) error {
 	params.AddMetadata("orderId", strconv.Itoa(int(req.OrderID)))
 	params.AddMetadata("userId", strconv.Itoa(int(req.UserID)))
 
-
 	intent, err := paymentintent.New(params)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
