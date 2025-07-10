@@ -27,14 +27,13 @@ func (m *OrderServiceMock) CreateOrder(userID uint, req dto.CreateOrderRequestDT
 func (m *OrderServiceMock) CancelOrderAndRestoreStock( orderID uint) error{
 	args := m.Called(orderID)
 
-	return args.Error(1)
+	return args.Error(0)
 }
 
 
 func (m *OrderServiceMock) UpdateStatusOrder(orderID *uint, status models.Status,userId uint) error{
 	args := m.Called(orderID,status,userId)
-
-	return args.Error(1)
+	return args.Error(0)
 }
 
 func (m *OrderServiceMock) GetOrderByID(orderID uint, userIDUint uint) (*models.Order, error) {
@@ -58,7 +57,7 @@ func (m *OrderServiceMock) GetAllOrderByUserId(userIDUint uint) ([]models.Order,
 func (m *OrderServiceMock) UpdateStatusByUser(userIDUint uint,orderID *uint, status models.Status) error {
 	args := m.Called(userIDUint,orderID,status)
 
-	return args.Error(1)
+	return args.Error(0)
 }
 
 func (m *OrderServiceMock) GetAllOrdersAdmin() ([]models.Order,error) {
@@ -75,7 +74,7 @@ func (m *OrderServiceMock) GetAllOrdersAdmin() ([]models.Order,error) {
 func (m *OrderServiceMock) UpdateStatusByAdmin(orderID *uint, status models.Status) error {
 	args := m.Called(orderID,status)
 
-	return args.Error(1)
+	return args.Error(0)
 }
 
 func (m *OrderServiceMock) GetDashboardSummary() (*dto.DashboardSummaryDTO, error) {
@@ -109,7 +108,7 @@ func (m *OrderServiceMock) GetSalesChartData() ([]dto.SalesPerMonthDTO, error) {
 func (m *OrderServiceMock)DeleteOrder(id uint) error {
 	args := m.Called(id)
 
-	return args.Error(1)
+	return args.Error(0)
 }
 
 func (m *OrderServiceMock)GetCustomerDetail() ([]dto.CustomerDTO,error) {
@@ -121,3 +120,15 @@ func (m *OrderServiceMock)GetCustomerDetail() ([]dto.CustomerDTO,error) {
 	return nil,args.Error(1)
 }
 
+func (m *OrderServiceMock)ValidateAndCalculate(
+	items []dto.CreateOrderItemDTO,
+	variants []models.ProductVariant,
+) ([]models.OrderItem, float64, error){
+	args := m.Called(items,variants)
+
+	if orders,ok := args.Get(0).([]models.OrderItem);ok{
+		return orders,args.Get(1).(float64),args.Error(2)
+	}
+
+	return nil,0.0,args.Error(2)
+}

@@ -77,7 +77,7 @@ type OrderListResponseDTO struct {
 }
 
 type UpdateStatusByUserOrderDTO struct {
-	Status  models.Status  `json:"status"`
+	Status  models.Status  `json:"status" validate:"required"`
 }
 
 type OrderListDataTableDTOResponse struct {

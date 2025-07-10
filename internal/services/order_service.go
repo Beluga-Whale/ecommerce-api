@@ -26,7 +26,7 @@ type OrderServiceInterface interface {
 	GetSalesChartData() ([]dto.SalesPerMonthDTO, error)
 	DeleteOrder(id uint) error
 	GetCustomerDetail() ([]dto.CustomerDTO,error)
-	validateAndCalculate(
+	ValidateAndCalculate(
 	items []dto.CreateOrderItemDTO,
 	variants []models.ProductVariant,
 ) ([]models.OrderItem, float64, error)
@@ -65,7 +65,7 @@ func (s *OrderService) CreateOrder(userID uint, req dto.CreateOrderRequestDTO) (
 	}
 
 	//NOTE -  validate + calculate
-	orderItems, total, err := s.validateAndCalculate(req.Items, variants)
+	orderItems, total, err := s.ValidateAndCalculate(req.Items, variants)
 	if err != nil {
 		return nil, err
 	}
@@ -419,7 +419,7 @@ func (s *OrderService) GetCustomerDetail() ([]dto.CustomerDTO,error){
 	return customers,nil
 }
 
-func (s *OrderService) validateAndCalculate(
+func (s *OrderService) ValidateAndCalculate(
 	items []dto.CreateOrderItemDTO,
 	variants []models.ProductVariant,
 ) ([]models.OrderItem, float64, error) {
