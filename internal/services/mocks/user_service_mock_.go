@@ -19,9 +19,9 @@ func (m *UserServiceMock) Register(user *models.User)error{
 	return args.Error(0)
 }
 
-func (m *UserServiceMock) Login(user *models.User) (string,error){
+func (m *UserServiceMock) Login(user *models.User) (string,uint,error){
 	args := m.Called(user)
-	return args.String(0), args.Error(1)
+	return args.String(0), uint(args.Int(1)), args.Error(2)
 }
 
 func (m *UserServiceMock) GetProfile(userIDUint uint) (*models.User,error) {

@@ -18,7 +18,6 @@ type UserHandlerInterface interface{
 	GetProfile(c *fiber.Ctx) error
 	UpdateProfile(c *fiber.Ctx) error
 	Logout(c *fiber.Ctx) error
-	// AddReview(c *fiber.Ctx) error
 }
 
 
@@ -192,33 +191,3 @@ func (h *UserHandler) Logout(c *fiber.Ctx) error{
 		"message": "Logout successful",
 	})
 }
-
-// func (h *UserHandler) AddReview(c *fiber.Ctx) error {
-// 	var req dto.CreateReviewDTO
-// 	if err := c.BodyParser(&req); err != nil {
-// 		return JSONError(c, fiber.StatusBadRequest, "Invalid request body")
-// 	}	
-
-// 	// NOTE - Validate request body
-// 	if err := Validate.Struct(req); err != nil {
-// 		// NOTE - บอกว่า field ไหนผิด
-// 		var messages []string
-// 		for _, err := range err.(validator.ValidationErrors) {
-// 			messages = append(messages, err.Field()+" is "+err.Tag())
-// 		}
-// 		return JSONError(c, fiber.StatusBadRequest, strings.Join(messages, ", "))
-// 	}
-
-// 	// NOTE - เอา UserIDจาก local
-// 	// NOTE - ดึง userID จาก Locals แล้วแปลง string -> uint
-// 	userIDStr, ok := c.Locals("userID").(string)
-
-// 	if !ok {
-// 		return JSONError(c, fiber.StatusUnauthorized, "Unauthorized")
-// 	}
-
-// 	userIDUint, err := strconv.ParseUint(userIDStr, 10, 64)
-// 	if err != nil {
-// 		return JSONError(c, fiber.StatusInternalServerError, "Invalid user ID format")
-// 	}
-// }
