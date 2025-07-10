@@ -17,7 +17,7 @@ import (
 
 var DB *gorm.DB
 
-// var TestDB *gorm.DB
+var TestDB *gorm.DB
 
 func LoadEnv() {
 	env := os.Getenv("APP_ENV")
@@ -122,6 +122,86 @@ func ConnectDB() {
 
 	// NOTE - AutoMigrate จะตรวจสอบและอัปเดตฐานข้อมูล
 	err = DB.AutoMigrate(
+		&models.CartItem{},   // NOTE - ให้ตรวจสอบตาราง CartItem
+		&models.Category{},   // NOTE - ให้ตรวจสอบตาราง Category
+		&models.Coupon{},   // NOTE - ให้ตรวจสอบตาราง Coupon
+		&models.Order{},   // NOTE - ให้ตรวจสอบตาราง Order
+		&models.OrderItem{},   // NOTE - ให้ตรวจสอบตาราง OrderItem
+		&models.Payment{},   // NOTE - ให้ตรวจสอบตาราง Payment
+		&models.Product{},   // NOTE - ให้ตรวจสอบตาราง Product
+		&models.ProductVariant{}, // NOTE - ให้ตรวจสอบตาราง ProductVariant
+		&models.Review{},   // NOTE - ให้ตรวจสอบตาราง Review
+		&models.User{},   // NOTE - ให้ตรวจสอบตาราง User
+		&models.ProductImage{}, // NOTE - ให้ตรวจสอบตาราง ProductImage
+	)
+	if err != nil {
+		log.Fatal("Failed to migrate database:", err)
+	}
+
+}
+
+func ConnectTestDB() {
+	var err error
+
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=%s",
+	os.Getenv("HOST"),
+	os.Getenv("USER_NAME"),
+	os.Getenv("PASSWORD"),
+	os.Getenv("DATABASE_NAME"),
+	os.Getenv("PORT"),
+	os.Getenv("SSL_MODE"),
+	)
+
+	fmt.Println("🔍 ENV:", os.Getenv("HOST"), os.Getenv("PORT"), os.Getenv("DATABASE_NAME"), os.Getenv("USER_NAME"))
+
+
+	// New logger for detailed SQL logging
+	newLogger := logger.New(
+		log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer
+		logger.Config{
+		SlowThreshold: time.Second, // Slow SQL threshold
+		LogLevel:      logger.Info, // Log level
+		Colorful:      true,        // Enable color
+		},
+	)
+
+	TestDB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{
+		Logger: newLogger, // add Logger
+	})
+
+	if err != nil {
+		log.Fatal("Fail to connect TestDB : ",err)
+	}
+
+	fmt.Println("Connect TestDB Success!")
+
+	TestDB.Exec(`
+	DO $$ BEGIN
+	IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'status') THEN
+		CREATE TYPE status AS ENUM ('pending', 'paid', 'shipped', 'cancel');
+	END IF;
+	END$$;
+	`)
+
+	TestDB.Exec(`
+	DO $$ BEGIN
+	IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'role') THEN
+		CREATE TYPE role AS ENUM ('user', 'admin');
+	END IF;
+	END$$;
+	`)
+
+	TestDB.Exec(`
+	DO $$ BEGIN
+	IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'payment_status') THEN
+		CREATE TYPE payment_status AS ENUM ('payed', 'failed');
+	END IF;
+	END$$;
+	`)
+
+
+	// NOTE - AutoMigrate จะตรวจสอบและอัปเดตฐานข้อมูล
+	err = TestDB.AutoMigrate(
 		&models.CartItem{},   // NOTE - ให้ตรวจสอบตาราง CartItem
 		&models.Category{},   // NOTE - ให้ตรวจสอบตาราง Category
 		&models.Coupon{},   // NOTE - ให้ตรวจสอบตาราง Coupon
