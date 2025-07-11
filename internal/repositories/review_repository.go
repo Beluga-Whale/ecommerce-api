@@ -11,7 +11,7 @@ type ReviewRepositoryInterface interface{
 	Create(review *models.Review ) error 
 	HasPurchasedProduct(userID uint, productID uint) (bool, error)
 	GetReviewAllByProductId(productId uint) ([]dto.ReviewAllProduct,error)
-	 GetAverageRatingByProductId(productId uint) (float64, error)
+	GetAverageRatingByProductId(productId uint) (float64, error)
 }
 
 type ReviewRepository struct {
