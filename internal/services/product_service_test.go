@@ -9,10 +9,12 @@ import (
 	"github.com/Beluga-Whale/ecommerce-api/internal/services"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"gorm.io/gorm"
 )
 
 func TestCreateProduct(t *testing.T) {
 	t.Run("Create Success", func(t *testing.T) {
+		productCategoryID := uint(1)
 		salePrice := 50.0
 		product := &models.Product{
 			Name: "T-shirt",
@@ -42,11 +44,12 @@ func TestCreateProduct(t *testing.T) {
 		productRepo := repositories.NewProductRepositoryMock()
 		categoryRepo := repositories.NewCategoryRepositoryMock()
 
-		categoryRepo.On("FindByID", mock.Anything ).Return(&models.Category{
+		categoryRepo.On("FindByID", productCategoryID ).Return(&models.Category{
+			Model: gorm.Model{ID: 1},
 			Name: "Test Category",
 		}, nil)
 
-		productRepo.On("Create", mock.Anything).Return(nil)
+		productRepo.On("Create", product).Return(nil)
 
 		productService := services.NewProductService(productRepo, categoryRepo)
 
@@ -360,6 +363,7 @@ func TestCreateProduct(t *testing.T) {
 	})
 
 	t.Run("Can't to find category",func(t *testing.T) {
+		productCategoryID := uint(1)
 		salePrice := 50.0
 		product := &models.Product{
 			Name: "T-shirt",
@@ -393,7 +397,7 @@ func TestCreateProduct(t *testing.T) {
 
 		productService := services.NewProductService(productRepo, categoryRepo)
 
-		categoryRepo.On("FindByID", mock.Anything ).Return(&models.Category{
+		categoryRepo.On("FindByID", productCategoryID ).Return(&models.Category{
 			Name: "Test Category",
 		}, errors.New("Error finding category"))
 
@@ -409,6 +413,7 @@ func TestCreateProduct(t *testing.T) {
 	})
 
 	t.Run("Category is nil", func(t *testing.T) {
+		productCategoryID := uint(1)
 		salePrice := 50.0
 		product := &models.Product{
 			Name: "T-shirt",
@@ -438,7 +443,7 @@ func TestCreateProduct(t *testing.T) {
 		productRepo := repositories.NewProductRepositoryMock()
 		categoryRepo := repositories.NewCategoryRepositoryMock()
 
-		categoryRepo.On("FindByID", mock.Anything ).Return(nil, nil)
+		categoryRepo.On("FindByID", productCategoryID ).Return(nil, nil)
 
 
 		productService := services.NewProductService(productRepo, categoryRepo)
@@ -454,6 +459,7 @@ func TestCreateProduct(t *testing.T) {
 	})
 
 	t.Run("Register Success", func(t *testing.T) {
+		productCategoryID := uint(1)
 		salePrice := 50.0
 		product := &models.Product{
 			Name: "T-shirt",
@@ -483,11 +489,11 @@ func TestCreateProduct(t *testing.T) {
 		productRepo := repositories.NewProductRepositoryMock()
 		categoryRepo := repositories.NewCategoryRepositoryMock()
 
-		categoryRepo.On("FindByID", mock.Anything ).Return(&models.Category{
+		categoryRepo.On("FindByID", productCategoryID ).Return(&models.Category{
 			Name: "Test Category",
 		}, nil)
 
-		productRepo.On("Create", mock.Anything).Return(errors.New("Error creating product"))
+		productRepo.On("Create", product).Return(errors.New("Error creating product"))
 
 		productService := services.NewProductService(productRepo, categoryRepo)
 
@@ -505,6 +511,8 @@ func TestCreateProduct(t *testing.T) {
 
 func TestUpdateProduct(t *testing.T) {
 	t.Run("Update Success", func(t *testing.T) {
+		id:= uint(1)
+		categoryId := uint(1)
 		salePrice := 50.0
 		product := &models.Product{
 			Name: "T-shirt",
@@ -534,13 +542,13 @@ func TestUpdateProduct(t *testing.T) {
 		productRepo := repositories.NewProductRepositoryMock()
 		categoryRepo := repositories.NewCategoryRepositoryMock()
 
-		productRepo.On("FindByID", mock.Anything).Return(product,nil)
+		productRepo.On("FindByID", id).Return(product,nil)
 
-		categoryRepo.On("FindByID", mock.Anything ).Return(&models.Category{
+		categoryRepo.On("FindByID", categoryId ).Return(&models.Category{
 			Name: "Test Category",
 		}, nil)
 
-		productRepo.On("Update", mock.Anything).Return(nil)
+		productRepo.On("Update", product).Return(nil)
 
 		productService := services.NewProductService(productRepo, categoryRepo)
 

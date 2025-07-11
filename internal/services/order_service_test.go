@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"testing"
+	"time"
 
 	"github.com/Beluga-Whale/ecommerce-api/internal/dto"
 	"github.com/Beluga-Whale/ecommerce-api/internal/models"
@@ -331,8 +332,8 @@ func TestUpdateStatusOrder(t *testing.T) {
 			Status: "pending",
 		}
 
-		orderRepo.On("FindOrderById",mock.Anything).Return(&orderMock,nil)
-		orderRepo.On("UpdateStatusOrder",mock.Anything,mock.Anything).Return(nil)
+		orderRepo.On("FindOrderById",orderID).Return(&orderMock,nil)
+		orderRepo.On("UpdateStatusOrder",&orderID,models.Status("pending")).Return(nil)
 
 		orderService := services.NewOrderService(db,orderRepo,productUtil)
 
@@ -381,7 +382,7 @@ func TestUpdateStatusOrder(t *testing.T) {
 		db  := InitializeDB(t)
 		productUtil := utils.NewProductUtilMock()
 		orderRepo := repositories.NewOrderRepositoryMock()
-		orderRepo.On("FindOrderById",mock.Anything).Return(nil,nil)
+		orderRepo.On("FindOrderById",orderID).Return(nil,nil)
 
 		orderService := services.NewOrderService(db,orderRepo,productUtil)
 
@@ -402,7 +403,7 @@ func TestUpdateStatusOrder(t *testing.T) {
 		db  := InitializeDB(t)
 		productUtil := utils.NewProductUtilMock()
 		orderRepo := repositories.NewOrderRepositoryMock()
-		orderRepo.On("FindOrderById",mock.Anything).Return(&mockOrder,nil)
+		orderRepo.On("FindOrderById",orderID).Return(&mockOrder,nil)
 
 		orderService := services.NewOrderService(db,orderRepo,productUtil)
 
@@ -426,8 +427,8 @@ func TestUpdateStatusOrder(t *testing.T) {
 			Status: "pending",
 		}
 
-		orderRepo.On("FindOrderById",mock.Anything).Return(&orderMock,nil)
-		orderRepo.On("UpdateStatusOrder",mock.Anything,mock.Anything).Return(errors.New("orderRepo.UpdateStatusOrder failed"))
+		orderRepo.On("FindOrderById",orderID).Return(&orderMock,nil)
+		orderRepo.On("UpdateStatusOrder",&orderID,models.Status("pending")).Return(errors.New("orderRepo.UpdateStatusOrder failed"))
 
 		orderService := services.NewOrderService(db,orderRepo,productUtil)
 
@@ -442,6 +443,7 @@ func TestUpdateStatusOrder(t *testing.T) {
 
 func TestGetOrderByID(t *testing.T) {
 	t.Run("GetOrderByID Success",func(t *testing.T) {
+		orderId := uint(1)
 		db  := InitializeDB(t)
 		productUtil := utils.NewProductUtilMock()
 		orderRepo := repositories.NewOrderRepositoryMock()
@@ -453,7 +455,7 @@ func TestGetOrderByID(t *testing.T) {
 		}
 
 
-		orderRepo.On("FindOrderById",mock.Anything).Return(&orderMock,nil)
+		orderRepo.On("FindOrderById",orderId).Return(&orderMock,nil)
 
 		orderService := services.NewOrderService(db,orderRepo,productUtil)
 
@@ -468,11 +470,12 @@ func TestGetOrderByID(t *testing.T) {
 	})
 
 	t.Run("Error to findOrderById",func(t *testing.T) {
+		orderId := uint(1)
 		db  := InitializeDB(t)
 		productUtil := utils.NewProductUtilMock()
 		orderRepo := repositories.NewOrderRepositoryMock()
 
-		orderRepo.On("FindOrderById",mock.Anything).Return(nil,errors.New("orderRepo.FindByIDWithItemsAndProducts failed:"))
+		orderRepo.On("FindOrderById",orderId).Return(nil,errors.New("orderRepo.FindByIDWithItemsAndProducts failed:"))
 
 		orderService := services.NewOrderService(db,orderRepo,productUtil)
 
@@ -485,11 +488,12 @@ func TestGetOrderByID(t *testing.T) {
 	})
 
 	t.Run("Order Not found",func(t *testing.T) {
+		orderId := uint(1)
 		db  := InitializeDB(t)
 		productUtil := utils.NewProductUtilMock()
 		orderRepo := repositories.NewOrderRepositoryMock()
 
-		orderRepo.On("FindOrderById",mock.Anything).Return(nil,nil)
+		orderRepo.On("FindOrderById",orderId).Return(nil,nil)
 
 		orderService := services.NewOrderService(db,orderRepo,productUtil)
 
@@ -503,6 +507,7 @@ func TestGetOrderByID(t *testing.T) {
 	})
 
 	t.Run("Unauthorized to update order",func(t *testing.T) {
+		orderId := uint(1)
 		db  := InitializeDB(t)
 		productUtil := utils.NewProductUtilMock()
 		orderRepo := repositories.NewOrderRepositoryMock()
@@ -514,7 +519,7 @@ func TestGetOrderByID(t *testing.T) {
 		}
 
 
-		orderRepo.On("FindOrderById",mock.Anything).Return(&orderMock,nil)
+		orderRepo.On("FindOrderById",orderId).Return(&orderMock,nil)
 
 		orderService := services.NewOrderService(db,orderRepo,productUtil)
 
@@ -529,6 +534,7 @@ func TestGetOrderByID(t *testing.T) {
 
 func TestGetAllOrderByUserId(t *testing.T) {
 	t.Run("GetAllOrderByUserId Success",func(t *testing.T) {
+		userId := uint(1)
 		db  := InitializeDB(t)
 		productUtil := utils.NewProductUtilMock()
 		orderRepo := repositories.NewOrderRepositoryMock()
@@ -548,7 +554,7 @@ func TestGetAllOrderByUserId(t *testing.T) {
 			},
 		}
 
-		orderRepo.On("FindAllOrderByUserId",mock.Anything).Return(orderAll,nil)
+		orderRepo.On("FindAllOrderByUserId",userId).Return(orderAll,nil)
 
 		orderService := services.NewOrderService(db,orderRepo,productUtil)
 
@@ -562,11 +568,12 @@ func TestGetAllOrderByUserId(t *testing.T) {
 		orderRepo.AssertExpectations(t)
 	})
 	t.Run("Error to findAllOrder",func(t *testing.T) {
+		userId := uint(1)
 		db  := InitializeDB(t)
 		productUtil := utils.NewProductUtilMock()
 		orderRepo := repositories.NewOrderRepositoryMock()
 
-		orderRepo.On("FindAllOrderByUserId",mock.Anything).Return(nil,errors.New("Error to find to order"))
+		orderRepo.On("FindAllOrderByUserId",userId).Return(nil,errors.New("Error to find to order"))
 
 		orderService := services.NewOrderService(db,orderRepo,productUtil)
 
@@ -591,8 +598,8 @@ func TestUpdateStatusByUser(t *testing.T) {
 			Status: "pending",
 		}
 
-		orderRepo.On("FindOrderById",mock.Anything).Return(&orderMock,nil)
-		orderRepo.On("UpdateStatusOrderByUserId",mock.Anything,mock.Anything).Return(nil)
+		orderRepo.On("FindOrderById",orderId).Return(&orderMock,nil)
+		orderRepo.On("UpdateStatusOrderByUserId",orderId,mock.Anything).Return(nil)
 
 		orderService := services.NewOrderService(db,orderRepo,productUtil)
 
@@ -621,7 +628,7 @@ func TestUpdateStatusByUser(t *testing.T) {
 		productUtil := utils.NewProductUtilMock()
 		orderRepo := repositories.NewOrderRepositoryMock()
 
-		orderRepo.On("FindOrderById",mock.Anything).Return(nil,errors.New("orderRepo.FindByIDWithItemsAndProducts failed"))
+		orderRepo.On("FindOrderById",orderId).Return(nil,errors.New("orderRepo.FindByIDWithItemsAndProducts failed"))
 
 		orderService := services.NewOrderService(db,orderRepo,productUtil)
 
@@ -638,7 +645,7 @@ func TestUpdateStatusByUser(t *testing.T) {
 		productUtil := utils.NewProductUtilMock()
 		orderRepo := repositories.NewOrderRepositoryMock()
 
-		orderRepo.On("FindOrderById",mock.Anything).Return(nil,nil)
+		orderRepo.On("FindOrderById",orderId).Return(nil,nil)
 
 		orderService := services.NewOrderService(db,orderRepo,productUtil)
 
@@ -661,7 +668,7 @@ func TestUpdateStatusByUser(t *testing.T) {
 			Status: "pending",
 		}
 
-		orderRepo.On("FindOrderById",mock.Anything).Return(&orderMock,nil)
+		orderRepo.On("FindOrderById",orderId).Return(&orderMock,nil)
 		
 		orderService := services.NewOrderService(db,orderRepo,productUtil)
 		
@@ -683,8 +690,8 @@ func TestUpdateStatusByUser(t *testing.T) {
 			Status: "pending",
 		}
 
-		orderRepo.On("FindOrderById",mock.Anything).Return(&orderMock,nil)
-		orderRepo.On("UpdateStatusOrderByUserId",mock.Anything,mock.Anything).Return(errors.New("Order can not update status"))
+		orderRepo.On("FindOrderById",orderId).Return(&orderMock,nil)
+		orderRepo.On("UpdateStatusOrderByUserId",orderId,models.Status("pending")).Return(errors.New("Order can not update status"))
 
 		orderService := services.NewOrderService(db,orderRepo,productUtil)
 
@@ -733,6 +740,9 @@ func TestGetAllOrdersAdmin(t *testing.T) {
 
 func TestUpdateStatusByAdmin(t *testing.T) {
 	t.Run("UpdateStatusByAdmin Success",func(t *testing.T) {
+		orderId := uint(1)
+		status := models.Status("paid")
+
 		orderMock := models.Order{
 			Model: gorm.Model{ID: 1},
 			UserID: 1,
@@ -743,13 +753,11 @@ func TestUpdateStatusByAdmin(t *testing.T) {
 		productUtil := utils.NewProductUtilMock()
 		orderRepo := repositories.NewOrderRepositoryMock()
 
-		orderRepo.On("FindOrderById",mock.Anything).Return(&orderMock,nil)
-		orderRepo.On("UpdateStatusOrderByUserId",mock.Anything,mock.Anything).Return(nil)
+		orderRepo.On("FindOrderById",orderId).Return(&orderMock,nil)
+		orderRepo.On("UpdateStatusOrderByUserId",orderId,status).Return(nil)
 
 		orderService := services.NewOrderService(db,orderRepo,productUtil)
 
-		orderId := uint(1)
-		status := models.Status("paid")
 		err := orderService.UpdateStatusByAdmin(&orderId,status)
 
 		assert.NoError(t,err)
@@ -829,5 +837,244 @@ func TestUpdateStatusByAdmin(t *testing.T) {
 
 		assert.EqualError(t,err,"Order can not update status")
 		orderRepo.AssertExpectations(t)
+	})
+}
+
+func TestGetProductTop(t *testing.T) {
+	t.Run("GetDashboardSummary Success",func(t *testing.T) {
+		topProduct := []dto.TopProductDTO{
+			{
+				ProductID: 1,
+				Name: "A",
+				TotalSold: 100.0,
+			},
+			{
+				ProductID: 2,
+				Name: "B",
+				TotalSold: 200.0,
+			},
+			{
+				ProductID: 3,
+				Name: "C",
+				TotalSold: 100.0,
+			},
+			{
+				ProductID: 4,
+				Name: "D",
+				TotalSold: 200.0,
+			},
+			{
+				ProductID: 5,
+				Name: "E",
+				TotalSold: 200.0,
+			},
+		}
+		db  := InitializeDB(t)
+		productUtil := utils.NewProductUtilMock()
+		orderRepo := repositories.NewOrderRepositoryMock()
+
+		orderRepo.On("GetTop5ProductsBySales").Return(topProduct,nil)
+
+		orderService := services.NewOrderService(db,orderRepo,productUtil)
+
+		top5Product,err := orderService.GetProductTop()
+
+		assert.NoError(t,err)
+
+		assert.Equal(t,top5Product[0].Name,"A")
+
+		orderRepo.AssertExpectations(t)
+	})
+
+	t.Run("GetDashboardSummary Success",func(t *testing.T) {
+	
+		db  := InitializeDB(t)
+		productUtil := utils.NewProductUtilMock()
+		orderRepo := repositories.NewOrderRepositoryMock()
+
+		orderRepo.On("GetTop5ProductsBySales").Return(nil,errors.New("Error to query top product"))
+
+		orderService := services.NewOrderService(db,orderRepo,productUtil)
+
+		top5Product,err := orderService.GetProductTop()
+
+		assert.EqualError(t,err,"Error to query top product")
+
+		assert.Nil(t,top5Product)
+
+		orderRepo.AssertExpectations(t)
+	})
+}
+
+func TestGetSalesChartData(t *testing.T) {
+	t.Run("GetSalesChartData Success",func(t *testing.T) {
+		salesPerDay := []dto.SalesPerMonthDTO{
+			{
+				Date:      time.Date(2025, 7, 11, 0, 0, 0, 0, time.UTC),
+				TotalSale: 1000.0,
+			},
+			{
+				Date:      time.Date(2025, 7, 12, 0, 0, 0, 0, time.UTC),
+				TotalSale: 2000.0,
+			},
+		}
+
+		db  := InitializeDB(t)
+		productUtil := utils.NewProductUtilMock()
+		orderRepo := repositories.NewOrderRepositoryMock()
+
+		orderRepo.On("GetSalesPerDay").Return(salesPerDay,nil)
+
+		orderService := services.NewOrderService(db,orderRepo,productUtil)
+
+		result,err := orderService.GetSalesChartData()
+
+		assert.NoError(t,err)
+
+		assert.Equal(t,result[0].TotalSale,1000.0)
+		assert.Equal(t,result[1].TotalSale,2000.0)
+
+		orderRepo.AssertExpectations(t)
+	})
+	t.Run("Error GetSalesChartData",func(t *testing.T) {
+
+		db  := InitializeDB(t)
+		productUtil := utils.NewProductUtilMock()
+		orderRepo := repositories.NewOrderRepositoryMock()
+
+		orderRepo.On("GetSalesPerDay").Return(nil,errors.New("Error to query salePreDay"))
+
+		orderService := services.NewOrderService(db,orderRepo,productUtil)
+
+		result,err := orderService.GetSalesChartData()
+
+		assert.EqualError(t,err,"Error to query salePreDay")
+		assert.Nil(t,result)
+
+		orderRepo.AssertExpectations(t)
+	})
+}
+
+func TestDeleteOrder(t *testing.T) {
+	t.Run("DeleteOrder Success",func(t *testing.T) {
+		id := uint(1)
+		existingOrder := models.Order{
+			Model: gorm.Model{ID: 1},
+		}
+
+		db  := InitializeDB(t)
+		productUtil := utils.NewProductUtilMock()
+		orderRepo := repositories.NewOrderRepositoryMock()
+
+		orderRepo.On("FindOrderById",id).Return(&existingOrder,nil)
+		orderRepo.On("Delete",id).Return(nil)
+
+		orderService := services.NewOrderService(db,orderRepo,productUtil)
+
+		err := orderService.DeleteOrder(id)
+
+		assert.NoError(t,err)
+
+		orderRepo.AssertExpectations(t)
+	})
+
+	t.Run("Error FindOrderById",func(t *testing.T) {
+		id := uint(1)
+		db  := InitializeDB(t)
+		productUtil := utils.NewProductUtilMock()
+		orderRepo := repositories.NewOrderRepositoryMock()
+
+		orderRepo.On("FindOrderById",id).Return(nil,errors.New("Error finding product"))
+
+		orderService := services.NewOrderService(db,orderRepo,productUtil)
+
+		err := orderService.DeleteOrder(id)
+
+		assert.EqualError(t,err,"Error finding product")
+
+		orderRepo.AssertExpectations(t)
+	})
+
+	t.Run("Order is Nil",func(t *testing.T) {
+		id := uint(1)
+		db  := InitializeDB(t)
+		productUtil := utils.NewProductUtilMock()
+		orderRepo := repositories.NewOrderRepositoryMock()
+
+		orderRepo.On("FindOrderById",id).Return(nil,nil)
+
+		orderService := services.NewOrderService(db,orderRepo,productUtil)
+
+		err := orderService.DeleteOrder(id)
+
+		assert.EqualError(t,err,"Product not found")
+
+		orderRepo.AssertExpectations(t)
+	})
+
+	t.Run("Error to Delete Order",func(t *testing.T) {
+		id := uint(1)
+		existingOrder := models.Order{
+			Model: gorm.Model{ID: 1},
+		}
+
+		db  := InitializeDB(t)
+		productUtil := utils.NewProductUtilMock()
+		orderRepo := repositories.NewOrderRepositoryMock()
+
+		orderRepo.On("FindOrderById",id).Return(&existingOrder,nil)
+		orderRepo.On("Delete",id).Return(errors.New("Error deleting order"))
+
+		orderService := services.NewOrderService(db,orderRepo,productUtil)
+
+		err := orderService.DeleteOrder(id)
+
+		assert.EqualError(t,err,"Error deleting order")
+
+		orderRepo.AssertExpectations(t)
+	})
+}
+
+func TestGetCustomerDetail(t *testing.T) {
+	t.Run("GetCustomerDetail Success",func(t *testing.T) {
+		customers := []dto.CustomerDTO{
+			{
+				ID: 1,
+				Name: "TEST A",
+			},
+			{
+				ID: 2,
+				Name: "TEST B",
+			},
+		}
+
+		db  := InitializeDB(t)
+		productUtil := utils.NewProductUtilMock()
+		orderRepo := repositories.NewOrderRepositoryMock()
+
+		orderRepo.On("GetUserDetail").Return(customers,nil)
+		
+		orderService := services.NewOrderService(db,orderRepo,productUtil)
+
+		result,err := orderService.GetCustomerDetail()
+
+		assert.NoError(t,err)
+		assert.Equal(t,result[0].Name,"TEST A")
+		assert.Equal(t,result[1].Name,"TEST B")
+	})
+
+	t.Run("Error To GetCustomerDetail",func(t *testing.T) {
+		db  := InitializeDB(t)
+		productUtil := utils.NewProductUtilMock()
+		orderRepo := repositories.NewOrderRepositoryMock()
+
+		orderRepo.On("GetUserDetail").Return(nil,errors.New("Error to query customer detail"))
+		
+		orderService := services.NewOrderService(db,orderRepo,productUtil)
+
+		result,err := orderService.GetCustomerDetail()
+
+		assert.EqualError(t,err,"Error to query customer detail")
+		assert.Nil(t,result)
 	})
 }
