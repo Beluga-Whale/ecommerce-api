@@ -51,7 +51,7 @@ func clearDataBaseUser(){
 }
 
 
-func loginAndGetJWT(t *testing.T, app *fiber.App, email string, password string) string {
+func LoginAndGetTokenUser(t *testing.T, app *fiber.App, email string, password string) string {
 	reqBody := []byte(fmt.Sprintf(`{
 		"email": "%s",
 		"password": "%s"
@@ -75,7 +75,7 @@ func loginAndGetJWT(t *testing.T, app *fiber.App, email string, password string)
 	return ""
 }
 
-func registerUser(t *testing.T, email string) {
+func RegisterUser(t *testing.T, email string) {
 	app := setUpAppUser()
 		
 	reqBody := []byte(fmt.Sprintf(`{
@@ -111,7 +111,7 @@ func TestRegisterIntegration(t *testing.T){
 			"password":"password",
 			"phone":"0874853567",
 			"birthDate":"2011-10-05T14:48:00.000Z"
-			}`)
+		}`)
 			
 			req := httptest.NewRequest("POST", "/register", bytes.NewReader(reqBody))
 			req.Header.Set("Content-Type", "application/json")
@@ -194,6 +194,32 @@ func TestRegisterIntegration(t *testing.T){
 		assert.Contains(t,string(body),"Invalid request body")
 		clearDataBaseUser()
 	})
+
+	t.Run("Integration Fail Password less than 6",func(t *testing.T) {
+		app := setUpAppUser()
+		
+		reqBody := []byte(`{
+			"email":"integration@gmail.com",
+			"firstName":"halay2",
+			"lastName":"halay1teT",
+			"password":"pass",
+			"phone":"0874853567",
+			"birthDate":"2011-10-05T14:48:00.000Z"
+			}`)
+			
+			req := httptest.NewRequest("POST", "/register", bytes.NewReader(reqBody))
+			req.Header.Set("Content-Type", "application/json")
+			
+			res,err := app.Test(req)
+			
+			assert.NoError(t,err)
+			assert.Equal(t,fiber.StatusBadRequest,res.StatusCode)
+			
+			body,_ := io.ReadAll(res.Body)
+			
+			assert.Contains(t,string(body),"Password is min")
+			clearDataBaseUser()
+	})
 }
 
 func TestLoginIntegration(t *testing.T){
@@ -275,6 +301,8 @@ func TestLoginIntegration(t *testing.T){
 		assert.Contains(t,string(body),"Invalid request body")
 		clearDataBaseUser()
 	})
+
+	
 	
 }
 
@@ -285,8 +313,8 @@ func TestGetProfileIntegration(t *testing.T) {
 		email := "halay@gmail.com"
 		password := "password"
 
-		registerUser(t, email)
-		token := loginAndGetJWT(t, app, email, password)
+		RegisterUser(t, email)
+		token := LoginAndGetTokenUser(t, app, email, password)
 
 		req := httptest.NewRequest("GET", "/user/profile", nil)
 		req.Header.Set("Content-Type", "application/json")
@@ -300,5 +328,25 @@ func TestGetProfileIntegration(t *testing.T) {
 		assert.Contains(t, string(body), "Get Profile Successful")
 
 		clearDataBaseUser()
+	})
+
+	t.Run("Integration Unauthorized To GetProfile",func(t *testing.T) {
+		app := setUpAppUser()
+
+		email := "halay@gmail.com"
+
+		RegisterUser(t, email)
+
+		req := httptest.NewRequest("GET", "/user/profile", nil)
+		req.Header.Set("Content-Type", "application/json")
+
+		res, err := app.Test(req)
+		assert.NoError(t, err)
+		assert.Equal(t, fiber.StatusUnauthorized, res.StatusCode)
+
+		body, _ := io.ReadAll(res.Body)
+		assert.Contains(t, string(body), "Unauthorized")
+
+		clearDataBaseUser()		
 	})
 }
