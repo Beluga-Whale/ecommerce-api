@@ -758,3 +758,238 @@ func TestDeleteStatusOrderIntegration(t *testing.T){
 
 	})
 }
+
+func TestGetOrderByIDIntegration(t *testing.T) {
+	t.Run("Integration GetOrderByID Success",func(t *testing.T) {
+		clearDataBaseOrder()
+		app := setUpAppOrder()
+
+		email := "orderuser@gmail.com"
+		password := "password"
+
+		token := RegisterAndLoginOrder(t, app, email, password)
+
+		categoryID := CreateCategoryOrder(t, app, token, "Clothing")
+
+		err := CreateProductOrder(t, app, token, categoryID)
+		require.NoError(t, err)
+
+		// NOTE: ดึง Variant ID จาก DB
+		var variantIDs []uint
+		err = config.TestDB.
+			Table("product_variants").
+			Select("id").
+			Scan(&variantIDs).Error
+
+		require.NoError(t, err)
+
+		orderPayload := dto.CreateOrderRequestDTO{
+		FullName:    "Thanathat Jivapaiboonsak",
+		Phone:       "0899999999",
+		Address:     "123 Main St",
+		Province:    "Bangkok",
+		District:    "Chatuchak",
+		Subdistrict: "Lat Yao",
+		Zipcode:     "10900",
+		Items: []dto.CreateOrderItemDTO{
+				{VariantID: variantIDs[0], Quantity: 1},
+			},
+		}
+
+		// NOTE - แปลงจาก struct เป็น json
+		body, err := json.Marshal(orderPayload)
+		require.NoError(t, err)
+
+		req := httptest.NewRequest("POST", "/user/order", bytes.NewReader(body))
+		req.Header.Set("Content-Type", "application/json")
+		req.Header.Set("Cookie", "jwt="+token)
+		res, err := app.Test(req)
+		require.NoError(t, err)
+
+		assert.Equal(t, fiber.StatusCreated, res.StatusCode)
+		resBody, _ := io.ReadAll(res.Body)
+		assert.Contains(t, string(resBody), "Order created successfully")
+
+		// NOTE -หา orderID
+		var orderID uint
+		err = config.TestDB.Table("orders").Select("id").Scan(&orderID).Error
+		require.NoError(t, err)
+
+		// NOTE หา userID
+		var userID uint
+		err = config.TestDB.Table("users").Where("email = ?",email).Select("id").Scan(&userID).Error
+		require.NoError(t, err)
+
+		getOrderByIDRequest := httptest.NewRequest("GET", fmt.Sprintf("/user/order/%d?userId=%d", orderID, userID), nil)
+
+		getOrderByIDRequest.Header.Set("Content-Type", "application/json")
+
+		updateRes, err := app.Test(getOrderByIDRequest)
+		require.NoError(t, err)
+		assert.Equal(t, fiber.StatusOK, updateRes.StatusCode)
+
+		updateResBody, _ := io.ReadAll(updateRes.Body)
+		assert.Contains(t, string(updateResBody), "Get Order By ID Success")
+
+	})
+
+	t.Run("Integration GetOrderByID Invalid order ID",func(t *testing.T) {
+		clearDataBaseOrder()
+		app := setUpAppOrder()
+
+		email := "orderuser@gmail.com"
+		password := "password"
+
+		token := RegisterAndLoginOrder(t, app, email, password)
+
+		categoryID := CreateCategoryOrder(t, app, token, "Clothing")
+
+		err := CreateProductOrder(t, app, token, categoryID)
+		require.NoError(t, err)
+
+		// NOTE: ดึง Variant ID จาก DB
+		var variantIDs []uint
+		err = config.TestDB.
+			Table("product_variants").
+			Select("id").
+			Scan(&variantIDs).Error
+
+		require.NoError(t, err)
+
+		orderPayload := dto.CreateOrderRequestDTO{
+		FullName:    "Thanathat Jivapaiboonsak",
+		Phone:       "0899999999",
+		Address:     "123 Main St",
+		Province:    "Bangkok",
+		District:    "Chatuchak",
+		Subdistrict: "Lat Yao",
+		Zipcode:     "10900",
+		Items: []dto.CreateOrderItemDTO{
+				{VariantID: variantIDs[0], Quantity: 1},
+			},
+		}
+
+		// NOTE - แปลงจาก struct เป็น json
+		body, err := json.Marshal(orderPayload)
+		require.NoError(t, err)
+
+		req := httptest.NewRequest("POST", "/user/order", bytes.NewReader(body))
+		req.Header.Set("Content-Type", "application/json")
+		req.Header.Set("Cookie", "jwt="+token)
+		res, err := app.Test(req)
+		require.NoError(t, err)
+
+		assert.Equal(t, fiber.StatusCreated, res.StatusCode)
+		resBody, _ := io.ReadAll(res.Body)
+		assert.Contains(t, string(resBody), "Order created successfully")
+
+		// NOTE -หา orderID
+		var orderID uint
+		err = config.TestDB.Table("orders").Select("id").Scan(&orderID).Error
+		require.NoError(t, err)
+
+		// NOTE หา userID
+		var userID uint
+		err = config.TestDB.Table("users").Where("email = ?",email).Select("id").Scan(&userID).Error
+		require.NoError(t, err)
+
+		getOrderByIDRequest := httptest.NewRequest("GET", fmt.Sprintf("/user/order/abcd?userId=%d", userID), nil)
+
+		getOrderByIDRequest.Header.Set("Content-Type", "application/json")
+
+		updateRes, err := app.Test(getOrderByIDRequest)
+		require.NoError(t, err)
+		assert.Equal(t, fiber.StatusBadRequest, updateRes.StatusCode)
+
+		updateResBody, _ := io.ReadAll(updateRes.Body)
+		assert.Contains(t, string(updateResBody), "Invalid order ID")
+
+	})
+
+	t.Run("Integration GetOrderByID Order Not Found",func(t *testing.T) {
+		clearDataBaseOrder()
+		app := setUpAppOrder()
+
+		email := "orderuser@gmail.com"
+		password := "password"
+
+		token := RegisterAndLoginOrder(t, app, email, password)
+
+		categoryID := CreateCategoryOrder(t, app, token, "Clothing")
+
+		err := CreateProductOrder(t, app, token, categoryID)
+		require.NoError(t, err)
+
+		// NOTE: ดึง Variant ID จาก DB
+		var variantIDs []uint
+		err = config.TestDB.
+			Table("product_variants").
+			Select("id").
+			Scan(&variantIDs).Error
+
+		require.NoError(t, err)
+
+		orderPayload := dto.CreateOrderRequestDTO{
+		FullName:    "Thanathat Jivapaiboonsak",
+		Phone:       "0899999999",
+		Address:     "123 Main St",
+		Province:    "Bangkok",
+		District:    "Chatuchak",
+		Subdistrict: "Lat Yao",
+		Zipcode:     "10900",
+		Items: []dto.CreateOrderItemDTO{
+				{VariantID: variantIDs[0], Quantity: 1},
+			},
+		}
+
+		// NOTE - แปลงจาก struct เป็น json
+		body, err := json.Marshal(orderPayload)
+		require.NoError(t, err)
+
+		req := httptest.NewRequest("POST", "/user/order", bytes.NewReader(body))
+		req.Header.Set("Content-Type", "application/json")
+		req.Header.Set("Cookie", "jwt="+token)
+		res, err := app.Test(req)
+		require.NoError(t, err)
+
+		assert.Equal(t, fiber.StatusCreated, res.StatusCode)
+		resBody, _ := io.ReadAll(res.Body)
+		assert.Contains(t, string(resBody), "Order created successfully")
+
+		// NOTE -หา orderID
+		var orderID uint
+		err = config.TestDB.Table("orders").Select("id").Scan(&orderID).Error
+		require.NoError(t, err)
+
+		// NOTE หา userID
+		var userID uint
+		err = config.TestDB.Table("users").Where("email = ?",email).Select("id").Scan(&userID).Error
+		require.NoError(t, err)
+
+
+		// NOTE - Delete ก่อน เพื่อให้Order ที่จะหา หาไม่เจอ
+		deleteRequest := httptest.NewRequest("DELETE",fmt.Sprintf("/admin/order/%d",orderID) , nil)
+		deleteRequest.Header.Set("Content-Type", "application/json")
+		// NOTE -STRIPE_WEBHOOK_SECRET เอามาจาก .env.test เป็น key สำหรับการ test
+		deleteRequest.Header.Set("Cookie", "jwt="+token)
+
+		deleteRes, err := app.Test(deleteRequest)
+		require.NoError(t, err)
+		assert.Equal(t, fiber.StatusOK, deleteRes.StatusCode)
+
+		deleteResBody, _ := io.ReadAll(deleteRes.Body)
+		assert.Contains(t, string(deleteResBody), "Order deleted successfully")
+
+		getOrderByIDRequest := httptest.NewRequest("GET", fmt.Sprintf("/user/order/%d?userId=%d", orderID, userID), nil)
+
+		getOrderByIDRequest.Header.Set("Content-Type", "application/json")
+
+		getOrderIdRes, err := app.Test(getOrderByIDRequest)
+		require.NoError(t, err)
+		assert.Equal(t, fiber.StatusInternalServerError, getOrderIdRes.StatusCode)
+
+		getOrderIdResBody, _ := io.ReadAll(getOrderIdRes.Body)
+		assert.Contains(t, string(getOrderIdResBody), "Error go get order by ID")
+
+	})
+}
