@@ -99,6 +99,10 @@ func (s *ProductService) UpdateProduct(id uint, product *models.Product) error {
 		return errors.New("Please provide title product")
 	}
 
+	if len(product.Images) != 3 {
+		return errors.New("You must upload exactly 3 product images")
+	}
+
 	if product.IsOnSale {
 		if product.SalePrice == nil || *product.SalePrice <= 0.0 {
 			return errors.New("Sale price must be greater than 0")
@@ -108,6 +112,7 @@ func (s *ProductService) UpdateProduct(id uint, product *models.Product) error {
 	if product.IsOnSale == false && *product.SalePrice > 0.0 {
 		return errors.New("You can should is in sale true")
 	}
+	
 
 	for _, v := range product.Variants {
 		if v.Stock < 0{

@@ -72,7 +72,7 @@ func clearDataBaseUserCategory(){
 	}
 }
 
-func RegisterAndLogin(t *testing.T,app *fiber.App, email string, password string) string {
+func RegisterAndLoginCategory(t *testing.T,app *fiber.App, email string, password string) string {
 		
 	reqBody := []byte(fmt.Sprintf(`{
 		"email":"%s",
@@ -125,7 +125,7 @@ func TestCrateCategoryIntegration(t *testing.T) {
 		email := "halay@gmail.com"
 		password := "password"
 
-		token := RegisterAndLogin(t, app, email, password)
+		token := RegisterAndLoginCategory(t, app, email, password)
 
 		reqBody := []byte(`{"name":"Sweater"}`)
 
@@ -151,7 +151,7 @@ func TestCrateCategoryIntegration(t *testing.T) {
 		email := "halay@gmail.com"
 		password := "password"
 
-		token := RegisterAndLogin(t, app, email, password)
+		token := RegisterAndLoginCategory(t, app, email, password)
 
 		reqBody := []byte(`{InvalidBody}`)
 
@@ -176,7 +176,7 @@ func TestCrateCategoryIntegration(t *testing.T) {
 		email := "halay@gmail.com"
 		password := "password"
 
-		token := RegisterAndLogin(t, app, email, password)
+		token := RegisterAndLoginCategory(t, app, email, password)
 
 		reqBody := []byte(`{"name":""}`)
 
@@ -201,7 +201,7 @@ func TestCrateCategoryIntegration(t *testing.T) {
 		email := "halay@gmail.com"
 		password := "password"
 
-		token := RegisterAndLogin(t, app, email, password)
+		token := RegisterAndLoginCategory(t, app, email, password)
 
 		reqBody := []byte(`{"name":"Sweater"}`)
 
@@ -242,7 +242,7 @@ func TestUpdateCategoryIntegration(t *testing.T) {
 		email := "halay@gmail.com"
 		password := "password"
 
-		token := RegisterAndLogin(t, app, email, password)
+		token := RegisterAndLoginCategory(t, app, email, password)
 
 		reqBody := []byte(`{"name":"Sweater"}`)
 
@@ -287,7 +287,7 @@ func TestUpdateCategoryIntegration(t *testing.T) {
 		email := "halay@gmail.com"
 		password := "password"
 
-		token := RegisterAndLogin(t, app, email, password)
+		token := RegisterAndLoginCategory(t, app, email, password)
 
 		reqBody := []byte(`{"name":"Sweater"}`)
 
@@ -332,7 +332,7 @@ func TestUpdateCategoryIntegration(t *testing.T) {
 		email := "halay@gmail.com"
 		password := "password"
 
-		token := RegisterAndLogin(t, app, email, password)
+		token := RegisterAndLoginCategory(t, app, email, password)
 
 		reqBody := []byte(`{"name":"Sweater"}`)
 
@@ -378,7 +378,7 @@ func TestUpdateCategoryIntegration(t *testing.T) {
 		email := "halay@gmail.com"
 		password := "password"
 
-		token := RegisterAndLogin(t, app, email, password)
+		token := RegisterAndLoginCategory(t, app, email, password)
 
 		reqBody := []byte(`{"name":"Sweater"}`)
 
@@ -426,7 +426,7 @@ func TestDeleteIntegration(t *testing.T) {
 		email := "halay@gmail.com"
 		password := "password"
 
-		token := RegisterAndLogin(t, app, email, password)
+		token := RegisterAndLoginCategory(t, app, email, password)
 
 		reqBody := []byte(`{"name":"Sweater"}`)
 
@@ -470,7 +470,7 @@ func TestDeleteIntegration(t *testing.T) {
 		email := "halay@gmail.com"
 		password := "password"
 
-		token := RegisterAndLogin(t, app, email, password)
+		token := RegisterAndLoginCategory(t, app, email, password)
 
 		reqBody := []byte(`{"name":"Sweater"}`)
 
@@ -514,7 +514,7 @@ func TestDeleteIntegration(t *testing.T) {
 		email := "halay@gmail.com"
 		password := "password"
 
-		token := RegisterAndLogin(t, app, email, password)
+		token := RegisterAndLoginCategory(t, app, email, password)
 
 		reqBody := []byte(`{"name":"Sweater"}`)
 
