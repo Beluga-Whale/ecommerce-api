@@ -58,6 +58,7 @@ func (h *CategoryHandler) Create(c *fiber.Ctx) error {
 	}
 
 	return JSONSuccess(c, fiber.StatusCreated, "Category created successfully", dto.CategoryCreateResponseDTO{
+		ID: category.ID,
 		Name: category.Name,
 		Slug: category.Slug,
 	})

@@ -7,6 +7,7 @@ type CategoryCreateDTO struct {
 }
 
 type CategoryCreateResponseDTO struct {
+	ID   uint   `json:"id" validate:"required"`
 	Name string `json:"name" validate:"required,min=2,max=100"`
 	Slug string `json:"slug"`
 }
