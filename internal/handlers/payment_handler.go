@@ -70,7 +70,7 @@ func (h *StripeHandler) Webhook(c *fiber.Ctx) error {
 
 	event, err := stripe.ConstructEvent(payload, sigHeader, stripeKey)
 	if err != nil {
-		fmt.Println("⚠️  Webhook signature verification failed:", err)
+		fmt.Println(" Webhook signature verification failed:", err)
 		return c.Status(fiber.StatusBadRequest).SendString("Webhook Error")
 	}
 
@@ -79,11 +79,11 @@ case "payment_intent.succeeded":
     var paymentIntent stripe.PaymentIntent
     err := json.Unmarshal(event.Data.Raw, &paymentIntent)
     if err != nil {
-        fmt.Println("❌ Failed to parse payment intent:", err)
+        fmt.Println(" Failed to parse payment intent:", err)
         return c.Status(fiber.StatusBadRequest).SendString("Invalid payment data")
     }
 
-    fmt.Println("✅ PaymentIntent was successful")
+    fmt.Println(" PaymentIntent was successful")
 
     orderID, _ := strconv.Atoi(paymentIntent.Metadata["orderId"])
     userID, _ := strconv.Atoi(paymentIntent.Metadata["userId"])
@@ -92,13 +92,13 @@ case "payment_intent.succeeded":
 
     err = h.orderService.UpdateStatusOrder(&orderIDUint, status, uint(userID))
     if err != nil {
-        fmt.Println("❌ Failed to update order:", err)
+        fmt.Println(" Failed to update order:", err)
         return c.Status(fiber.StatusInternalServerError).SendString("Update failed")
     }
 
     fmt.Println("✅ Order updated")
 	case "payment_intent.payment_failed":
-		fmt.Println("❌ Payment failed:", event.ID)
+		fmt.Println(" Payment failed:", event.ID)
 	default:
 		fmt.Println("Unhandled event type:", event.Type)
 	}

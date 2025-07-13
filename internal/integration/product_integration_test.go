@@ -62,7 +62,7 @@ func setUpAppProduct() *fiber.App {
 	return app
 }
 
-func clearDataBaseProductCategory(){
+func clearDataBaseProduct(){
 	tables := []string{
 		"order_items",
 		"orders",
@@ -161,7 +161,7 @@ func CreateCategoryProduct(t *testing.T, app *fiber.App,token string,name string
 
 func TestCreateProductIntegration(t *testing.T) {
 	t.Run("Integration CreateProduct Success",func(t *testing.T) {
-		clearDataBaseProductCategory()
+		clearDataBaseProduct()
 
 		app := setUpAppProduct()
 
@@ -220,12 +220,12 @@ func TestCreateProductIntegration(t *testing.T) {
 
 		assert.Contains(t, string(body), "Product created successfully")
 		t.Cleanup(func() {
-			clearDataBaseProductCategory()
+			clearDataBaseProduct()
 		})
 	})
 
 	t.Run("Integration CreateProduct Invalid request body",func(t *testing.T) {
-		clearDataBaseProductCategory()
+		clearDataBaseProduct()
 
 		app := setUpAppProduct()
 
@@ -253,12 +253,12 @@ func TestCreateProductIntegration(t *testing.T) {
 
 		assert.Contains(t, string(body), "Invalid request body")
 		t.Cleanup(func() {
-			clearDataBaseProductCategory()
+			clearDataBaseProduct()
 		})
 	})
 
 	t.Run("Integration CreateProduct Unauthorized",func(t *testing.T) {
-		clearDataBaseProductCategory()
+		clearDataBaseProduct()
 
 		app := setUpAppProduct()
 
@@ -316,12 +316,12 @@ func TestCreateProductIntegration(t *testing.T) {
 
 		assert.Contains(t, string(body), "Unauthorized")
 		t.Cleanup(func() {
-			clearDataBaseProductCategory()
+			clearDataBaseProduct()
 		})
 	})
 
 	t.Run("Integration CreateProduct Required Field",func(t *testing.T) {
-		clearDataBaseProductCategory()
+		clearDataBaseProduct()
 
 		app := setUpAppProduct()
 
@@ -379,12 +379,12 @@ func TestCreateProductIntegration(t *testing.T) {
 
 		assert.Contains(t, string(body), "Name is required")
 		t.Cleanup(func() {
-			clearDataBaseProductCategory()
+			clearDataBaseProduct()
 		})
 	})
 
 	t.Run("Integration CreateProduct Image Must 3",func(t *testing.T) {
-		clearDataBaseProductCategory()
+		clearDataBaseProduct()
 		app := setUpAppProduct()
 
 		email := "halay@gmail.com"
@@ -435,12 +435,12 @@ func TestCreateProductIntegration(t *testing.T) {
 
 		assert.Contains(t, string(body), "You must upload exactly 3 product images")
 		t.Cleanup(func() {
-			clearDataBaseProductCategory()
+			clearDataBaseProduct()
 		})
 	})
 
 	t.Run("Integration CreateProduct SalePrice Must More Than 0",func(t *testing.T) {
-		clearDataBaseProductCategory()
+		clearDataBaseProduct()
 
 		app := setUpAppProduct()
 
@@ -499,12 +499,12 @@ func TestCreateProductIntegration(t *testing.T) {
 
 		assert.Contains(t, string(body), "Sale price must be greater than 0")
 		t.Cleanup(func() {
-			clearDataBaseProductCategory()
+			clearDataBaseProduct()
 		})
 	})
 
 	t.Run("Integration CreateProduct IsOnSale False But Sale Price More Than 0",func(t *testing.T) {
-		clearDataBaseProductCategory()
+		clearDataBaseProduct()
 
 		app := setUpAppProduct()
 
@@ -563,14 +563,14 @@ func TestCreateProductIntegration(t *testing.T) {
 
 		assert.Contains(t, string(body), "You can should is in sale true")
 		t.Cleanup(func() {
-			clearDataBaseProductCategory()
+			clearDataBaseProduct()
 		})
 	})
 }
 
 func TestUpdateProduct(t *testing.T) {
 	t.Run("Integration Update Product Success",func(t *testing.T) {
-		clearDataBaseProductCategory()
+		clearDataBaseProduct()
 
 		app := setUpAppProduct()
 
@@ -679,12 +679,12 @@ func TestUpdateProduct(t *testing.T) {
 		assert.Equal(t, fiber.StatusOK, res.StatusCode, "Product updated successfully")
 
 		t.Cleanup(func() {
-			clearDataBaseProductCategory()
+			clearDataBaseProduct()
 		})
 	})
 
 	t.Run("Integration Update Product Unauthorized",func(t *testing.T) {
-		clearDataBaseProductCategory()
+		clearDataBaseProduct()
 
 		app := setUpAppProduct()
 
@@ -793,12 +793,12 @@ func TestUpdateProduct(t *testing.T) {
 		
 		assert.Contains(t, string(body), "Unauthorized")
 		t.Cleanup(func() {
-			clearDataBaseProductCategory()
+			clearDataBaseProduct()
 		})
 	})
 
 	t.Run("Integration Update Product Invalid Product ID",func(t *testing.T) {
-		clearDataBaseProductCategory()
+		clearDataBaseProduct()
 
 		app := setUpAppProduct()
 
@@ -907,11 +907,11 @@ func TestUpdateProduct(t *testing.T) {
 		assert.Equal(t, fiber.StatusInternalServerError, res.StatusCode, "Invalid product ID")
 
 		t.Cleanup(func() {
-			clearDataBaseProductCategory()
+			clearDataBaseProduct()
 		})
 	})
 	t.Run("Integration Update Product Required Field",func(t *testing.T) {
-		clearDataBaseProductCategory()
+		clearDataBaseProduct()
 
 		app := setUpAppProduct()
 
@@ -1019,12 +1019,12 @@ func TestUpdateProduct(t *testing.T) {
 		assert.Equal(t, fiber.StatusBadRequest, res.StatusCode, "Name is required")
 
 		t.Cleanup(func() {
-			clearDataBaseProductCategory()
+			clearDataBaseProduct()
 		})
 	})
 
 	t.Run("Integration Update Product Image Is Equal 3",func(t *testing.T) {
-		clearDataBaseProductCategory()
+		clearDataBaseProduct()
 
 		app := setUpAppProduct()
 
@@ -1127,12 +1127,12 @@ func TestUpdateProduct(t *testing.T) {
 		assert.Equal(t, fiber.StatusInternalServerError, res.StatusCode, "You must upload exactly 3 product images")
 
 		t.Cleanup(func() {
-			clearDataBaseProductCategory()
+			clearDataBaseProduct()
 		})
 	})
 
 	t.Run("Integration Update SalePrice Must More Than 0",func(t *testing.T) {
-		clearDataBaseProductCategory()
+		clearDataBaseProduct()
 
 		app := setUpAppProduct()
 
@@ -1241,12 +1241,12 @@ func TestUpdateProduct(t *testing.T) {
 		assert.Equal(t, fiber.StatusInternalServerError, res.StatusCode, "Sale price must be greater than 0")
 
 		t.Cleanup(func() {
-			clearDataBaseProductCategory()
+			clearDataBaseProduct()
 		})
 	})
 
 	t.Run("Integration Update IsOnSale False But Sale Price More Than 0",func(t *testing.T) {
-		clearDataBaseProductCategory()
+		clearDataBaseProduct()
 
 		app := setUpAppProduct()
 
@@ -1355,14 +1355,14 @@ func TestUpdateProduct(t *testing.T) {
 		assert.Equal(t, fiber.StatusInternalServerError, res.StatusCode, "You can should is in sale")
 
 		t.Cleanup(func() {
-			clearDataBaseProductCategory()
+			clearDataBaseProduct()
 		})
 	})
 }
 
 func TestDelete(t *testing.T) {
 	t.Run("Integration Delete Success ",func(t *testing.T) {
-		clearDataBaseProductCategory()
+		clearDataBaseProduct()
 
 		app := setUpAppProduct()
 
@@ -1437,12 +1437,12 @@ func TestDelete(t *testing.T) {
 		assert.Equal(t, fiber.StatusOK, res.StatusCode, "Product deleted successfully")
 
 		t.Cleanup(func() {
-			clearDataBaseProductCategory()
+			clearDataBaseProduct()
 		})
 	})
 
 	t.Run("Integration Delete Invalid Product ID ",func(t *testing.T) {
-			clearDataBaseProductCategory()
+			clearDataBaseProduct()
 
 		app := setUpAppProduct()
 
@@ -1517,14 +1517,14 @@ func TestDelete(t *testing.T) {
 		assert.Equal(t, fiber.StatusInternalServerError, res.StatusCode, "Invalid product ID")
 
 		t.Cleanup(func() {
-			clearDataBaseProductCategory()
+			clearDataBaseProduct()
 		})
 	})
 }
 
 func TestGetProductByID(t *testing.T) {
 	t.Run("Integration GetProductByID Success",func(t *testing.T) {
-		clearDataBaseProductCategory()
+		clearDataBaseProduct()
 
 		app := setUpAppProduct()
 
@@ -1599,11 +1599,11 @@ func TestGetProductByID(t *testing.T) {
 		assert.Equal(t, fiber.StatusOK, res.StatusCode, "Product retrieved successfully")
 
 		t.Cleanup(func() {
-			clearDataBaseProductCategory()
+			clearDataBaseProduct()
 		})
 	})
 	t.Run("Integration GetProductByID Invalid Product ID",func(t *testing.T) {
-		clearDataBaseProductCategory()
+		clearDataBaseProduct()
 
 		app := setUpAppProduct()
 
@@ -1678,12 +1678,12 @@ func TestGetProductByID(t *testing.T) {
 		assert.Equal(t, fiber.StatusInternalServerError, res.StatusCode, "Invalid product ID")
 
 		t.Cleanup(func() {
-			clearDataBaseProductCategory()
+			clearDataBaseProduct()
 		})
 	})
 
 	t.Run("Integration GetProductByID Product Not Found",func(t *testing.T) {
-		clearDataBaseProductCategory()
+		clearDataBaseProduct()
 
 		app := setUpAppProduct()
 
@@ -1758,7 +1758,7 @@ func TestGetProductByID(t *testing.T) {
 		assert.Equal(t, fiber.StatusInternalServerError, res.StatusCode, "Product not found")
 
 		t.Cleanup(func() {
-			clearDataBaseProductCategory()
+			clearDataBaseProduct()
 		})
 	})	
 }
