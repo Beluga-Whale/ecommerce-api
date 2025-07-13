@@ -647,8 +647,6 @@ func TestUpdateProduct(t *testing.T) {
 	})
 
 	t.Run("Image is equal 3", func(t *testing.T) {
-		id:= uint(1)
-		categoryId := uint(1)
 		salePrice := 50.0
 		product := &models.Product{
 			Name: "T-shirt",
@@ -674,23 +672,11 @@ func TestUpdateProduct(t *testing.T) {
 		productRepo := repositories.NewProductRepositoryMock()
 		categoryRepo := repositories.NewCategoryRepositoryMock()
 
-		productRepo.On("FindByID", id).Return(product,nil)
-
-		categoryRepo.On("FindByID", categoryId ).Return(&models.Category{
-			Name: "Test Category",
-		}, nil)
-
-		productRepo.On("Update", product).Return(nil)
-
 		productService := services.NewProductService(productRepo, categoryRepo)
 
 		err := productService.UpdateProduct(1,product)
 
 		assert.EqualError(t, err,"You must upload exactly 3 product images")
-
-		// NOTE - เช็คว่ามีการ Call function ไหม
-		productRepo.AssertExpectations(t)
-		categoryRepo.AssertExpectations(t)
 
 	})
 
