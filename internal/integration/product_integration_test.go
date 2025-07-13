@@ -130,7 +130,7 @@ func RegisterAndLoginProduct(t *testing.T,app *fiber.App, email string, password
 	return ""
 }
 
-func CreateCategory(t *testing.T, app *fiber.App,token string,name string) uint  {
+func CreateCategoryProduct(t *testing.T, app *fiber.App,token string,name string) uint  {
 	reqBody := []byte(fmt.Sprintf(`{
 		"name":"%s"
 	}`, name))
@@ -169,7 +169,7 @@ func TestCreateProductIntegration(t *testing.T) {
 		password := "password"
 		token := RegisterAndLoginProduct(t,app,email,password)
 
-		categoryID := CreateCategory(t, app, token, "Clothing")
+		categoryID := CreateCategoryProduct(t, app, token, "Clothing")
 		reqBody := []byte(fmt.Sprintf(`{
 			"name": "T-Shirt",
 			"title": "test title",
@@ -233,7 +233,7 @@ func TestCreateProductIntegration(t *testing.T) {
 		password := "password"
 		token := RegisterAndLoginProduct(t,app,email,password)
 
-		categoryID := CreateCategory(t, app, token, "Clothing")
+		categoryID := CreateCategoryProduct(t, app, token, "Clothing")
 		reqBody := []byte(fmt.Sprintf(`{
 			"categoryId": %d,
 		}`, categoryID))
@@ -266,7 +266,7 @@ func TestCreateProductIntegration(t *testing.T) {
 		password := "password"
 		token := RegisterAndLoginProduct(t,app,email,password)
 
-		categoryID := CreateCategory(t, app, token, "Clothing")
+		categoryID := CreateCategoryProduct(t, app, token, "Clothing")
 		reqBody := []byte(fmt.Sprintf(`{
 			"name": "T-Shirt",
 			"title": "test title",
@@ -329,7 +329,7 @@ func TestCreateProductIntegration(t *testing.T) {
 		password := "password"
 		token := RegisterAndLoginProduct(t,app,email,password)
 
-		categoryID := CreateCategory(t, app, token, "Clothing")
+		categoryID := CreateCategoryProduct(t, app, token, "Clothing")
 		reqBody := []byte(fmt.Sprintf(`{
 			"title": "test title",
 			"description": "<p>TEST</p>",
@@ -391,7 +391,7 @@ func TestCreateProductIntegration(t *testing.T) {
 		password := "password"
 		token := RegisterAndLoginProduct(t,app,email,password)
 
-		categoryID := CreateCategory(t, app, token, "Clothing")
+		categoryID := CreateCategoryProduct(t, app, token, "Clothing")
 		reqBody := []byte(fmt.Sprintf(`{
 			"name": "T-Shirt",
 			"title": "test title",
@@ -448,7 +448,7 @@ func TestCreateProductIntegration(t *testing.T) {
 		password := "password"
 		token := RegisterAndLoginProduct(t,app,email,password)
 
-		categoryID := CreateCategory(t, app, token, "Clothing")
+		categoryID := CreateCategoryProduct(t, app, token, "Clothing")
 		reqBody := []byte(fmt.Sprintf(`{
 			"name": "T-Shirt",
 			"title": "test title",
@@ -512,7 +512,7 @@ func TestCreateProductIntegration(t *testing.T) {
 		password := "password"
 		token := RegisterAndLoginProduct(t,app,email,password)
 
-		categoryID := CreateCategory(t, app, token, "Clothing")
+		categoryID := CreateCategoryProduct(t, app, token, "Clothing")
 		reqBody := []byte(fmt.Sprintf(`{
 			"name": "T-Shirt",
 			"title": "test title",
@@ -578,7 +578,7 @@ func TestUpdateProduct(t *testing.T) {
 		password := "password"
 		token := RegisterAndLoginProduct(t,app,email,password)
 
-		categoryID := CreateCategory(t, app, token, "Clothing")
+		categoryID := CreateCategoryProduct(t, app, token, "Clothing")
 		reqBody := []byte(fmt.Sprintf(`{
 			"name": "T-Shirt",
 			"title": "test title",
@@ -692,7 +692,7 @@ func TestUpdateProduct(t *testing.T) {
 		password := "password"
 		token := RegisterAndLoginProduct(t,app,email,password)
 
-		categoryID := CreateCategory(t, app, token, "Clothing")
+		categoryID := CreateCategoryProduct(t, app, token, "Clothing")
 		reqBody := []byte(fmt.Sprintf(`{
 			"name": "T-Shirt",
 			"title": "test title",
@@ -806,7 +806,7 @@ func TestUpdateProduct(t *testing.T) {
 		password := "password"
 		token := RegisterAndLoginProduct(t,app,email,password)
 
-		categoryID := CreateCategory(t, app, token, "Clothing")
+		categoryID := CreateCategoryProduct(t, app, token, "Clothing")
 		reqBody := []byte(fmt.Sprintf(`{
 			"name": "T-Shirt",
 			"title": "test title",
@@ -919,7 +919,7 @@ func TestUpdateProduct(t *testing.T) {
 		password := "password"
 		token := RegisterAndLoginProduct(t,app,email,password)
 
-		categoryID := CreateCategory(t, app, token, "Clothing")
+		categoryID := CreateCategoryProduct(t, app, token, "Clothing")
 		reqBody := []byte(fmt.Sprintf(`{
 			"name": "T-Shirt",
 			"title": "test title",
@@ -1032,7 +1032,7 @@ func TestUpdateProduct(t *testing.T) {
 		password := "password"
 		token := RegisterAndLoginProduct(t,app,email,password)
 
-		categoryID := CreateCategory(t, app, token, "Clothing")
+		categoryID := CreateCategoryProduct(t, app, token, "Clothing")
 		reqBody := []byte(fmt.Sprintf(`{
 			"name": "T-Shirt",
 			"title": "test title",
@@ -1140,7 +1140,7 @@ func TestUpdateProduct(t *testing.T) {
 		password := "password"
 		token := RegisterAndLoginProduct(t,app,email,password)
 
-		categoryID := CreateCategory(t, app, token, "Clothing")
+		categoryID := CreateCategoryProduct(t, app, token, "Clothing")
 		reqBody := []byte(fmt.Sprintf(`{
 			"name": "T-Shirt",
 			"title": "test title",
@@ -1254,7 +1254,7 @@ func TestUpdateProduct(t *testing.T) {
 		password := "password"
 		token := RegisterAndLoginProduct(t,app,email,password)
 
-		categoryID := CreateCategory(t, app, token, "Clothing")
+		categoryID := CreateCategoryProduct(t, app, token, "Clothing")
 		reqBody := []byte(fmt.Sprintf(`{
 			"name": "T-Shirt",
 			"title": "test title",
@@ -1370,7 +1370,7 @@ func TestDelete(t *testing.T) {
 		password := "password"
 		token := RegisterAndLoginProduct(t,app,email,password)
 
-		categoryID := CreateCategory(t, app, token, "Clothing")
+		categoryID := CreateCategoryProduct(t, app, token, "Clothing")
 		reqBody := []byte(fmt.Sprintf(`{
 			"name": "T-Shirt",
 			"title": "test title",
@@ -1450,7 +1450,7 @@ func TestDelete(t *testing.T) {
 		password := "password"
 		token := RegisterAndLoginProduct(t,app,email,password)
 
-		categoryID := CreateCategory(t, app, token, "Clothing")
+		categoryID := CreateCategoryProduct(t, app, token, "Clothing")
 		reqBody := []byte(fmt.Sprintf(`{
 			"name": "T-Shirt",
 			"title": "test title",
@@ -1532,7 +1532,7 @@ func TestGetProductByID(t *testing.T) {
 		password := "password"
 		token := RegisterAndLoginProduct(t,app,email,password)
 
-		categoryID := CreateCategory(t, app, token, "Clothing")
+		categoryID := CreateCategoryProduct(t, app, token, "Clothing")
 		reqBody := []byte(fmt.Sprintf(`{
 			"name": "T-Shirt",
 			"title": "test title",
@@ -1611,7 +1611,7 @@ func TestGetProductByID(t *testing.T) {
 		password := "password"
 		token := RegisterAndLoginProduct(t,app,email,password)
 
-		categoryID := CreateCategory(t, app, token, "Clothing")
+		categoryID := CreateCategoryProduct(t, app, token, "Clothing")
 		reqBody := []byte(fmt.Sprintf(`{
 			"name": "T-Shirt",
 			"title": "test title",
@@ -1691,7 +1691,7 @@ func TestGetProductByID(t *testing.T) {
 		password := "password"
 		token := RegisterAndLoginProduct(t,app,email,password)
 
-		categoryID := CreateCategory(t, app, token, "Clothing")
+		categoryID := CreateCategoryProduct(t, app, token, "Clothing")
 		reqBody := []byte(fmt.Sprintf(`{
 			"name": "T-Shirt",
 			"title": "test title",

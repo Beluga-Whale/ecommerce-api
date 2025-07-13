@@ -50,13 +50,14 @@ jobs:
     runs-on: ubuntu-latest
     needs: build-and-push
     steps:
-      - name: 📦 SSH & Deploy Docker Container on EC2
+      - name: SSH & Deploy Docker Container on EC2
         uses: appleboy/ssh-action@v1.0.0
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
+            sudo docker system prune -f || true
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/commerce-api-app:latest
             sudo docker stop ecommerce-api || true
             sudo docker rm ecommerce-api || true
